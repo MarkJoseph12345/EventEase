@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const navLinks = [
     {name: "Home", href: "/"},
-    {name: "About Us", href: "/aboutus"},
+    {name: "About Us", href: "/dashboard"},
     {name: "Login", href: "/login"},
     {name: "Sign Up", href: "/signup"},
 ]
@@ -14,10 +14,10 @@ const navLinks = [
 const NavBar = () => {
     const pathname = usePathname();
     return (
-        <div className="bg-customYellow p-4">
-            <div className="mx-10 items-center flex">
-            <div><img src="/logo.png" className="bg-black m-4" /></div>
-            <div className="justify-end flex flex-1 w-full gap-32">
+        <div className="bg-customYellow  h-20 p-4">
+            <div className="mx-9 items-center flex">
+            <div><img src="/logo.png "  alt="Logo" className="h-32 w-40 -mt-10 -ml-10" /></div>
+            <div className="justify-end flex flex-1 w-full gap-20 -mt-5 -mr-5">
                {navLinks.map((link) => {
                 const isActive = pathname.startsWith(link.href)
                 return (

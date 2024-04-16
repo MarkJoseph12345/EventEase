@@ -1,3 +1,4 @@
+import { Height } from "@mui/icons-material";
 import Footer from "./comps/footer";
 import HomePageCard from "./comps/hompageCards";
 import NavBar from "./comps/navbar";
@@ -5,11 +6,11 @@ const Home = () => {
   return (
     <div className="max-w-[2000px] mx-auto">
       <NavBar />
-      <img src="/wildcats 2.png" className="w-full" />
+      <img src="/wil4.png" className="" style={{height:'25rem', width:'78rem'}} />
       <div className="mx-[3%] my-[1%]">
-        <p className="font-poppins">What's Happening!</p>
+        <p className="font-poppins font-bold mt-8 text-xl">Latest Events!</p>
         <div className="mx-[3%] my-[1%] py-[3%] flex gap-[30%]">
-          <div className="w-[400px] h-[400px] bg-customYellow rounded-lg">
+          <div className="w-[250px] h-[250px] bg-customYellow rounded-lg">
             Temp
           </div>
           <div className="flex flex-col items-center justify-center gap-5">
