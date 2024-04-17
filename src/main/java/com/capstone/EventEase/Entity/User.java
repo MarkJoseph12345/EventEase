@@ -35,6 +35,18 @@ public class User implements UserDetails {
 
     private String name;
 
+
+    private String IdNumber;
+
+    private String department;
+
+    private String profilePicture;
+
+
+    private String qrCode;
+
+
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

@@ -12,8 +12,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.awt.*;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,8 @@ public class AuthenticationService {
 
     private final JwtService jwtService;
 
+    private final ImageService imageService;
+
     private  final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
@@ -35,12 +42,11 @@ public class AuthenticationService {
             throw new EntityExistsException("Username Already Exists!");
         }
 
-
-
         User newUser = User.builder().username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.STUDENT)
                 .name(registerRequest.getFirstName() + " " + registerRequest.getLastName())
+                .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .build();
         User user = userRepository.save(newUser);
         return new LoginResponse(user, jwtService.generateToken(user));
@@ -58,6 +64,32 @@ public class AuthenticationService {
 
         return new LoginResponse(user,jwtService.generateToken(user));
     }
+
+
+
+    public LoginResponse updateUser(Long userId, User user) throws IOException{
+        User userPerson = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+                "User with id: " + userId + " not found!"
+        ));
+
+        if( user.getName() != null &&  !user.getName().isEmpty()){
+            userPerson.setName(user.getName());
+        }
+
+        if(user.getPassword() != null &&  !user.getPassword().isBlank()){
+            userPerson.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        return new LoginResponse(userRepository.save(userPerson), jwtService.generateToken(userPerson));
+    }
+
+
+
+
+
+
+
+
 
 
 

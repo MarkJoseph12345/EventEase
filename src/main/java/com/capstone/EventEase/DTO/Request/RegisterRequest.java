@@ -14,7 +14,14 @@ public class RegisterRequest {
     private String firstName;
 
 
+
+
     private String lastName;
+
+    private String idNumber;
+
+    private String department;
+
 
 
 }
