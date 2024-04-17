@@ -143,9 +143,5 @@ const SignUp = () => {
         </div>
     );
 }
+export default SignUp;
 
-<<<<<<< HEAD
-export default SignUp;
-=======
-export default SignUp;
->>>>>>> 5a32b12cbd9f4e650eca19acde425a8ad6b5768e

@@ -17,9 +17,4 @@ const Dashboard = () => {
         </div>
     );
 };
-
-<<<<<<< HEAD
 export default withAuth(Dashboard);
-=======
-export default withAuth(Dashboard);
->>>>>>> 5a32b12cbd9f4e650eca19acde425a8ad6b5768e
