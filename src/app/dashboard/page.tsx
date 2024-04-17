@@ -1,29 +1,21 @@
 'use client'
 
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from 'next/navigation';
+import { withAuth } from '../protection'
 
 const Dashboard = () => {
-    const [isVisible, setIsVisible] = useState(true); 
+    const router = useRouter();
 
-    const toggleVisibility = () => {
-        setIsVisible(prev => !prev);
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        router.push("/login");
     };
 
     return (
-        <div className="max-w-[2000px] mx-auto relative">
-            <div className={`fixed left-0 top-0 w-48 h-full bg-customYellow transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
-            <button className={`bg-black mt-[60px] w-[9rem] h-[32px]  ml-6 -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`}>
-                    <img src="/plusicon.png" alt="Plus Icon" className="w-6 h-6 -ml-2.5" /> 
-                    <span className="text-white font-regular  font-poppins text-base ml-[4px]">Create Event</span>
-                </button>
-            </div>
-            <img src="/menuicon.png" alt="Menu Icon" className="absolute left-0 w-21 h-22 p-2 -ml-5 -mt-4 cursor-pointer" onClick={toggleVisibility} />
-           
+        <div>
+            <button onClick={handleLogout}>Log out</button>
         </div>
     );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard);

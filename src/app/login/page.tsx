@@ -2,17 +2,48 @@
 
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import axios, { AxiosError } from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 const Login = () => {
+    const router = useRouter();
     const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
     };
 
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
+    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:8080/api/v1/auth/login", formData);
+            console.log("Login successful:", response.data);
+            const authToken = response.data.token;
+            localStorage.setItem("token", authToken);
+            setFormData({
+                username: "",
+                password: "",
+            });
+            router.push('/dashboard')
+        } catch (error) {
+            const axiosError = error as AxiosError;
+            console.error("Login failed:", axiosError.response?.data);
+        }
+    };
 
     return (
         <div className="max-w-[2000px] bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen box-border px-[5%] py-[5%] flex justify-end mx-auto">

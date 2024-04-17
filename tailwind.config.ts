@@ -16,6 +16,7 @@ const config: Config = {
       colors: {
         customYellow: "#FDCC01",
         customShinyGold: "#AE9F64",
+        customGray:"#636363",
       }, 
     },
   },

@@ -3,16 +3,66 @@
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Link from "next/link";
+import axios, { AxiosError } from "axios";
 
 import { useState } from "react";
 
-const Login = () => {
+const SignUp = () => {
     const [showLoginPassword, setShowLoginPassword] = useState(false);
 
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
     };
 
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        department: "CS"
+    });
+
+    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleDepartmentChange = (e: { target: { value: any; }; }) => {
+        setFormData({
+            ...formData,
+            department: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:8080/api/v1/auth/register", formData);
+            console.log("Registration successful:", response.data);
+
+            const loginResponse = await axios.post("http://localhost:8080/api/v1/auth/login", {
+                username: formData.username,
+                password: formData.password
+            });
+
+            console.log("Login successful:", loginResponse.data);
+            const authToken = loginResponse.data.token;
+            localStorage.setItem("token", authToken);
+
+            setFormData({
+                username: "",
+                password: "",
+                firstName: "",
+                lastName: "",
+                department: "CS"
+            });
+        } catch (error) {
+            const axiosError = error as AxiosError;
+            console.error("Registration failed:", axiosError.response?.data);
+        }
+    };
 
     return (
         <div className="max-w-[2000px] bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen box-border px-[5%] py-[5%] flex justify-start mx-auto">
@@ -65,4 +115,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default SignUp;
