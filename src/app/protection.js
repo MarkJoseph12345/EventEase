@@ -14,4 +14,8 @@ export function withAuth(Component) {
 
         return <Component {...props} />;
     };
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5a32b12cbd9f4e650eca19acde425a8ad6b5768e
