@@ -51,30 +51,32 @@ const Login = () => {
 
     return (
         <div className="max-w-[2000px] bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen box-border px-[5%] py-[5%] flex justify-end mx-auto">
-            <div className="flex justify-center w-[38%] h-full bg-black box-border p-10 rounded-2xl">
+            <div className="flex justify-center w-[40%] h-[27rem] bg-black box-border p-10 rounded-2xl mt-6">
                 <form onSubmit={handleLoginSubmit} method="post" className="flex flex-col items-center w-full h-full bg-customYellow rounded-2xl box-border justify-between	py-10">
                     <div className="flex flex-col items-center">
                         <h1 className="text-4xl font-extrabold font-poppins -mt-7">WELCOME!</h1>
-                        <p className="text-xs font-light font-poppins mb-2">Please enter your Login and Password</p>
+                        <p className="text-xs font-light font-poppins mb-2">Please enter your Login and Password.</p>
                     </div>
-                    <div className="w-[63%] -mt-1">
-                        <p className="font-poppins text-sm font-regular">Username/Email Address<span className="text-red-800">*</span></p>
+                    <div className="w-[63%]">
+                        <p className="font-poppins text-sm font-regular  -mt-8">Username/Email Address<span className="text-red-800">*</span></p>
                         <input
                             type="text"
                             name="username"
                             value={formData.username}
                             onChange={handleInputChange}
-                            placeholder="Username/Email Address"
+                            placeholder=" Enter Username/Email Address"
+                            style={{ fontSize: '13px', marginLeft:'2px' }}
                             className="w-full h-[37px] rounded-2xl border-2 border-black" />
                     </div>
-                    <div className="w-[63%] -mt-1">
-                        <p className="font-poppins text-sm font-regular">Password<span className="text-red-800">*</span></p>
+                    <div className="w-[63%]">
+                        <p className="font-poppins text-sm font-regular -mt-8">Password<span className="text-red-800">*</span></p>
                         <div className="relative box-border">
                             <input type={showLoginPassword ? "text" : "password"}
                                 name="password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                placeholder="Enter Password"
+                                placeholder=" Enter Password"
+                                style={{ fontSize: '13px', marginLeft:'2px' }}
                                 className="pr-8 w-full rounded-2xl h-[37px] border-2 border-black" />
                             <span className="absolute inset-y-0 right-0 flex items-center pr-1">
                                 <span className="cursor-pointer -ml-7 -mt-.5" onClick={handleClickShowPassword}>
@@ -85,7 +87,7 @@ const Login = () => {
                         <span className="text-xs flex justify-end font-light mb-2 mt-.5">Forgot Password?</span>
                     </div>
                     <div className="flex flex-col items-center">
-                        <button type="submit" className="bg-black text-customYellow w-[110px] h-[35px] text-xl rounded font-bold mb-5">LOGIN</button>
+                        <button type="submit" className="bg-black text-customYellow w-[110px] h-[35px] text-xl rounded font-bold mb-5 -mt-4">LOGIN</button>
                         <p className="font-light text-xs font-poppins -mt-5">Don't have an account? <Link href="/signup" replace className="font-bold cursor-pointer mt-5">SIGN IN</Link></p>
                     </div>
                 </form>
