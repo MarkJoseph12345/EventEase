@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 //import { withAuth } from '../protection';
 import CreateEvent from '../createevent/page';
 
-function Dashboard() {
+const Dashboard= () => {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
