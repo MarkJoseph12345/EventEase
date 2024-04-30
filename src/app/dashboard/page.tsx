@@ -38,9 +38,9 @@ const Dashboard= () => {
     <div>
       <div className={`fixed left-0 top-0 w-44 h-full bg-customYellow transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className={`fixed left-0 top-0 ml-44 w-[1px] h-full bg-customGray transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}></div>
-        <button className={`bg-black mt-[80px] w-[7.9rem] h-[32px]  ml-[19px] -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`} onClick={handleModalOpen}>
+        <button  style={{width:'8rem'}} className={`bg-black mt-[80px] h-[32px]  ml-[19px] -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`} onClick={handleModalOpen}>
           <img src="/plusicon.png" alt="Plus Icon" className="w-6 h-6 -ml-2.5" />
-          <span className="text-white font-regular  font-poppins text-sm ml-[3px]">Create Event</span>
+          <span className="text-white font-regular  font-poppins text-[13px] ml-[3px]">Create Event</span>
         </button>
         <CreateEvent visible={isModalOpen} onClose={handleModalClose} />
         <button className='mt-5 ml-[4rem]'>Home</button>

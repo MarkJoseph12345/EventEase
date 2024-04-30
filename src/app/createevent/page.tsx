@@ -2,11 +2,25 @@
 
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { styled } from '@mui/joy';
+
+const VisuallyHiddenInput = styled('input')`
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  white-space: nowrap;
+  width: 1px;
+`;
 
 const CreateEvent = ({ visible, onClose }) => {
+  
   const [showCalendar, setShowCalendar] = useState(false);
   const [formData, setFormData] = useState({ 
     eventName: "",
@@ -16,7 +30,9 @@ const CreateEvent = ({ visible, onClose }) => {
     startTime: null, 
     endDate: null, 
     endTime: null, 
+    uploadedPhoto: null,
   });
+  const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -68,6 +84,17 @@ const CreateEvent = ({ visible, onClose }) => {
       setShowCalendar(type);
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    // Perform additional checks if needed, like file type validation
+    setFormData({
+      ...formData,
+      uploadedPhoto: file,
+    });
+  };
+  const handleButtonClick = () => {
+    fileInputRef.current.click(); // Programmatically trigger the file input field
+  };
   return (
     <Modal
       open={visible}
@@ -78,6 +105,7 @@ const CreateEvent = ({ visible, onClose }) => {
         style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
+       
         <div className="grid grid-cols-1 gap-5">
           <div className="relative p-5 -mt-1">
             <p className="font-poppins text-sm font-regular -mt-6">Event Name <span className="text-red-800">*</span></p>
@@ -87,22 +115,23 @@ const CreateEvent = ({ visible, onClose }) => {
               name="eventName" 
               value={formData.eventName} 
               onChange={handleInputChange} 
-              className="p-2 w-[20rem] h-[32px] rounded-2xl border-2 border-black"
-              style={{ zIndex: 1, backgroundClip: 'padding-box', fontSize: '12px' }}
+              className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]"
             />
           </div>
+
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6">Type of Event<span className="text-red-800">*</span></p>
             <select
               value={formData.typeofEvent}
               onChange={handleTypeofEventChange}
-              className="p-2 w-[20rem] h-[32px] rounded-2xl border-2 border-black" 
-              style={{ zIndex: 1, backgroundClip: 'padding-box', fontSize: '12px' }}
+              className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]" 
+             
             >
               <option value="One-Time">One-Time</option>
               <option value="Series">Series</option>
             </select>
           </div>
+
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6">Event Description <span className="text-red-800">*</span></p>
             <textarea 
@@ -110,11 +139,10 @@ const CreateEvent = ({ visible, onClose }) => {
               name="eventDescription" 
               value={formData.eventDescription} 
               onChange={handleInputChange} 
-              className="p-2 w-[20rem] h-[60px] rounded-2xl border-2 border-black resize-none"
-              style={{ zIndex: 1, backgroundClip: 'padding-box', fontSize: '12px' }}
+              className="p-2 w-[20rem] h-[60px] rounded-2xl border-[1.5px] border-black resize-none text-[12px]"
             />
           </div>
-           {/* Start Date */}
+        
            <div className="relative p-5 -mt-8">
             <p className="font-poppins text-sm font-regular -mt-6">Start Date <span className="text-red-800">*</span></p>
             <div className="relative">
@@ -127,8 +155,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     : ''
                 }
                 readOnly
-                className="p-1 w-[9rem] h-[32px] rounded-2xl border-2 border-black"
-                style={{ zIndex: 1, backgroundClip: 'padding-box', fontSize: '10px' }}
+                className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
               <img 
                 src="/calendar.png"
@@ -142,7 +169,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     selected={formData.startDate}
                     onChange={(date) => handleDateChange(date, 'start')}
                     dateFormat="MM/dd/yyyy"
-                    className="border-2 border-customYellow mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
+                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
                   />
                   <DatePicker
                     selected={formData.startTime}
@@ -152,13 +179,13 @@ const CreateEvent = ({ visible, onClose }) => {
                     timeIntervals={1}
                     timeCaption="Time"
                     dateFormat="h:mm aa"
-                    className="border-2 border-customYellow mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
+                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
                   />
                 </div>
               )}
             </div>
           </div>
-          {/* End Date */}
+         
           <div className="relative p-5 -mt-[5.5rem] ml-[11rem]">
             <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
             <div className="relative">
@@ -171,8 +198,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     : ''
                 }
                 readOnly
-                className="p-1 w-[9rem] h-[32px] rounded-2xl border-2 border-black"
-                style={{ zIndex: 1, backgroundClip: 'padding-box', fontSize: '10px' }}
+                className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
               <img 
                 src="/calendar.png"
@@ -186,7 +212,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     selected={formData.endDate}
                     onChange={(date) => handleDateChange(date, 'end')}
                     dateFormat="MM/dd/yyyy"
-                    className="border-2 border-customYellow mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
+                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
                   />
                   <DatePicker
                     selected={formData.endTime}
@@ -196,7 +222,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     timeIntervals={1}
                     timeCaption="Time"
                     dateFormat="h:mm aa"
-                    className="border-2 border-customYellow mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
+                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
                   />
                 </div>
               )}
@@ -205,6 +231,53 @@ const CreateEvent = ({ visible, onClose }) => {
         </div>
         <div className=' font-bold -mt-[22rem] ' >
           <Button onClick={onClose} style={{ color: 'black', fontSize:'25px', marginLeft:'43rem' }}>X</Button>
+          <div className="grid grid-cols-1 gap-5">
+          
+          <div className="relative p-5 mt-[1rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
+            <div className="relative" style={{ width: '100%', height: '100%' }}>
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                ref={fileInputRef} 
+                onChange={handleFileChange}
+              />
+              {formData.uploadedPhoto && (
+                <img 
+                  src={URL.createObjectURL(formData.uploadedPhoto)} 
+                  alt="Uploaded" 
+                  className="absolute top-0 left-0 w-full h-full object-cover rounded " 
+                  style={{ objectFit: 'cover' }} 
+                />
+              )}
+              {!formData.uploadedPhoto && (
+                <div className="absolute top-0 left-0 w-full h-full"></div>
+              )}
+              <Button
+                component="label"
+                role={undefined}
+                tabIndex={-1}
+                style={{ 
+                  marginTop: '10.5rem', 
+                  fontSize:'11px', 
+                  color:'black', 
+                  fontWeight:'bold', 
+                  textDecoration:'underline', 
+                  textTransform:'none',
+                  marginRight:'-1rem',
+                  outline: 'none'
+                }}
+                onClick={() => fileInputRef.current.click()} 
+              >
+              Upload Event Picture
+              </Button>
+                </div>
+              </div>
+
+            <div  className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
+                <Button style={{ color: 'black', fontWeight:'semibold',fontSize:'14px', outline: 'none'  }}>CREATE</Button>
+            </div>
+
+        </div>
         </div>
       </div>
     </Modal>
