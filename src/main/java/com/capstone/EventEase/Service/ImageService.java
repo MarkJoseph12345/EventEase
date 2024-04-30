@@ -1,7 +1,9 @@
 package com.capstone.EventEase.Service;
 
 
+import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
+import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,8 +26,12 @@ public class ImageService {
 
 
     private final String userHome = System.getProperty("user.home");
-    private final Path root = Paths.get(userHome,"ProfilePictures");
+    private final Path root = Paths.get(userHome,"EventEasePics");
     private final UserRepository userRepository;
+
+
+    private final EventRepository eventRepository;
+
 
 
     @PostConstruct
@@ -60,15 +66,23 @@ public class ImageService {
 
 
 
-    public String uploadImage(Long userId,MultipartFile file) throws IOException{
+
+    public String uploadUserImage(Long userId,MultipartFile file) throws IOException{
 
             User user = userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User dont exists"));
 
             if(user.getProfilePicture() != null){
                 deleteImage(user.getProfilePicture());
             }
+
+            String fileName;
+
             String fileExtension =  StringUtils.getFilenameExtension(file.getOriginalFilename());
-            String fileName = "ProfilePictureID_" + userId + "." + fileExtension;
+            if(!fileExtension.equals("svg")){
+                fileName = "ProfilePictureID_" + userId + "." + fileExtension;
+            }else{
+                fileName = "ProfilePictureSVG_" + userId + "." + fileExtension;
+            }
             user.setProfilePicture(fileName);
             userRepository.save(user);
             Path filePath = root.resolve(fileName);
@@ -79,6 +93,21 @@ public class ImageService {
 
 
 
+
+    public String uploadEventImage(Long eventId, MultipartFile file) throws IOException{
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont exists!"));
+        if(event.getEventPicture() != null){
+            deleteImage(event.getEventPicture());
+        }
+        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        String fileName = "EventID_" + eventId + "." + fileExtension;
+        event.setEventPicture(fileName);
+        eventRepository.save(event);
+        Path filePath = root.resolve(fileName);
+        file.transferTo(filePath);
+
+        return "Event Image has been uploaded!";
+    }
 
 
 
@@ -100,9 +129,15 @@ public class ImageService {
 
     }
 
-    public byte[] downloadImage(Long userId) throws IOException{
+    public byte[] downloadUserImage(Long userId) throws IOException{
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
         Path filePath = root.resolve(user.getProfilePicture());
+        return Files.readAllBytes(filePath);
+    }
+
+    public byte[] downloadEventImage(Long eventId) throws IOException{
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        Path filePath = root.resolve(event.getEventPicture());
         return Files.readAllBytes(filePath);
     }
 

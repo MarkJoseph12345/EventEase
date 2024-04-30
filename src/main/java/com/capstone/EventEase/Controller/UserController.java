@@ -28,6 +28,15 @@ public class UserController {
 
 
 
+
+
+
+    @GetMapping("/hello")
+    public ResponseEntity<String> greet(){
+        return new ResponseEntity<>("Hello World",HttpStatus.OK);
+    }
+
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable Long userId) throws Exception{
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
@@ -38,8 +47,15 @@ public class UserController {
     @GetMapping("/getProfilePicture/{userId}")
     public ResponseEntity<?> getProfilePicture(@PathVariable Long userId) throws IOException{
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
-                .body(imageService.downloadImage(userId));
+                .body(imageService.downloadUserImage(userId));
     }
+
+    @GetMapping("/getProfilePicture/svg/{userId}")
+    public ResponseEntity<byte[]> getProfilePictureSvg(@PathVariable Long userId) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg"))
+                .body(imageService.downloadUserImage(userId));
+    }
+
 
 
 
@@ -47,7 +63,7 @@ public class UserController {
     @PutMapping("/updateProfilePicture/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestParam("image")
     MultipartFile file) throws IOException {
-        return new ResponseEntity<>(imageService.uploadImage(userId,file),HttpStatus.OK);
+        return new ResponseEntity<>(imageService.uploadUserImage(userId,file),HttpStatus.OK);
     }
 
 

@@ -73,6 +73,16 @@ public class AuthenticationController {
 
 
 
+    @GetMapping("/hello")
+    public ResponseEntity<?> greet() {
+        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
+    }
+
+
+
+
+
+
 
 
 

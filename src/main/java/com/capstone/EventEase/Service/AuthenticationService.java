@@ -30,7 +30,7 @@ public class AuthenticationService {
 
     private final JwtService jwtService;
 
-    private final ImageService imageService;
+
 
     private  final AuthenticationManager authenticationManager;
 
@@ -48,9 +48,20 @@ public class AuthenticationService {
                 .name(registerRequest.getFirstName() + " " + registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .build();
+
+
+
+
         User user = userRepository.save(newUser);
         return new LoginResponse(user, jwtService.generateToken(user));
     }
+
+
+
+
+
+
+    
     public LoginResponse loginUser(LoginRequest loginRequest){
         User user = userRepository.findByUsername(loginRequest.getUsername());
 
