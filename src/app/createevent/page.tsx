@@ -6,6 +6,8 @@ import React, { useState, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { styled } from '@mui/joy';
+import { API_ENDPOINTS } from '../api';
+import axios from 'axios';
 
 const VisuallyHiddenInput = styled('input')`
   clip: rect(0 0 0 0);
@@ -20,36 +22,39 @@ const VisuallyHiddenInput = styled('input')`
 `;
 
 const CreateEvent = ({ visible, onClose }) => {
-  
+
   const [showCalendar, setShowCalendar] = useState(false);
-  const [formData, setFormData] = useState({ 
+  const [formData, setFormData] = useState({
     eventName: "",
-    typeofEvent: "One-Time",
+    eventType: "One-Time",
     eventDescription: "",
-    startDate: null, 
-    startTime: null, 
-    endDate: null, 
-    endTime: null, 
-    uploadedPhoto: null,
+    startDate: null as Date | null,
+    startTime: null as Date | null,
+    endDate: null as Date | null,
+    endTime: null as Date | null,
+    eventPicture: null as string | ArrayBuffer | null,
+    eventStarts: null as Date | null,
+    eventEnds: null as Date | null,
   });
+
   const fileInputRef = useRef(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleTypeofEventChange = (e) => {
+  const handleTypeofEventChange = (e: { target: { value: any; }; }) => {
     setFormData({
       ...formData,
-      typeofEvent: e.target.value
+      eventType: e.target.value
     });
   };
- 
 
-  const handleDateChange = (date, type) => {
+
+  const handleDateChange = (date: Date | null, type: string) => {
     if (type === 'start') {
       setFormData({
         ...formData,
@@ -63,7 +68,7 @@ const CreateEvent = ({ visible, onClose }) => {
     }
   };
 
-  const handleTimeChange = (time, type) => {
+  const handleTimeChange = (time: Date | null, type: string) => {
     if (type === 'start') {
       setFormData({
         ...formData,
@@ -77,44 +82,95 @@ const CreateEvent = ({ visible, onClose }) => {
     }
   };
 
-  const toggleCalendar = (type) => {
+  const toggleCalendar = (type: string | boolean | ((prevState: boolean) => boolean)) => {
     if (showCalendar === type) {
       setShowCalendar(false);
     } else {
       setShowCalendar(type);
     }
   };
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    // Perform additional checks if needed, like file type validation
-    setFormData({
-      ...formData,
-      uploadedPhoto: file,
-    });
+
+  const [secFormData, setSecFormData] = useState(new FormData());
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        const imageDataUrl = reader.result;
+        setFormData({
+          ...formData,
+          eventPicture: imageDataUrl,
+        });
+      }
+    };
+
+    if (file) {
+      secFormData.append('eventImage', file);
+      reader.readAsDataURL(file);
+    } else {
+      secFormData.delete('eventImage');
+    }
+
   };
-  const handleButtonClick = () => {
-    fileInputRef.current.click(); // Programmatically trigger the file input field
+
+
+  const createEvent = async () => {
+    const eventStarts = formData.startDate && formData.startTime
+      ? new Date(formData.startDate.getFullYear(), formData.startDate.getMonth(), formData.startDate.getDate(), formData.startTime.getHours(), formData.startTime.getMinutes(), formData.startTime.getSeconds())
+      : null;
+
+    const eventEnds = formData.endDate && formData.endTime
+      ? new Date(formData.endDate.getFullYear(), formData.endDate.getMonth(), formData.endDate.getDate(), formData.endTime.getHours(), formData.endTime.getMinutes(), formData.endTime.getSeconds())
+      : null;
+
+    const { eventPicture, ...formDataWithoutPicture } = formData;
+
+    const updatedFormData = {
+      ...formDataWithoutPicture,
+      eventStarts,
+      eventEnds,
+    };
+
+    try {
+      const response = await axios.post(API_ENDPOINTS.CREATE_EVENT, updatedFormData);
+      console.log("Create successful:", response.data);
+      const id = response.data.id;
+
+      if (selectedFile) {
+        console.log(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
+        const pictureResponse = await axios.put(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
+        console.log("Image upload successful:", pictureResponse.data);
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error("Error creating event:", error);
+    }
   };
+
   return (
     <Modal
       open={visible}
       onClose={onClose}
     >
-      <div 
-        className='bg-white p-4 rounded-3xl mt-20 ml-[20rem] w-[48rem] h-[25rem] relative' 
+      <div
+        className='bg-white p-4 rounded-3xl mt-20 ml-[20rem] w-[48rem] h-[25rem] relative'
         style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
-       
+
         <div className="grid grid-cols-1 gap-5">
           <div className="relative p-5 -mt-1">
             <p className="font-poppins text-sm font-regular -mt-6">Event Name <span className="text-red-800">*</span></p>
-            <input 
-              type='text' 
-              placeholder='Enter Text' 
-              name="eventName" 
-              value={formData.eventName} 
-              onChange={handleInputChange} 
+            <input
+              type='text'
+              placeholder='Enter Text'
+              name="eventName"
+              value={formData.eventName}
+              onChange={handleInputChange}
               className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]"
             />
           </div>
@@ -122,10 +178,10 @@ const CreateEvent = ({ visible, onClose }) => {
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6">Type of Event<span className="text-red-800">*</span></p>
             <select
-              value={formData.typeofEvent}
+              value={formData.eventType}
               onChange={handleTypeofEventChange}
-              className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]" 
-             
+              className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]"
+
             >
               <option value="One-Time">One-Time</option>
               <option value="Series">Series</option>
@@ -134,21 +190,21 @@ const CreateEvent = ({ visible, onClose }) => {
 
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6">Event Description <span className="text-red-800">*</span></p>
-            <textarea 
-              placeholder='Enter Description' 
-              name="eventDescription" 
-              value={formData.eventDescription} 
-              onChange={handleInputChange} 
+            <textarea
+              placeholder='Enter Description'
+              name="eventDescription"
+              value={formData.eventDescription}
+              onChange={handleInputChange}
               className="p-2 w-[20rem] h-[60px] rounded-2xl border-[1.5px] border-black resize-none text-[12px]"
             />
           </div>
-        
-           <div className="relative p-5 -mt-8">
+
+          <div className="relative p-5 -mt-8">
             <p className="font-poppins text-sm font-regular -mt-6">Start Date <span className="text-red-800">*</span></p>
             <div className="relative">
-              <input 
-                type='text' 
-                placeholder='Select Date and Time' 
+              <input
+                type='text'
+                placeholder='Select Date and Time'
                 value={
                   formData.startDate && formData.startTime
                     ? `${formData.startDate.toLocaleDateString()} ${formData.startTime.toLocaleTimeString()}`
@@ -157,9 +213,9 @@ const CreateEvent = ({ visible, onClose }) => {
                 readOnly
                 className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
-              <img 
+              <img
                 src="/calendar.png"
-                alt="Calendar" 
+                alt="Calendar"
                 className="absolute top-0 right-20 m-2 cursor-pointer w-[15px] mr-[30rem]"
                 onClick={() => toggleCalendar('start')}
               />
@@ -185,13 +241,13 @@ const CreateEvent = ({ visible, onClose }) => {
               )}
             </div>
           </div>
-         
+
           <div className="relative p-5 -mt-[5.5rem] ml-[11rem]">
             <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
             <div className="relative">
-              <input 
-                type='text' 
-                placeholder='Select Date and Time' 
+              <input
+                type='text'
+                placeholder='Select Date and Time'
                 value={
                   formData.endDate && formData.endTime
                     ? `${formData.endDate.toLocaleDateString()} ${formData.endTime.toLocaleTimeString()}`
@@ -200,9 +256,9 @@ const CreateEvent = ({ visible, onClose }) => {
                 readOnly
                 className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
-              <img 
+              <img
                 src="/calendar.png"
-                alt="Calendar" 
+                alt="Calendar"
                 className="absolute top-0 right-[254px] m-2 cursor-pointer w-[15px] mr-[8rem]"
                 onClick={() => toggleCalendar('end')}
               />
@@ -230,54 +286,55 @@ const CreateEvent = ({ visible, onClose }) => {
           </div>
         </div>
         <div className=' font-bold -mt-[22rem] ' >
-          <Button onClick={onClose} style={{ color: 'black', fontSize:'25px', marginLeft:'43rem' }}>X</Button>
+          <Button onClick={onClose} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem' }}>X</Button>
           <div className="grid grid-cols-1 gap-5">
-          
-          <div className="relative p-5 mt-[1rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
-            <div className="relative" style={{ width: '100%', height: '100%' }}>
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/*"
-                ref={fileInputRef} 
-                onChange={handleFileChange}
-              />
-              {formData.uploadedPhoto && (
-                <img 
-                  src={URL.createObjectURL(formData.uploadedPhoto)} 
-                  alt="Uploaded" 
-                  className="absolute top-0 left-0 w-full h-full object-cover rounded " 
-                  style={{ objectFit: 'cover' }} 
-                />
-              )}
-              {!formData.uploadedPhoto && (
-                <div className="absolute top-0 left-0 w-full h-full"></div>
-              )}
-              <Button
-                component="label"
-                role={undefined}
-                tabIndex={-1}
-                style={{ 
-                  marginTop: '10.5rem', 
-                  fontSize:'11px', 
-                  color:'black', 
-                  fontWeight:'bold', 
-                  textDecoration:'underline', 
-                  textTransform:'none',
-                  marginRight:'-1rem',
-                  outline: 'none'
-                }}
-                onClick={() => fileInputRef.current.click()} 
-              >
-              Upload Event Picture
-              </Button>
-                </div>
-              </div>
 
-            <div  className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
-                <Button style={{ color: 'black', fontWeight:'semibold',fontSize:'14px', outline: 'none'  }}>CREATE</Button>
+            <div className="relative p-5 mt-[1rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
+              <div className="relative" style={{ width: '100%', height: '100%' }}>
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                />
+                {formData.eventPicture && (
+                  <img
+                    src={formData.eventPicture.toString()}
+                    alt="Uploaded"
+                    className="absolute top-0 left-0 w-full h-full object-cover rounded"
+                    style={{ objectFit: 'cover' }}
+                  />
+                )}
+
+                {!formData.eventPicture && (
+                  <div className="absolute top-0 left-0 w-full h-full"></div>
+                )}
+                <Button
+                  component="label"
+                  role={undefined}
+                  tabIndex={-1}
+                  style={{
+                    marginTop: '10.5rem',
+                    fontSize: '11px',
+                    color: 'black',
+                    fontWeight: 'bold',
+                    textDecoration: 'underline',
+                    textTransform: 'none',
+                    marginRight: '-1rem',
+                    outline: 'none'
+                  }}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  Upload Event Picture
+                </Button>
+              </div>
             </div>
 
-        </div>
+            <div className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
+              <Button style={{ color: 'black', fontWeight: 'semibold', fontSize: '14px', outline: 'none' }} onClick={() => { createEvent() }}>CREATE</Button>
+            </div>
+
+          </div>
         </div>
       </div>
     </Modal>

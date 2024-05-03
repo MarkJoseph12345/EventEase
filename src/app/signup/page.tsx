@@ -6,6 +6,7 @@ import Link from "next/link";
 import axios, { AxiosError } from "axios";
 
 import { useState } from "react";
+import { API_ENDPOINTS } from "../api";
 
 const SignUp = () => {
     const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -39,10 +40,10 @@ const SignUp = () => {
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8080/api/v1/auth/register", formData);
+            const response = await axios.post(API_ENDPOINTS.REGISTER, formData);
             console.log("Registration successful:", response.data);
 
-            const loginResponse = await axios.post("http://localhost:8080/api/v1/auth/login", {
+            const loginResponse = await axios.post(API_ENDPOINTS.LOGIN, {
                 username: formData.username,
                 password: formData.password
             });
