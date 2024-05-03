@@ -20,7 +20,7 @@ public class AdminController {
     private final AdminService adminService;
 
 
-    @GetMapping("/attend/{idNumber}")
+    @PostMapping("/attend/{idNumber}")
     public ResponseEntity<?> attendUsers(@PathVariable String idNumber){
         try{
             return new ResponseEntity<>(adminService.checkAttendance(idNumber),HttpStatus.OK);

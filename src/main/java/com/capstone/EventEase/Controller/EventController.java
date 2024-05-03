@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,8 +34,6 @@ public class EventController {
     public ResponseEntity<?> createEvent(@RequestBody Event event){
       return new ResponseEntity(eventService.craeteEvent(event),HttpStatus.OK);
     }
-
-
 
 
     @PutMapping("updateEvent/{eventId}")
@@ -59,10 +58,19 @@ public class EventController {
     }
 
 
-    @DeleteMapping("deleteEventById/{eventId}")
-    public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) throws Exception{
-        return new ResponseEntity<>(eventService.deleteEvent(eventId),HttpStatus.OK);
+
+    @GetMapping("/getAllEvents")
+    public List<Event> getAllEvents(){
+        return eventService.getAllEvents();
     }
+
+
+    @DeleteMapping("deleteEventById/{eventId}")
+    public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) throws Exception {
+        return new ResponseEntity<>(eventService.deleteEvent(eventId), HttpStatus.OK);
+    }
+
+
 
 
 }

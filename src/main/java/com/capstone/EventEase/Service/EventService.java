@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,14 @@ public class EventService {
         }
         return "Event Has been Deleted";
     }
+
+
+
+    public List<Event> getAllEvents(){
+        return eventRepository.findAll();
+    }
+
+
 
 
     public Event updateEvent(Long eventId,Event event){

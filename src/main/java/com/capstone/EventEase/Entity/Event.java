@@ -36,6 +36,8 @@ public class Event {
     private String eventPicture;
 
 
+
+
     private String department;
 
 

@@ -1,5 +1,6 @@
 package com.capstone.EventEase.Controller;
 
+import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Exceptions.EntityNotDeletedException;
 import com.capstone.EventEase.Repository.UserRepository;
 import com.capstone.EventEase.Service.ImageService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +26,8 @@ public class UserController {
     private final UserService userService;
 
     private final ImageService imageService;
+
+
 
 
 
@@ -54,6 +58,12 @@ public class UserController {
     public ResponseEntity<byte[]> getProfilePictureSvg(@PathVariable Long userId) throws IOException {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg"))
                 .body(imageService.downloadUserImage(userId));
+    }
+
+
+    @GetMapping("/getAllUsers")
+    public List<User> getAllUsers(){
+         return userService.getAllUsers();
     }
 
 
