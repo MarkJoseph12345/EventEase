@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 //import { withAuth } from '../protection';
-import CreateEvent from '../createevent/page';
+import JoinEvent from '../joinevent/page';
 
 
-const AdminSideBar = () => {
+const StudentSideBar = () => {
 
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
@@ -36,9 +36,9 @@ const AdminSideBar = () => {
         <div className={`fixed ml-44 w-[.5px] h-full bg-customGray transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}></div>
         <button style={{ width: '8rem' }} className={`bg-black mt-[80px] h-[32px]  ml-[19px] -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`} onClick={handleModalOpen}>
           <img src="/plusicon.png" alt="Plus Icon" className="w-6 h-6 -ml-2.5" />
-          <span className="text-white font-regular  font-poppins text-[13px] ml-[3px]">Create Event</span>
+          <span className="text-white font-regular  font-poppins text-[13px] ml-[3px]">Join Event</span>
         </button>
-        <CreateEvent visible={isModalOpen} onClose={handleModalClose} />
+        <JoinEvent visible={isModalOpen} onClose={handleModalClose} />
         <button className='mt-5 ml-[4rem]'>Home</button>
         <button onClick={() => { handleLogout() }}>Log out</button>
       </div>
@@ -47,4 +47,4 @@ const AdminSideBar = () => {
     </div>
   );
 }
-export default AdminSideBar;
+export default StudentSideBar;

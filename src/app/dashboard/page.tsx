@@ -8,8 +8,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      {userRole === '' && <StudentDashboard />}
-      {userRole === 'STUDENT' && <AdminDashboard />}
+      {userRole === 'STUDENT' && <StudentDashboard />}
+      {userRole === '' && <AdminDashboard />}
     </div>
   );
 };

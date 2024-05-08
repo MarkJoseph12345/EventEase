@@ -20,7 +20,7 @@ const SignUp = () => {
         password: "",
         firstName: "",
         lastName: "",
-        department: "CS"
+        department: "CCS"
     });
 
     const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
@@ -57,7 +57,7 @@ const SignUp = () => {
                 password: "",
                 firstName: "",
                 lastName: "",
-                department: "CS"
+                department: "CCS"
             });
         } catch (error) {
             const axiosError = error as AxiosError;
@@ -118,8 +118,13 @@ const SignUp = () => {
                             value={formData.department}
                             onChange={handleDepartmentChange}
                             className="w-full h-[37px] rounded-2xl border-2 border-black">
-                            <option value="department2">CS</option>
-                            <option value="department1">IT</option>
+                            <option value="department1">CEA</option>
+                            <option value="department2">CMBA</option>
+                            <option value="department3">CASE</option>
+                            <option value="department4">CNAHS</option>
+                            <option value="department5">CCS</option>
+                            <option value="department6">CCJ</option>
+
                         </select>
                     </div>
                     <div className="w-[60%]">

@@ -91,7 +91,7 @@ const AdminEventCards = () => {
                             </div>
                         </div>
                         <div className='self-end'>
-                            <button className='font-bold rounded px-3 py-1 bg-customYellow'>View</button>
+                            <button className='font-regular rounded px-3 py-1 bg-customYellow'>View</button>
                         </div>
                     </div>
                 ))}

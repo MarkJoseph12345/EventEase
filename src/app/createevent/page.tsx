@@ -28,6 +28,7 @@ const CreateEvent = ({ visible, onClose }) => {
     eventName: "",
     eventType: "One-Time",
     eventDescription: "",
+    evetDepartment:"CCS",
     startDate: null as Date | null,
     startTime: null as Date | null,
     endDate: null as Date | null,
@@ -52,6 +53,14 @@ const CreateEvent = ({ visible, onClose }) => {
       eventType: e.target.value
     });
   };
+
+  const handleDepartmentChange = (e: { target: { value: any; }; }) => {
+    setFormData({
+      ...formData,
+      eventType: e.target.value
+    });
+  };
+
 
 
   const handleDateChange = (date: Date | null, type: string) => {
@@ -157,7 +166,7 @@ const CreateEvent = ({ visible, onClose }) => {
       onClose={onClose}
     >
       <div
-        className='bg-white p-4 rounded-3xl mt-20 ml-[20rem] w-[48rem] h-[25rem] relative'
+        className='bg-white p-4 rounded-3xl mt-20 ml-[20rem] w-[48rem] h-[26.5rem] relative'
         style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
@@ -199,7 +208,24 @@ const CreateEvent = ({ visible, onClose }) => {
             />
           </div>
 
-          <div className="relative p-5 -mt-8">
+          <div className="relative p-5 -mt-10">
+            <p className="font-poppins text-sm font-regular -mt-5">Department<span className="text-red-800">*</span></p>
+            <select
+              value={formData.eventType}
+              onChange={handleDepartmentChange}
+              className="p-2 w-[20rem] h-[32px] rounded-2xl  border-[1.5px] border-black text-[12px]"
+
+            >
+              <option value="CEA">CEA</option>
+              <option value="CMBA">CMBA</option>
+              <option value="CASE">CASE</option>
+              <option value="CNAHS">CNAHS</option>
+              <option value="CCS">CCS</option>
+              <option value="CCJ">CCJ</option>
+              <option value="ALL">ALL</option>
+            </select>
+          </div>
+          <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6">Start Date <span className="text-red-800">*</span></p>
             <div className="relative">
               <input
@@ -285,7 +311,9 @@ const CreateEvent = ({ visible, onClose }) => {
             </div>
           </div>
         </div>
-        <div className=' font-bold -mt-[22rem] ' >
+
+        
+        <div className=' font-bold -mt-[25rem] ' >
           <Button onClick={onClose} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem' }}>X</Button>
           <div className="grid grid-cols-1 gap-5">
 
@@ -320,7 +348,7 @@ const CreateEvent = ({ visible, onClose }) => {
                     fontWeight: 'bold',
                     textDecoration: 'underline',
                     textTransform: 'none',
-                    marginRight: '-1rem',
+                    marginRight: '-1.5rem',
                     outline: 'none'
                   }}
                   onClick={() => fileInputRef.current.click()}
@@ -331,7 +359,7 @@ const CreateEvent = ({ visible, onClose }) => {
             </div>
 
             <div className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
-              <Button style={{ color: 'black', fontWeight: 'semibold', fontSize: '14px', outline: 'none' }} onClick={() => { createEvent() }}>CREATE</Button>
+              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEvent() }}>CREATE</Button>
             </div>
 
           </div>
