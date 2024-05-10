@@ -5,6 +5,7 @@ import AdminEventCards from '../comps/adminEventCards';
 const StudentDashboard = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeItem, setActiveItem] = useState("In Progress");
+    const name = localStorage.getItem("name")
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -19,7 +20,7 @@ const StudentDashboard = () => {
             </div>
             <div className='flex flex-col flex-1 h-full'>
                 <div className="flex flex-col  justify-end min-h-[300px] pl-8 -mt-[3rem]">
-                    <p className=' absolute ml-3 text-4xl font-bold'>WELCOME, Student!</p>
+                    <p className=' absolute ml-3 text-4xl font-bold'>WELCOME, {name}!</p>
                     <div >
                     <p className='absolute mt-[.1rem] ml-4 text-sm'>EventEase a portal for discovering and exploring university events.</p>
                     </div>

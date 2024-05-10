@@ -38,8 +38,10 @@ const Login = () => {
             console.log("Login successful:", response.data);
             const authToken = response.data.token;
             const role = response.data.user.role;
+            const name = response.data.user.name;
             localStorage.setItem("token", authToken);
             localStorage.setItem("role", role);
+            localStorage.setItem("name", name);
             setFormData({
                 username: "",
                 password: "",
