@@ -1,12 +1,11 @@
 'use client'
 
+
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-
 import { useState } from "react";
 import { API_ENDPOINTS } from "../api";
 
@@ -14,6 +13,7 @@ const Login = () => {
     const router = useRouter();
 
     const [showLoginPassword, setShowLoginPassword] = useState(false);
+    const [validEmail, setValidEmail] = useState(true); // State to track email validity
 
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
@@ -24,15 +24,30 @@ const Login = () => {
         password: "",
     });
 
-    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+
+        // Check email validity
+        if (e.target.name === "username") {
+            setValidEmail(validateEmail(e.target.value));
+        }
     };
 
-    const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
+    const validateEmail = (email: string) => {
+        // Regular expression for email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!validEmail) {
+            // If email is not valid, prevent form submission
+            return;
+        }
         try {
             const response = await axios.post(API_ENDPOINTS.LOGIN, formData);
             console.log("Login successful:", response.data);
@@ -47,7 +62,7 @@ const Login = () => {
                 password: "",
             });
             router.push('/dashboard')
-        }  catch (error) {
+        } catch (error) {
             const axiosError = error as AxiosError;
             console.error("Login failed:", axiosError.response?.data);
         }
@@ -70,9 +85,10 @@ const Login = () => {
                             value={formData.username}
                             onChange={handleInputChange}
                             placeholder=" Enter Username/Email Address"
-                            style={{ fontSize: '13px', marginLeft: '2px' }}
-                            className="w-full h-[37px] rounded-2xl border-2 border-black"
+                            style={{ fontSize: '13px', marginLeft: '2px', borderColor: validEmail ? 'black' : 'red' }} // Update border color based on email validity
+                            className="w-full h-[37px] rounded-2xl border-2" // Removed 'border-black'
                         />
+                        {!validEmail && <p className="text-red-800 text-xs mt-1">Please enter a valid email address.</p>} {/* Render alert message if email is not valid */}
                     </div>
                     <div className="w-[63%] md:w-[75%] lg:w-[85%]">
                         <p className="font-poppins text-sm font-regular -mt-8">Password<span className="text-red-800">*</span></p>
