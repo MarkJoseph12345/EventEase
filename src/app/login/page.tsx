@@ -1,12 +1,11 @@
 'use client'
 
+
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-
 import { useState } from "react";
 import { API_ENDPOINTS } from "../api";
 
@@ -14,7 +13,6 @@ const Login = () => {
     const router = useRouter();
 
     const [showLoginPassword, setShowLoginPassword] = useState(false);
-
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
     };
@@ -24,14 +22,15 @@ const Login = () => {
         password: "",
     });
 
-    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
     };
 
-    const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
+
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             const response = await axios.post(API_ENDPOINTS.LOGIN, formData);
