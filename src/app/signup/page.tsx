@@ -46,8 +46,8 @@ const SignUp = () => {
 
     // Function to validate password
     const isValidPassword = (password: string): boolean => {
-        // Regular expression for at least one uppercase letter, one number, and a minimum length of 8
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        // Regular expression for at least one uppercase letter, one number, and a minimum length of 8, with optional special characters
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,}$/;
         return passwordRegex.test(password);
     };
 
@@ -77,7 +77,7 @@ const SignUp = () => {
 
         // Validate password
         if (!isValidPassword(formData.password)) {
-            errors.password = "Password should be at least 8 characters, with one uppercase and one number.";
+            errors.password = "Your password must be 8 characters with at least one uppercase letter and one number.";
         }
 
         setFormErrors(errors);
@@ -117,7 +117,7 @@ const SignUp = () => {
 
         if (name === "password") {
             if (!isValidPassword(value)) {
-                errors.password = "Password must be at least 8 characters long and contain at least one uppercase letter and one number.";
+                errors.password = "Your password must be 8 characters with at least one uppercase letter and one number.";
             } else {
                 delete errors.password;
             }
@@ -178,7 +178,7 @@ const SignUp = () => {
                 password: "",
                 firstName: "",
                 lastName: "",
-                department: "CCS"
+                department: ""
             });
             setFormErrors({});
         } catch (error) {
