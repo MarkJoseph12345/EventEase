@@ -1,31 +1,16 @@
 'use client'
+import { SetStateAction, useEffect, useState } from 'react';
 
 const HomePageCards = [
-    { imageUrl: "/card1.png" },
-    { imageUrl: "/card2.png" },
-    { imageUrl: "/card3.png" },
-    { imageUrl: "/card2.png" },
+    { id: 1, imageUrl: "/card1.png" },
+    { id: 2, imageUrl: "/card2.png" },
+    { id: 3, imageUrl: "/card3.png" },
+    { id: 4, imageUrl: "/card2.png" },
 ];
-
-import { SetStateAction, useEffect, useState } from 'react';
 
 const HomePageCard = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % HomePageCards.length);
-    };
-
-    const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + HomePageCards.length) % HomePageCards.length);
-    };
-    
-    const handleCircleClick = (circleIndex: SetStateAction<number>) => {
-        setCurrentIndex(circleIndex);
-    };
-    
     const [isMobile, setIsMobile] = useState(false);
-
 
     useEffect(() => {
         const handleResize = () => {
@@ -43,18 +28,29 @@ const HomePageCard = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    });
+    }, [isMobile]);
 
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % HomePageCards.length);
+    };
+
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + HomePageCards.length) % HomePageCards.length);
+    };
+    
+    const handleCircleClick = (circleIndex: SetStateAction<number>) => {
+        setCurrentIndex(circleIndex);
+    };
+    
     const numVisibleCards = isMobile ? 1 : 3;
-
     const numCircles = Math.max(HomePageCards.length - numVisibleCards + 1, 1);
 
     return (
         <div className="relative">
             <div className="flex justify-center lg:justify-between max-w-[90%] mx-auto">
-                {HomePageCards.slice(currentIndex, currentIndex + numVisibleCards).map((card, index) => (
-                    <div className="border p-8 rounded-lg flex flex-col items-center gap-4 shadow-xl">
-                        <img key={index} src={card.imageUrl} alt={`Image ${currentIndex + index + 1}`} />
+                {HomePageCards.slice(currentIndex, currentIndex + numVisibleCards).map((card) => (
+                    <div key={card.id} className="border p-8 rounded-lg flex flex-col items-center gap-4 shadow-xl">
+                        <img src={card.imageUrl} alt={`Image ${card.id}`} className="w-[250px] h-[200px]" />
                         <button className="rounded bg-customYellow text-2xl w-[100px]">Details</button>
                     </div>
                 ))}

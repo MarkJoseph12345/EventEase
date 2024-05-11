@@ -188,16 +188,16 @@ const SignUp = () => {
     };
 
     return (
-        <div className="max-w-[2000px] bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen box-border px-[5%] py-[5%] flex justify-start mx-auto">
-            <div className="flex justify-center w-[43%] h-[33rem] bg-black box-border p-10 rounded-2xl -mt-6">
-                <form onSubmit={handleSubmit} method="post" className="flex flex-col items-center w-full h-full bg-customYellow rounded-2xl box-border justify-between py-10">
+        <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex lg:justify-start justify-center py-32 lg:px-60">
+            <div className="h-[600px] w-[500px] bg-black rounded-2xl lg:p-10 p-4 ">
+                <form onSubmit={handleSubmit} method="post" className="bg-customYellow w-full h-full rounded-2xl flex flex-col items-center justify-between pt-4 pb-8 shadow-inner">
                     <div className="flex flex-col items-center">
-                        <h1 className="text-3xl font-extrabold font-poppins -mt-7">CREATE AN ACCOUNT!</h1>
-                        <p className="text-xs font-light font-poppins mb-2">Create an account to explore exciting events.</p>
+                        <h1 className="text-4xl font-extrabold">CREATE AN ACCOUNT!</h1>
+                        <p className="text-sm font-light">Create an account to explore exciting events.</p>
                     </div>
-                    <div className="flex justify-between gap-10">
-                        <div className="w-[63%] -mt-1">
-                            <p className="font-poppins text-sm font-regular ml-1 mt-2">First Name<span className="text-red-800">*</span></p>
+                    <div className="flex justify-between gap-10 w-full px-4">
+                        <div className="w-[63%] ">
+                            <p className="font-poppins text-sm font-bold ">First Name<span className="text-red-800">*</span></p>
                             <input
                                 type="text"
                                 name="firstName"
@@ -205,16 +205,16 @@ const SignUp = () => {
                                 onChange={handleInputChange}
                                 placeholder="Enter First Name"
                                 style={{ fontSize: '13px' }}
-                                className="w-40 h-[37px] rounded-2xl border-2 ml-1 border-black"
+                                className="w-40 h-[37px] rounded-2xl border-2 border-black"
                             />
                             {formErrors.firstName && (
-                                <p className="text-red-800 text-xs font-poppins mt-1">
+                                <p className="text-red-800 text-xs font-poppins ">
                                     {formErrors.firstName}
                                 </p>
                             )}
                         </div>
                         <div>
-                            <p className="font-poppins text-sm font-regular -ml-2 mt-1">Last Name<span className="text-red-800">*</span></p>
+                            <p className="font-poppins text-sm font-bold ">Last Name<span className="text-red-800">*</span></p>
                             <input
                                 type="text"
                                 name="lastName"
@@ -222,16 +222,16 @@ const SignUp = () => {
                                 onChange={handleInputChange}
                                 placeholder="Enter Last Name"
                                 style={{ fontSize: '13px'}}
-                                className="w-40 h-[37px] rounded-2xl border-2 border-black -ml-2" />
+                                className="w-40 h-[37px] rounded-2xl border-2 border-black " />
                             {formErrors.lastName && (
-                                <p className="text-red-800 text-xs font-poppins mt-1">
+                                <p className="text-red-800 text-xs font-poppins">
                                     {formErrors.lastName}
                                 </p>
                             )}
                         </div>
                     </div>
-                    <div className="w-[60%]">
-                        <p className="font-poppins text-sm font-regular mt-3">Username/Email Address<span className="text-red-800">*</span></p>
+                    <div className="w-5/6">
+                        <p className="font-poppins text-sm font-bold">Username/Email Address<span className="text-red-800">*</span></p>
                         <input
                             type="text"
                             name="username"
@@ -241,13 +241,13 @@ const SignUp = () => {
                             style={{ fontSize: '13px', marginLeft: '2px' }}
                             className="w-full h-[37px] rounded-2xl border-2 border-black" />
                         {formErrors.username && (
-                            <p className="text-red-800 text-xs font-poppins mt-1">
+                            <p className="text-red-800 text-xs font-poppins ">
                                 {formErrors.username}
                             </p>
                         )}
                     </div>
-                    <div className="w-[60%]">
-                        <p className="font-poppins text-sm font-regular mt-2">Department<span className="text-red-800">*</span></p>
+                    <div className="w-5/6">
+                        <p className="font-poppins text-sm font-bold">Department<span className="text-red-800">*</span></p>
                         <select
                             value={formData.department}
                             onChange={handleDepartmentChange}
@@ -260,13 +260,13 @@ const SignUp = () => {
                             <option value="CCJ">CCJ</option>
                         </select>
                         {formErrors.department && (
-                            <p className="text-red-800 text-xs font-poppins mt-1">
+                            <p className="text-red-800 text-xs font-poppins">
                                 {formErrors.department}
                             </p>
                         )}
                     </div>
-                    <div className="w-[60%]">
-                        <p className="font-poppins text-sm font-regular ml-1 mt-2">Password<span className="text-red-800">*</span></p>
+                    <div className="w-5/6">
+                        <p className="font-poppins text-sm font-bold">Password<span className="text-red-800">*</span></p>
                         <div className="relative box-border">
                             <input
                                 type={showLoginPassword ? "text" : "password"}
@@ -283,7 +283,7 @@ const SignUp = () => {
                             </span>
                         </div>
                         {formErrors.password && (
-                            <p className="text-red-800 text-xs font-poppins mt-1">
+                            <p className="text-red-800 text-xs font-poppins">
                                 {formErrors.password}
                             </p>
                         )}
