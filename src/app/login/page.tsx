@@ -51,8 +51,6 @@ const Login = () => {
             console.error("Login failed:", axiosError.response?.data);
         }
     };
-
-
     return (
         <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex lg:justify-end justify-center py-32 lg:px-60">
             <div className="h-[500px] w-[500px] bg-black rounded-2xl lg:p-10 p-4">

@@ -86,27 +86,31 @@ const SignUp = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value } = e.target;
-
+    
         setFormData({
             ...formData,
             [name]: value
         });
-
+    
         // Validate individual fields and update error state
         const errors = { ...formErrors };
-
-        if (name === "firstName" && !value.trim()) {
-            errors.firstName = "First name is required.";
-        } else {
-            delete errors.firstName;
+    
+        if (name === "firstName") {
+            if (!value.trim()) {
+                errors.firstName = "First name is required.";
+            } else {
+                delete errors.firstName;
+            }
         }
-
-        if (name === "lastName" && !value.trim()) {
-            errors.lastName = "Last name is required.";
-        } else {
-            delete errors.lastName;
+    
+        if (name === "lastName") {
+            if (!value.trim()) {
+                errors.lastName = "Last name is required.";
+            } else {
+                delete errors.lastName;
+            }
         }
-
+    
         if (name === "username") {
             if (!isValidEmail(value)) {
                 errors.username = "Please enter a valid email address.";
@@ -114,7 +118,7 @@ const SignUp = () => {
                 delete errors.username;
             }
         }
-
+    
         if (name === "password") {
             if (!isValidPassword(value)) {
                 errors.password = "Your password must be 8 characters with at least one uppercase letter and one number.";
@@ -122,15 +126,18 @@ const SignUp = () => {
                 delete errors.password;
             }
         }
-
-        if (name === "department" && !value) {
-            errors.department = "Department is required.";
-        } else {
-            delete errors.department;
+    
+        if (name === "department") {
+            if (!value) {
+                errors.department = "Department is required.";
+            } else {
+                delete errors.department;
+            }
         }
-
+    
         setFormErrors(errors);
     };
+    
 
     const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
         const { value } = e.target;

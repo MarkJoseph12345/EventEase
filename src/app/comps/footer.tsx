@@ -4,27 +4,64 @@ import Link from "next/link";
 
 const navLinks = [
     { name: "Contact Us", href: "/contact" },
-    { name: "Event Calendar", href: "/eventcalendar" },
     { name: "Privacy Policy", href: "/privacypolicy" },
     { name: "Terms and Conditions", href: "/termsandconditions" },
 ]
 
 
+
+
 const Footer = () => {
     return (
         <div>
-            <div className="pt-32 gap-32 flex flex-col">
-                <div className="justify-end px-32 flex flex-1 w-full gap-64">
-                    {navLinks.map((link) => {
-                        return (
-                            <Link href={link.href} key={link.name}>
-                                {link.name}
-                            </Link>
-                        )
-                    })}
+            <div className="flex flex-col lg:flex-row lg:px-32 lg:justify-between">
+                <div className="flex items-center flex-col mt-4 gap-2">
+                    <div className="h-8 w-32 lg:h-12 lg:w-44">
+                        <img src="/logo.png" alt="Logo" className="w-full h-full object-cover bg-customYellow" />
+                    </div>
+                    <div>
+                        <p className="font-medium">Get in touch</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <img src="/Facebook.png" alt="Facebook" className="h-8 w-8 object-cover" />
+                        <img src="/Instagram.png" alt="Instagram" className="h-8 w-8 object-cover" />
+                        <img src="/TwitterX.png" alt="X, Formerly Twitter" className="h-8 w-8 object-cover" />
+                    </div>
+
+                    <div>
+                        <div className="flex box-border items-center">
+                            <img src="/search2.png" alt="Search" className="w-12 h-12 object-cover hover:cursor-pointer" />
+                            <input type="text" placeholder="Search" className="h-10 border-2 border-gray-300 rounded-lg" />
+                        </div>
+                    </div>
                 </div>
-                <div className="w-full border"></div>
+                <div className="flex items-center flex-col mt-4 lg:items-start">
+                    <div className="flex flex-col items-center lg:flex-row lg:gap-32">
+                        {navLinks.map((link) => {
+                            return (
+                                <Link href={link.href} key={link.name} className="hover:underline font-bold">
+                                    {link.name}
+                                </Link>
+                            )
+                        })}
+                    </div>
+                    <div className="flex flex-col mt-4 gap-1 ">
+                        <div className="flex gap-2">
+                            <img src="/location.png" alt="Location" className="h-6 w-6 object-cover" />
+                            <p>N. Bacalso-Avenue, Cebu City, Philippines 6000</p>
+                        </div>
+                        <div className="flex gap-2">
+                            <img src="/phone.png" alt="Number" className="h-6 w-6 object-cover" />
+                            <p>+12 12 123 2000</p>
+                        </div>
+                        <div className="flex gap-2">
+                            <img src="/letter.png" alt="Email" className="h-6 w-6 object-cover" />
+                            <p>eventease.cit.edu</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div className="w-full border"></div>
             <p className="flex justify-center">2024  EventEase. All rights reserved</p>
         </div>
     );

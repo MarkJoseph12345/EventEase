@@ -15,9 +15,7 @@ import { useEffect, useState } from 'react';
 import { API_ENDPOINTS } from '../api';
 
 const AdminEventCards = () => {
-    const [homePageCards, setHomePageCards] = useState<EventCard[]>([]);
-
-
+    const [adminPageCards, setAdminPageCards] = useState<EventCard[]>([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -49,7 +47,7 @@ const AdminEventCards = () => {
                             return event;
                         }
                     }));
-                    setHomePageCards(cardsWithPictures);
+                    setAdminPageCards(cardsWithPictures);
                 } else {
                     throw new Error('Failed to fetch data');
                 }
@@ -63,13 +61,13 @@ const AdminEventCards = () => {
 
 
     useEffect(() => {
-        console.log("Cards", homePageCards);
-    }, [homePageCards]);
+        console.log("Cards", adminPageCards);
+    }, [adminPageCards]);
 
     return (
         <div className="relative">
             <div className="grid grid-cols-3 gap-4 max-w-[90%] mx-auto">
-                {homePageCards.map((card, index) => (
+                {adminPageCards.map((card, index) => (
                     <div key={index} className="border p-8 rounded-lg flex flex-col items-start gap-4 shadow-xl relative">
                         <div className='self-center relative'>
                             <img className="self-center min-h-[250px] min-w-[250px] object-fill" src={card.eventPicture} />
