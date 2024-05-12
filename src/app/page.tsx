@@ -114,7 +114,7 @@ const Home = () => {
   return (
     <div className="max-w-[2000px] mx-auto">
       <NavBar />
-      <img src="/wil4.png" className="h-[40vh] w-full max-w-full" />
+      <img src="/wil4.png" className="h-[55vh] w-full max-w-full" />
       <div className="mx-[3%] my-[1%]">
         <p className="font-poppins font-bold mt-8 text-xl">Latest Events!</p>
         <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl relative lg:flex lg:justify-between">
