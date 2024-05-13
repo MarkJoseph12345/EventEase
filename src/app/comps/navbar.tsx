@@ -41,11 +41,7 @@ const NavBar = () => {
                 <div><img src="/logo.png " alt="Logo" className="h-32 w-40 -mt-10 -ml-10" /></div>
                 <div className="justify-end items-center flex flex-1 w-full gap-20 -mt-10 -mr-5 hidden lg:flex">
                     {navLinks.map((link) => {
-<<<<<<< Updated upstream
-                        const isActive = pathname === link.href;
-=======
                         const isActive = pathname ===link.href;
->>>>>>> Stashed changes
                         return (
                             <Link href={link.href} key={link.name} className={isActive ? "font-bold" : "font-regular"}>
                                 {link.name}

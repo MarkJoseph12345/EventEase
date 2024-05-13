@@ -1,16 +1,5 @@
 import NavBar from "../comps/navbar";
 
-<<<<<<< Updated upstream
-const AboutUs = () => {
-    return (
-        <div>
-            <NavBar />
-        </div>
-    );
-}
-
-export default AboutUs;
-=======
 const Aboutus = () => {
 
     return (
@@ -42,10 +31,43 @@ const Aboutus = () => {
                 Join us and discover the convenience of stress-free event coordination tailored specifically to campus life.
                 </p>
 
-                <h1 className=" absolute font-bold ml-[33rem] mt-[6rem] text-[26px] text-customYellow text-center">Meet Our TEAM </h1>
+                <h1 className=" absolute font-bold ml-[33rem] mt-[10rem] text-[26px] text-customYellow text-center">Meet Our TEAM </h1>
                 <img src="honey3.png" className="absolute -m-[1rem] mt-[3rem] w-[23rem] rotate-180"></img>
+
+                <div className=" absolute my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl w-[20rem] h-[20rem] mt-[20.2rem] ml-[6rem] ">
+                <img src="person.png" className="object-cover rounded-2xl w-[10rem] h-[10rem]" />
+                <p className="text-center">John Doe</p>
+                </div>
+
+                <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl w-[20rem] h-[20rem] mt-[20rem] ml-[29.5rem] ">
+                <img src="person.png" className="object-cover rounded-2xl w-[10rem] h-[10rem]" />
+                <p className="text-center">John Doe</p>
+                </div>
+              
+                <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl w-[20rem] h-[20rem] -mt-[20.8rem] ml-[53rem] ">
+                <img src="person.png" className="object-cover rounded-2xl w-[10rem] h-[10rem]" />
+                <p className="text-center">John Doe</p>
+                </div>
+
+                <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl w-[20rem] h-[20rem] mt-[3rem] ml-[41rem] ">
+                <img src="person.png" className="object-cover rounded-2xl w-[10rem] h-[10rem]" />
+                <p className="text-center">John Doe</p>
+                </div>
+
+                <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl w-[20rem] h-[20rem] -mt-[20.6rem] ml-[17.5rem] ">
+                <img src="person.png" className="object-cover rounded-2xl w-[10rem] h-[10rem]" />
+                <p className="text-center">John Doe</p>
+                </div>
+
+                <img src="honey3.png" className="absolute ml-[71rem] -mt-[17rem] w-[23rem] rotate-90"></img>
+                <div className="mt-[3rem]">
+                <h1 className=" absolute font-bold ml-[33rem] mt-[10rem] text-[26px] text-customYellow text-center">Testimonials</h1>
+                <p className=" absolute text-center mt-[12rem] ml-[23rem] text-[14px]">See what our users love about EventEase – real stories, real impact.</p>
+                </div>
+
+                <div className="w-full border mt-[35rem]"></div>
+                <p className="flex justify-center font-light text-[13px]">2024  EventEase. All rights reserved</p>
         </div>
     );
 }
 export default Aboutus;
->>>>>>> Stashed changes
