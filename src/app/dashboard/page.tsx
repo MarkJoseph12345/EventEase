@@ -1,17 +1,8 @@
-'use client'
-import React from 'react';
-import StudentDashboard from './studentDashboard';
-import AdminDashboard from './adminDashboard';
+import DashboardFunction from "./dashboardFunction";
+
 
 const Dashboard = () => {
-  const userRole = localStorage.getItem("role")
-
-  return (
-    <div>
-      {userRole === 'STUDENT' && <StudentDashboard />}
-      {userRole === '' && <AdminDashboard />}
-    </div>
-  );
-};
+  return <DashboardFunction />
+}
 
 export default Dashboard;

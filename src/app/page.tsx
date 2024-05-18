@@ -7,10 +7,14 @@ import NavBar from "./comps/navbar";
 import axios from "axios";
 import { API_ENDPOINTS } from "./api";
 import { startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
+import Link from "next/link";
 
 interface EventCard {
   hour: number;
   description: string;
+}
+interface Latest {
+  attendees: string;
 }
 
 
@@ -20,6 +24,7 @@ const Home = () => {
   const [selectedDay, setSelectedDay] = useState(days[startIndex]);
   const [homePageCards, setHomePageCards] = useState<EventCard[]>([]);
   const [closestEventImageUrl, setClosestEventImageUrl] = useState<string>('');
+  const [latestCompletedEvent, setLatestCompletedEvent] = useState<Latest>();
 
   function getCurrentDayIndex() {
     const currentDate = new Date();
@@ -67,23 +72,16 @@ const Home = () => {
             description: event.eventDescription,
           };
         });
-
-
         setHomePageCards(updatedHomePageCards);
 
+        const completedEvents = allEvents.filter((event: { eventEnds: string | number | Date; }) => new Date(event.eventEnds) < new Date());
 
-        const closestEvent = eventsForThisWeek.reduce((closest: { eventStarts: string | number | Date; }, event: { eventStarts: string | number | Date; }) => {
-          const eventStartTime = new Date(event.eventStarts).getTime();
-          const closestStartTime = new Date(closest.eventStarts).getTime();
-          const currentTime = new Date().getTime();
-          const eventTimeDifference = Math.abs(eventStartTime - currentTime);
-          const closestTimeDifference = Math.abs(closestStartTime - currentTime);
+        completedEvents.sort((a: { eventEnds: string | number | Date }, b: { eventEnds: string | number | Date }) => new Date(b.eventEnds).getTime() - new Date(a.eventEnds).getTime());
 
-          return eventTimeDifference < closestTimeDifference ? event : closest;
-        }, eventsForThisWeek[0]);
+        const latestCompletedEventId = completedEvents[0].id;
 
         try {
-          const imgResponse = await axios.get(`${API_ENDPOINTS.GET_EVENT_PICTURE}${closestEvent.id}`, {
+          const imgResponse = await axios.get(`${API_ENDPOINTS.GET_EVENT_PICTURE}${latestCompletedEventId}`, {
             responseType: 'arraybuffer'
           });
           if (imgResponse.status >= 200 && imgResponse.status < 300) {
@@ -93,7 +91,7 @@ const Home = () => {
             console.error('Failed to fetch image for closest event');
           }
         } catch (error) {
-          console.error(`Error fetching image for closest event with ID ${closestEvent.id}:`, error);
+          console.error("Error retrieving image:", error);
         }
 
       } else {
@@ -111,15 +109,17 @@ const Home = () => {
 
 
 
+
+
   return (
     <div className="max-w-[2000px] mx-auto">
       <NavBar />
-      <img src="/wil4.png" className="h-[55vh] w-full max-w-full" />
-      <div className="mx-[3%] my-[1%]">
-        <p className="font-poppins font-bold mt-8 text-xl">Latest Events!</p>
-        <div className="my-[1%] py-[3%] grid justify-center border p-10 rounded-3xl relative lg:flex lg:justify-between">
-          <div className=" rounded-lg" >
-            <img src={closestEventImageUrl} className="object-cover rounded-lg w-full h-full" />
+      <img src="/wil4 1.png" className="w-full" />
+      <div className="mx-[3%] my-[1%] ">
+        <p className="font-poppins font-medium mt-8 text-xl">Latest Event</p>
+        <div className="my-[1%] py-[3%] grid justify-center border px-14 rounded-3xl relative lg:flex lg:justify-between">
+          <div>
+            <img src={closestEventImageUrl} className="object-cover rounded-lg h-[275px] w-[275px]" />
           </div>
           <div className="py-16 gap-6 flex flex-col items-center lg:items-start">
             <div className="flex items-center">
@@ -132,31 +132,31 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <button className="border rounded-3xl text-customYellow bg-black px-6 py-1">Join Now!</button>
+              <Link href={"/signup"} className="border rounded-3xl text-customYellow bg-black px-6 py-1 flex justify-center items-center">Join Now!</Link>
               <span className="border-2 rounded-3xl border-customYellow px-6 py-1">Open To All</span>
             </div>
           </div>
           <div className="flex">
-            <div className="flex flex-col">
-              <p className="font-semibold text-2xl">Happening this week</p>
-              <div className="flex justify-between gap-2">
-                <button onClick={handleBack} className="text-2xl font-bold">&lt;</button>
-                {days.slice(startIndex, startIndex + 2).map((day, index) => (
+            <div className="flex flex-col gap-3">
+              <p className="font-semibold text-2xl">Happening this week!</p>
+              <div className="flex justify-center gap-3">
+                <button onClick={handleBack} className="text-base font-bold">&lt;</button>
+                {days.slice(startIndex === days.length - 1 ? startIndex - 1 : startIndex, startIndex + 2).map((day, index) => (
                   <span
                     key={index}
-                    className={` cursor-pointer border-black border px-4 py-2 font-bold flex-1 gap-2 flex justify-center ${selectedDay === day ? "bg-customYellow border-none" : ""
-                      }`}
+                    className={`text-xs cursor-pointer border-black border px-5 py-1 font-bold flex justify-center ${selectedDay === day ? "bg-customYellow border-none" : ""}`}
                     onClick={() => handleDayClick(day)}
                   >
                     {day}
                   </span>
                 ))}
-                <button onClick={handleNext} className="text-2xl font-bold">&gt;</button>
+
+                <button onClick={handleNext} className="text-base font-bold">&gt;</button>
               </div>
               <div>
                 {homePageCards.length > 0 ? (
                   homePageCards.map((event, index) => (
-                    <div key={index}>
+                    <div key={index} className="text-ellipsis overflow-hidden">
                       {event.hour.toString()} {event.description}
                     </div>
                   ))
@@ -165,12 +165,11 @@ const Home = () => {
                 )}
               </div>
             </div>
-            <span className="-mt-20 bg-customYellow rounded-full text-5xl w-16 h-16 items-center justify-center font-bold lg:flex hidden">!!</span>
           </div>
         </div>
       </div>
       <div className="mx-[3%] my-[3%]">
-        <p className="font-poppins">Discover More Events</p>
+        <p className="font-poppins text-xl font-medium">Discover More Events</p>
         <div className=" my-[1%]">
           <HomePageCard />
         </div>
@@ -178,9 +177,9 @@ const Home = () => {
       <div className="relative">
         <img src="/discover.png" className="w-full" alt="Discover" />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white px-4 py-2 rounded-lg lg:mt-[5%] mt-[10%] flex lg:gap-10 gap-2 text-2xl flex-col lg:flex-row">
-          <button className="bg-black text-customYellow w-[100px] lg:w-[200px] rounded text-sm lg:text-2xl">JOIN</button>
-          <div className="box-border bg-gradient-to-r from-black to-customYellow lg:w-[200px] w-[100px] lg:h-[50px] p-[3px] rounded text-sm lg:text-2xl">
-            <button className="bg-white text-customYellow w-full h-full rounded">EXPLORE</button>
+          <Link href={"/signup"} className="bg-black w-[100px] text-black bg-customYellow lg:w-[150px] lg:h-[40px] text-sm lg:text-2xl font-bold flex justify-center items-center">JOIN</Link>
+          <div className="box-border bg-black lg:w-[150px] w-[100px] lg:h-[40px] p-[3px] text-sm lg:text-2xl">
+            <button className="bg-white text-black w-full h-full font-bold">EXPLORE</button>
           </div>
         </div>
       </div>

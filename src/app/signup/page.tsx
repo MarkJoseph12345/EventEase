@@ -6,6 +6,7 @@ import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { API_ENDPOINTS } from "../api";
+import { useRouter } from "next/navigation";
 
 interface FormData {
     username: string;
@@ -24,15 +25,17 @@ interface FormErrors {
 }
 
 const SignUp = () => {
+    const router = useRouter();
     const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
     const [formData, setFormData] = useState<FormData>({
         username: "",
         password: "",
         firstName: "",
         lastName: "",
-        department: "CCS"
+        department: "CEA"
     });
     const [formErrors, setFormErrors] = useState<FormErrors>({});
+    const [loading, setLoading] = useState(false);
 
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
@@ -86,15 +89,15 @@ const SignUp = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value } = e.target;
-    
+
         setFormData({
             ...formData,
             [name]: value
         });
-    
+
         // Validate individual fields and update error state
         const errors = { ...formErrors };
-    
+
         if (name === "firstName") {
             if (!value.trim()) {
                 errors.firstName = "First name is required.";
@@ -102,7 +105,7 @@ const SignUp = () => {
                 delete errors.firstName;
             }
         }
-    
+
         if (name === "lastName") {
             if (!value.trim()) {
                 errors.lastName = "Last name is required.";
@@ -110,7 +113,7 @@ const SignUp = () => {
                 delete errors.lastName;
             }
         }
-    
+
         if (name === "username") {
             if (!isValidEmail(value)) {
                 errors.username = "Please enter a valid email address.";
@@ -118,7 +121,7 @@ const SignUp = () => {
                 delete errors.username;
             }
         }
-    
+
         if (name === "password") {
             if (!isValidPassword(value)) {
                 errors.password = "Your password must be 8 characters with at least one uppercase letter and one number.";
@@ -126,7 +129,7 @@ const SignUp = () => {
                 delete errors.password;
             }
         }
-    
+
         if (name === "department") {
             if (!value) {
                 errors.department = "Department is required.";
@@ -134,10 +137,10 @@ const SignUp = () => {
                 delete errors.department;
             }
         }
-    
+
         setFormErrors(errors);
     };
-    
+
 
     const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
         const { value } = e.target;
@@ -159,10 +162,12 @@ const SignUp = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
+        setLoading(true);
 
         // Validate the form data before submission
         const isFormValid = validateFormData();
         if (!isFormValid) {
+            setLoading(false);
             return; // Prevent form submission if the form is invalid
         }
 
@@ -176,10 +181,13 @@ const SignUp = () => {
             });
 
             console.log("Login successful:", loginResponse.data);
-            const authToken = loginResponse.data.token;
+            const authToken = response.data.token;
+            const role = response.data.user.role;
+            const name = response.data.user.name;
             localStorage.setItem("token", authToken);
-
-            // Reset form data and errors
+            localStorage.setItem("role", role);
+            localStorage.setItem("name", name);
+            router.push('/dashboard')
             setFormData({
                 username: "",
                 password: "",
@@ -191,19 +199,20 @@ const SignUp = () => {
         } catch (error) {
             const axiosError = error as AxiosError;
             console.error("Registration failed:", axiosError.response?.data);
+        } finally {
+            setLoading(false);
         }
     };
-
     return (
-        <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex lg:justify-start justify-center py-32 lg:px-60">
-            <div className="h-[600px] w-[500px] bg-black rounded-2xl lg:p-10 p-4 ">
-                <form onSubmit={handleSubmit} method="post" className="bg-customYellow w-full h-full rounded-2xl flex flex-col items-center justify-between pt-4 pb-8 shadow-inner">
+        <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex items-center lg:justify-start justify-center lg:px-60">
+            <div className={`h-[600px] w-[500px] bg-black rounded-2xl lg:p-6 p-4 absolute top-[15%]`} >
+                <form onSubmit={handleSubmit} method="post" className="bg-customYellow h-full w-full flex flex-col items-center justify-between py-3 gap-5 shadow-inner">
                     <div className="flex flex-col items-center">
-                        <h1 className="text-4xl font-extrabold">CREATE AN ACCOUNT!</h1>
-                        <p className="text-sm font-light">Create an account to explore exciting events.</p>
+                        <h1 className="text-3xl font-extrabold">CREATE AN ACCOUNT</h1>
+                        <p className="font-poppins font-light">Create an account to explore exciting events.</p>
                     </div>
                     <div className="flex justify-between gap-10 w-full px-4">
-                        <div className="w-[63%] ">
+                        <div className="w-[63%]">
                             <p className="font-poppins text-sm font-bold ">First Name<span className="text-red-800">*</span></p>
                             <input
                                 type="text"
@@ -212,7 +221,7 @@ const SignUp = () => {
                                 onChange={handleInputChange}
                                 placeholder="Enter First Name"
                                 style={{ fontSize: '13px' }}
-                                className="w-40 h-[37px] rounded-2xl border-2 border-black"
+                                className="w-40 h-[37px] rounded-2xl border-2 border-black px-2"
                             />
                             {formErrors.firstName && (
                                 <p className="text-red-800 text-xs font-poppins ">
@@ -228,8 +237,8 @@ const SignUp = () => {
                                 value={formData.lastName}
                                 onChange={handleInputChange}
                                 placeholder="Enter Last Name"
-                                style={{ fontSize: '13px'}}
-                                className="w-40 h-[37px] rounded-2xl border-2 border-black " />
+                                style={{ fontSize: '13px' }}
+                                className="w-40 h-[37px] rounded-2xl border-2 border-black px-2" />
                             {formErrors.lastName && (
                                 <p className="text-red-800 text-xs font-poppins">
                                     {formErrors.lastName}
@@ -246,7 +255,7 @@ const SignUp = () => {
                             onChange={handleInputChange}
                             placeholder="Enter Username/Email Address"
                             style={{ fontSize: '13px', marginLeft: '2px' }}
-                            className="w-full h-[37px] rounded-2xl border-2 border-black" />
+                            className="w-full h-[37px] rounded-2xl border-2 border-black px-2" />
                         {formErrors.username && (
                             <p className="text-red-800 text-xs font-poppins ">
                                 {formErrors.username}
@@ -258,7 +267,7 @@ const SignUp = () => {
                         <select
                             value={formData.department}
                             onChange={handleDepartmentChange}
-                            className="w-full h-[37px] rounded-2xl border-2 border-black">
+                            className="w-full h-[37px] rounded-2xl border-2 border-black px-2">
                             <option value="CEA">CEA</option>
                             <option value="CMBA">CMBA</option>
                             <option value="CASE">CASE</option>
@@ -272,7 +281,7 @@ const SignUp = () => {
                             </p>
                         )}
                     </div>
-                    <div className="w-5/6">
+                    <div className="w-5/6 mb-2">
                         <p className="font-poppins text-sm font-bold">Password<span className="text-red-800">*</span></p>
                         <div className="relative box-border">
                             <input
@@ -282,7 +291,7 @@ const SignUp = () => {
                                 onChange={handleInputChange}
                                 placeholder="Enter Password"
                                 style={{ fontSize: '13px' }}
-                                className="pr-8 w-full rounded-2xl h-[37px] border-2 border-black" />
+                                className="pr-8 w-full rounded-2xl h-[37px] border-2 border-black px-2" />
                             <span className="absolute inset-y-0 right-0 flex items-center pr-1">
                                 <span className="cursor-pointer -ml-7 -mt-.5" onClick={handleClickShowPassword}>
                                     {showLoginPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -294,11 +303,10 @@ const SignUp = () => {
                                 {formErrors.password}
                             </p>
                         )}
-                        <span className="text-xs flex justify-end font-light mb-2 mt-.5">Forgot Password?</span>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <button type="submit" className="bg-black text-customYellow w-[110px] h-[35px] text-xl rounded font-bold mb-5 mt-5">SIGN UP</button>
-                        <p className="font-light text-xs font-poppins -mt-5">Already have an account? <Link href="/login" replace className="font-bold cursor-pointer">LOGIN</Link></p>
+                    <div className="flex flex-col items-center gap-2">
+                        <button type="submit" disabled={loading} className={`bg-black text-customYellow w-[110px] h-[35px] ${loading ? 'text-sm' : 'text-xl'}  rounded-xl font-bold `}> {loading ? "SIGNING UP..." : "SIGN UP"}</button>
+                        <p className="font-light text-xs font-poppins">Already have an account? <Link href="/login" replace className="font-bold cursor-pointer">LOGIN</Link></p>
                     </div>
                 </form>
             </div>

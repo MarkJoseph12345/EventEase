@@ -5,14 +5,14 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 
 
-const JoinEventModal = ({ visible, onClose }) => {
+const JoinEventModal = ({ visible, onClose }: any) => {
   const [searchValue, setSearchValue] = useState('');
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchValue(e.target.value);
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e: any) => {
     e.preventDefault();
     console.log('Search submitted:', searchValue);
     

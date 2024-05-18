@@ -15,9 +15,9 @@ const Aboutus = () => {
                 </div>
                 <h1 className="font-bold text-3xl text-customYellow text-center mt-8">About Us</h1>
                 <p className="text-center font-regular mt-6 px-4 max-w-3xl mx-auto">
-                    Welcome to EventEase! We're dedicated to revolutionizing event planning within our campus community. 
+                    Welcome to EventEase! We&apos;re dedicated to revolutionizing event planning within our campus community. 
                     Our team is committed to providing students, faculty, and staff with the tools they need to create unforgettable events effortlessly. 
-                    With a focus on simplicity and innovation, we're here to make event planning an enjoyable experience for everyone.
+                    With a focus on simplicity and innovation, we&apos;re here to make event planning an enjoyable experience for everyone.
                 </p>
                 <h1 className="font-bold text-3xl text-customYellow text-center mt-[7rem]">What We Offer</h1>
                 <div className="relative flex justify-center mt-8">

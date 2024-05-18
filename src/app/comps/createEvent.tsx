@@ -21,14 +21,27 @@ const VisuallyHiddenInput = styled('input')`
   width: 1px;
 `;
 
-const CreateEvent = ({ visible, onClose }) => {
+interface FormErrors {
+  eventName?: string;
+  eventType?: string;
+  eventDescription?: string;
+  department?: string;
+  selectedFile?: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+}
 
-  const [showCalendar, setShowCalendar] = useState(false);
+
+const CreateEventModal = ({ visible, onClose }: any) => {
+  const [showEndCalendar, setShowEndCalendar] = useState(false);
+  const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [formData, setFormData] = useState({
     eventName: "",
     eventType: "One-Time",
     eventDescription: "",
-    evetDepartment:"CCS",
+    department: "CEA",
     startDate: null as Date | null,
     startTime: null as Date | null,
     endDate: null as Date | null,
@@ -38,9 +51,30 @@ const CreateEvent = ({ visible, onClose }) => {
     eventEnds: null as Date | null,
   });
 
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+
+    const { name, value } = e.target;
+    let errorMessage = '';
+
+    switch (name) {
+      case 'eventName':
+        errorMessage = !value.trim() ? 'Event name is required' : '';
+        break;
+      case 'eventDescription':
+        errorMessage = !value.trim() ? 'Event description is required' : '';
+        break;
+      default:
+        errorMessage = '';
+    }
+
+    setFormErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: errorMessage
+    }));
+
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -57,13 +91,44 @@ const CreateEvent = ({ visible, onClose }) => {
   const handleDepartmentChange = (e: { target: { value: any; }; }) => {
     setFormData({
       ...formData,
-      eventType: e.target.value
+      department: e.target.value
     });
   };
 
 
 
   const handleDateChange = (date: Date | null, type: string) => {
+    // Validate the selected date
+    if (!date) {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        [type === 'start' ? 'startDate' : 'endDate']: 'Please select a valid date'
+      }));
+    } else {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        [type === 'start' ? 'startDate' : 'endDate']: ''
+      }));
+    }
+
+    // Check if the selected date is before the current date
+    const currentDate = new Date();
+    if (type === 'start' && date && date < currentDate) {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        startDate: 'Start date cannot be before the current date'
+      }));
+    }
+
+    // Check if the end date is before the start date
+    if (type === 'end' && date && formData.startDate && date < formData.startDate) {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        endDate: 'End date cannot be before the start date'
+      }));
+    }
+
+    // Update formData with the new date value
     if (type === 'start') {
       setFormData({
         ...formData,
@@ -78,6 +143,20 @@ const CreateEvent = ({ visible, onClose }) => {
   };
 
   const handleTimeChange = (time: Date | null, type: string) => {
+    // Validate the selected time
+    if (!time) {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        [type === 'start' ? 'startTime' : 'endTime']: 'Please select a valid time'
+      }));
+    } else {
+      setFormErrors(prevErrors => ({
+        ...prevErrors,
+        [type === 'start' ? 'startTime' : 'endTime']: ''
+      }));
+    }
+
+    // Update formData with the new time value
     if (type === 'start') {
       setFormData({
         ...formData,
@@ -91,13 +170,7 @@ const CreateEvent = ({ visible, onClose }) => {
     }
   };
 
-  const toggleCalendar = (type: string | boolean | ((prevState: boolean) => boolean)) => {
-    if (showCalendar === type) {
-      setShowCalendar(false);
-    } else {
-      setShowCalendar(type);
-    }
-  };
+
 
   const [secFormData, setSecFormData] = useState(new FormData());
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
@@ -118,24 +191,80 @@ const CreateEvent = ({ visible, onClose }) => {
     };
 
     if (file) {
-      secFormData.append('eventImage', file);
+      const newSecFormData = new FormData();
+      newSecFormData.append('eventImage', file);
+      setSecFormData(newSecFormData);
+
       reader.readAsDataURL(file);
     } else {
-      secFormData.delete('eventImage');
+      setFormData({
+        ...formData,
+        eventPicture: null,
+      });
+      setSecFormData(new FormData());
     }
-
   };
 
 
-  const createEvent = async () => {
-    const eventStarts = formData.startDate && formData.startTime
-      ? new Date(formData.startDate.getFullYear(), formData.startDate.getMonth(), formData.startDate.getDate(), formData.startTime.getHours(), formData.startTime.getMinutes(), formData.startTime.getSeconds())
-      : null;
+  const [loading, setLoading] = useState(false);
 
-    const eventEnds = formData.endDate && formData.endTime
-      ? new Date(formData.endDate.getFullYear(), formData.endDate.getMonth(), formData.endDate.getDate(), formData.endTime.getHours(), formData.endTime.getMinutes(), formData.endTime.getSeconds())
-      : null;
 
+  const createEventFunction = async () => {
+    const requiredErrorMessages: FormErrors = {
+      eventName: !formData.eventName ? 'Event name is required' : '',
+      eventDescription: !formData.eventDescription ? 'Event description is required' : '',
+      selectedFile: !selectedFile ? 'File is required' : '',
+    };
+    setLoading(true);
+
+    if (!formData.eventName || !formData.eventDescription || !formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime || !selectedFile) {
+      setFormErrors(requiredErrorMessages)
+      setLoading(false);
+      return;
+    }
+
+
+    const eventStarts = new Date(formData.startDate.getFullYear(), formData.startDate.getMonth(), formData.startDate.getDate(), formData.startTime.getHours(), formData.startTime.getMinutes(), formData.startTime.getSeconds())
+
+
+    const eventEnds = new Date(formData.endDate.getFullYear(), formData.endDate.getMonth(), formData.endDate.getDate(), formData.endTime.getHours(), formData.endTime.getMinutes(), formData.endTime.getSeconds())
+
+    const currentDateTime = new Date();
+    if (eventStarts <= currentDateTime) {
+      setFormErrors({
+        ...requiredErrorMessages,
+        startDate: "Start date and time must be in the future",
+        startTime: "Start date and time must be in the future",
+      });
+      console.log("Start time")
+      setLoading(false);
+      return;
+    }
+    else{
+      setFormErrors({
+        ...requiredErrorMessages,
+        startDate: "",
+        startTime: "",
+      });
+    }
+
+    if (eventEnds <= eventStarts) {
+      setFormErrors({
+        ...requiredErrorMessages,
+        endDate: "End date must be after start date",
+        endTime: "End time must be after start time",
+      });
+      console.log("End time")
+      setLoading(false);
+      return;
+    }
+    else{
+      setFormErrors({
+        ...requiredErrorMessages,
+        endDate: "",
+        endTime: "",
+      });
+    }
     const { eventPicture, ...formDataWithoutPicture } = formData;
 
     const updatedFormData = {
@@ -150,23 +279,30 @@ const CreateEvent = ({ visible, onClose }) => {
       const id = response.data.id;
 
       if (selectedFile) {
-        console.log(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
+        console.log(`image: ${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
         const pictureResponse = await axios.put(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
         console.log("Image upload successful:", pictureResponse.data);
       }
       window.location.reload();
     } catch (error) {
       console.error("Error creating event:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+
 
   return (
     <Modal
       open={visible}
       onClose={onClose}
+      className="backdrop-blur-[4px]"
     >
       <div
-        className='bg-white p-4 rounded-3xl mt-20 ml-[20rem] w-[48rem] h-[26.5rem] relative'
+        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative'
         style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
@@ -182,6 +318,11 @@ const CreateEvent = ({ visible, onClose }) => {
               onChange={handleInputChange}
               className="p-2 w-[20rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[12px]"
             />
+            {formErrors.eventName && (
+              <p className="text-red-800 text-xs font-poppins">
+                {formErrors.eventName}
+              </p>
+            )}
           </div>
 
           <div className="relative p-5 -mt-7">
@@ -206,12 +347,18 @@ const CreateEvent = ({ visible, onClose }) => {
               onChange={handleInputChange}
               className="p-2 w-[20rem] h-[60px] rounded-2xl border-[1.5px] border-black resize-none text-[12px]"
             />
+
+            {formErrors.eventDescription && (
+              <p className="text-red-800 text-xs font-poppins">
+                {formErrors.eventDescription}
+              </p>
+            )}
           </div>
 
           <div className="relative p-5 -mt-10">
             <p className="font-poppins text-sm font-regular -mt-5">Department<span className="text-red-800">*</span></p>
             <select
-              value={formData.eventType}
+              value={formData.department}
               onChange={handleDepartmentChange}
               className="p-2 w-[20rem] h-[32px] rounded-2xl  border-[1.5px] border-black text-[12px]"
 
@@ -225,8 +372,15 @@ const CreateEvent = ({ visible, onClose }) => {
               <option value="ALL">ALL</option>
             </select>
           </div>
+
           <div className="relative p-5 -mt-7">
-            <p className="font-poppins text-sm font-regular -mt-6">Start Date <span className="text-red-800">*</span></p>
+            <p className="font-poppins text-sm font-regular -mt-6 ">Start Date <span className="text-red-800">*</span></p>
+            {/* {formErrors.startDate && (
+              <p className="text-red-800 text-xs font-poppins w-40">
+                {formErrors.startDate}
+              </p>
+            )} */}
+            {/*Ayuha ni maguba ig butang sa error*/}
             <div className="relative">
               <input
                 type='text'
@@ -243,9 +397,9 @@ const CreateEvent = ({ visible, onClose }) => {
                 src="/calendar.png"
                 alt="Calendar"
                 className="absolute top-0 right-20 m-2 cursor-pointer w-[15px] mr-[30rem]"
-                onClick={() => toggleCalendar('start')}
+                onClick={() => setShowStartCalendar(true)}
               />
-              {showCalendar === 'start' && (
+              {showStartCalendar && (
                 <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
                   <DatePicker
                     selected={formData.startDate}
@@ -270,6 +424,12 @@ const CreateEvent = ({ visible, onClose }) => {
 
           <div className="relative p-5 -mt-[5.5rem] ml-[11rem]">
             <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
+            {/* {formErrors.endDate && (
+              <p className="text-red-800 text-xs font-poppins text-balance w-40">
+                {formErrors.endDate}
+              </p>
+            )} */}
+            {/*Ayuha ni maguba ig butang sa error*/}
             <div className="relative">
               <input
                 type='text'
@@ -286,9 +446,9 @@ const CreateEvent = ({ visible, onClose }) => {
                 src="/calendar.png"
                 alt="Calendar"
                 className="absolute top-0 right-[254px] m-2 cursor-pointer w-[15px] mr-[8rem]"
-                onClick={() => toggleCalendar('end')}
+                onClick={() => setShowEndCalendar(true)}
               />
-              {showCalendar === 'end' && (
+              {showEndCalendar && (
                 <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
                   <DatePicker
                     selected={formData.endDate}
@@ -312,9 +472,16 @@ const CreateEvent = ({ visible, onClose }) => {
           </div>
         </div>
 
-        
+
         <div className=' font-bold -mt-[25rem] ' >
-          <Button onClick={onClose} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem' }}>X</Button>
+          <Button
+            onClick={() => {
+              onClose();
+              setFormErrors({});
+              setShowStartCalendar(false);
+              setShowEndCalendar(false);
+            }} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem' }}>X</Button>
+
           <div className="grid grid-cols-1 gap-5">
 
             <div className="relative p-5 mt-[1rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
@@ -351,17 +518,15 @@ const CreateEvent = ({ visible, onClose }) => {
                     marginRight: '-1.5rem',
                     outline: 'none'
                   }}
-                  onClick={() => fileInputRef.current.click()}
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
                 >
                   Upload Event Picture
                 </Button>
               </div>
             </div>
-
             <div className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
-              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEvent() }}>CREATE</Button>
+              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "CREATING..." : "CREATE"}</Button>
             </div>
-
           </div>
         </div>
       </div>
@@ -369,4 +534,6 @@ const CreateEvent = ({ visible, onClose }) => {
   );
 };
 
-export default CreateEvent;
+
+
+export default CreateEventModal;
