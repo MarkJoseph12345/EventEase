@@ -50,10 +50,12 @@ const Login = () => {
             const role = response.data.user.role;
             const name = response.data.user.name;
             const userid = response.data.user.id;
+            const department = response.data.user.department;
             window.localStorage.setItem("token", authToken);
             window.localStorage.setItem("role", role);
             window.localStorage.setItem("name", name);
             window.localStorage.setItem("userid", userid);
+            window.localStorage.setItem("department", department);
             router.push('/dashboard')
             setFormData({
                 username: "",

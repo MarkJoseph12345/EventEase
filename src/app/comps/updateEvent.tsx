@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { styled } from '@mui/joy';
@@ -29,27 +29,61 @@ interface FormErrors {
   selectedFile?: string;
   startDate?: string;
   endDate?: string;
-  startTime?: string;
-  endTime?: string;
 }
 
 
-const UpdateEventModal = ({ visible, onClose }: any) => {
+const UpdateEventModal = ({ visible, onClose, id }: { visible: boolean; onClose: () => void; id: number; }) => {
   const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [formData, setFormData] = useState({
     eventName: "",
-    eventType: "",
+    eventType: "One-Time",
     eventDescription: "",
-    department: "",
+    department: "CEA",
     startDate: null as Date | null,
-    startTime: null as Date | null,
     endDate: null as Date | null,
-    endTime: null as Date | null,
     eventPicture: null as string | ArrayBuffer | null,
     eventStarts: null as Date | null,
     eventEnds: null as Date | null,
   });
+
+
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const response = await axios.get(`${API_ENDPOINTS.GET_EVENT_BY_ID}${id}`);
+        const eventData = response.data;
+        setFormData({
+          eventName: eventData.eventName || "",
+          eventType: eventData.eventType || "One-Time",
+          eventDescription: eventData.eventDescription || "",
+          department: eventData.department || "CEA",
+          startDate: eventData.startDate ? new Date(eventData.startDate) : null,
+          endDate: eventData.endDate ? new Date(eventData.endDate) : null,
+          eventPicture: null,
+          eventStarts: eventData.eventStarts ? new Date(eventData.eventStarts) : null,
+          eventEnds: eventData.eventEnds ? new Date(eventData.eventEnds) : null,
+        });
+        const imgResponse = await axios.get(`${API_ENDPOINTS.GET_EVENT_PICTURE}${id}`, {
+          responseType: 'arraybuffer'
+        });
+        if (imgResponse.status >= 200 && imgResponse.status < 300) {
+          const base64Image = Buffer.from(imgResponse.data, 'binary').toString('base64');
+          setFormData(prevData => ({
+            ...prevData,
+            eventPicture: `data:image/png;base64,${base64Image}`
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching event data:", error);
+      }
+    };
+
+    if (visible && id) {
+      fetchEventData();
+    }
+  }, [visible, id]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,7 +132,6 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
 
 
   const handleDateChange = (date: Date | null, type: string) => {
-    // Validate the selected date
     if (!date) {
       setFormErrors(prevErrors => ({
         ...prevErrors,
@@ -111,7 +144,6 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
       }));
     }
 
-    // Check if the selected date is before the current date
     const currentDate = new Date();
     if (type === 'start' && date && date < currentDate) {
       setFormErrors(prevErrors => ({
@@ -120,7 +152,6 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
       }));
     }
 
-    // Check if the end date is before the start date
     if (type === 'end' && date && formData.startDate && date < formData.startDate) {
       setFormErrors(prevErrors => ({
         ...prevErrors,
@@ -128,49 +159,30 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
       }));
     }
 
-    // Update formData with the new date value
     if (type === 'start') {
       setFormData({
         ...formData,
-        startDate: date
+        eventStarts: date
       });
     } else {
       setFormData({
         ...formData,
-        endDate: date
+        eventEnds: date
       });
+    }
+
+    if (formData.startDate && type === 'start') {
+      if (date && date.getTime()) {
+        setShowStartCalendar(false);
+      }
+    }
+
+    if (formData.endDate && type === 'end') {
+      if (date && date.getTime()) {
+        setShowEndCalendar(false);
+      }
     }
   };
-
-  const handleTimeChange = (time: Date | null, type: string) => {
-    // Validate the selected time
-    if (!time) {
-      setFormErrors(prevErrors => ({
-        ...prevErrors,
-        [type === 'start' ? 'startTime' : 'endTime']: 'Please select a valid time'
-      }));
-    } else {
-      setFormErrors(prevErrors => ({
-        ...prevErrors,
-        [type === 'start' ? 'startTime' : 'endTime']: ''
-      }));
-    }
-
-    // Update formData with the new time value
-    if (type === 'start') {
-      setFormData({
-        ...formData,
-        startTime: time
-      });
-    } else {
-      setFormData({
-        ...formData,
-        endTime: time
-      });
-    }
-  };
-
-
 
   const [secFormData, setSecFormData] = useState(new FormData());
   const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
@@ -210,62 +222,60 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
 
 
   const createEventFunction = async () => {
+    setLoading(true);
     const requiredErrorMessages: FormErrors = {
       eventName: !formData.eventName ? 'Event name is required' : '',
       eventDescription: !formData.eventDescription ? 'Event description is required' : '',
       selectedFile: !selectedFile ? 'File is required' : '',
     };
-    setLoading(true);
 
-    if (!formData.eventName || !formData.eventDescription || !formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime || !selectedFile) {
+    if (!formData.eventName || !formData.eventDescription || !formData.eventStarts || !formData.eventEnds || !selectedFile) {
       setFormErrors(requiredErrorMessages)
       setLoading(false);
       return;
     }
 
 
-    const eventStarts = new Date(formData.startDate.getFullYear(), formData.startDate.getMonth(), formData.startDate.getDate(), formData.startTime.getHours(), formData.startTime.getMinutes(), formData.startTime.getSeconds())
-
-
-    const eventEnds = new Date(formData.endDate.getFullYear(), formData.endDate.getMonth(), formData.endDate.getDate(), formData.endTime.getHours(), formData.endTime.getMinutes(), formData.endTime.getSeconds())
-
     const currentDateTime = new Date();
-    if (eventStarts <= currentDateTime) {
+    if (formData.eventStarts <= currentDateTime) {
       setFormErrors({
         ...requiredErrorMessages,
         startDate: "Start date and time must be in the future",
-        startTime: "Start date and time must be in the future",
       });
       console.log("Start time")
       setLoading(false);
       return;
     }
-    else{
+    else {
       setFormErrors({
         ...requiredErrorMessages,
         startDate: "",
-        startTime: "",
       });
     }
 
-    if (eventEnds <= eventStarts) {
+    if (formData.eventEnds <= formData.eventStarts) {
       setFormErrors({
         ...requiredErrorMessages,
         endDate: "End date must be after start date",
-        endTime: "End time must be after start time",
       });
       console.log("End time")
       setLoading(false);
       return;
     }
-    else{
+    else {
       setFormErrors({
         ...requiredErrorMessages,
         endDate: "",
-        endTime: "",
       });
     }
     const { eventPicture, ...formDataWithoutPicture } = formData;
+
+
+    const eventStarts = new Date(formData.eventStarts.getFullYear(), formData.eventStarts.getMonth(), formData.eventStarts.getDate(), formData.eventStarts.getHours(), formData.eventStarts.getMinutes(), formData.eventStarts.getSeconds())
+
+
+    const eventEnds = new Date(formData.eventEnds.getFullYear(), formData.eventEnds.getMonth(), formData.eventEnds.getDate(), formData.eventEnds.getHours(), formData.eventEnds.getMinutes(), formData.eventEnds.getSeconds())
+
 
     const updatedFormData = {
       ...formDataWithoutPicture,
@@ -274,13 +284,11 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
     };
 
     try {
-      const response = await axios.post(API_ENDPOINTS.CREATE_EVENT, updatedFormData);
-      console.log("Create successful:", response.data);
-      const id = response.data.id;
+      const response = await axios.put(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, updatedFormData);
+      console.log("Update successful:", response.data);
 
       if (selectedFile) {
-        console.log(`image: ${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
-        const pictureResponse = await axios.put(`${API_ENDPOINTS.UPDATE_EVENT}${id}`, secFormData);
+        const pictureResponse = await axios.put(`${API_ENDPOINTS.UPDATE_EVENTPICTURE}${id}`, secFormData);
         console.log("Image upload successful:", pictureResponse.data);
       }
       window.location.reload();
@@ -302,10 +310,10 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
       className="backdrop-blur-[4px]"
     >
       <div
-        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative'
-        style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
+        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative h-[26rem]'
+
       >
-        <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
+        <h2 className='text-lg font-bold -mt-4 p-4'>Update Event</h2>
 
         <div className="grid grid-cols-1 gap-5">
           <div className="relative p-5 -mt-1">
@@ -375,21 +383,19 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
 
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6 ">Start Date <span className="text-red-800">*</span></p>
-            {/* {formErrors.startDate && (
-              <p className="text-red-800 text-xs font-poppins w-40">
-                {formErrors.startDate}
-              </p>
-            )} */}
-            {/*Ayuha ni maguba ig butang sa error*/}
+            <div className='relative'></div>
+            {formErrors.startDate && (
+              <div className="relative  left-0 mt-2">
+                <p className=" text-red-800 text-xs font-poppins w-40">
+                  {formErrors.startDate}
+                </p>
+              </div>
+            )}
             <div className="relative">
               <input
                 type='text'
                 placeholder='Select Date and Time'
-                value={
-                  formData.startDate && formData.startTime
-                    ? `${formData.startDate.toLocaleDateString()} ${formData.startTime.toLocaleTimeString()}`
-                    : ''
-                }
+                value={formData.eventStarts ? `${formData.eventStarts.toLocaleDateString()} ${formData.eventStarts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
                 readOnly
                 className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
@@ -397,77 +403,70 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
                 src="/calendar.png"
                 alt="Calendar"
                 className="absolute top-0 right-20 m-2 cursor-pointer w-[15px] mr-[30rem]"
-                onClick={() => setShowStartCalendar(true)}
+                onClick={() => {
+                  setShowStartCalendar(!showStartCalendar);
+                  setShowEndCalendar(false);
+                }}
               />
               {showStartCalendar && (
-                <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
+                <div className="absolute top-full left-0 mt-2 z-10">
                   <DatePicker
+                    inline
                     selected={formData.startDate}
                     onChange={(date) => handleDateChange(date, 'start')}
-                    dateFormat="MM/dd/yyyy"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                  <DatePicker
-                    selected={formData.startTime}
-                    onChange={(time) => handleTimeChange(time, 'start')}
                     showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={1}
+                    timeFormat="h:mm aa"
+                    timeIntervals={30}
                     timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="border-[1px] border-black mt-[5px] w-[16rem] font-regular text-[10px] rounded-2xl text-center"
+                  />
+                </div>
+              )}
+              {showEndCalendar && (
+                <div className="absolute top-full left-0 mt-2 z-10">
+                  <DatePicker
+                    inline
+                    selected={formData.endDate}
+                    onChange={(date) => handleDateChange(date, 'end')}
+                    showTimeSelect
+                    timeFormat="h:mm aa"
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="border-[1px] border-black mt-[5px] w-[16rem] font-regular text-[10px] rounded-2xl text-center"
                   />
                 </div>
               )}
             </div>
           </div>
 
-          <div className="relative p-5 -mt-[5.5rem] ml-[11rem]">
+          <div className="absolute  p-5 mt-[16.4rem] ml-[11rem]">
             <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
-            {/* {formErrors.endDate && (
-              <p className="text-red-800 text-xs font-poppins text-balance w-40">
-                {formErrors.endDate}
-              </p>
-            )} */}
-            {/*Ayuha ni maguba ig butang sa error*/}
+            {formErrors.endDate && (
+              <div className="relative  left-0 mt-2">
+                <p className=" text-red-800 text-xs font-poppins w-40">
+                  {formErrors.endDate}
+                </p>
+              </div>
+            )}
             <div className="relative">
               <input
                 type='text'
                 placeholder='Select Date and Time'
-                value={
-                  formData.endDate && formData.endTime
-                    ? `${formData.endDate.toLocaleDateString()} ${formData.endTime.toLocaleTimeString()}`
-                    : ''
-                }
+                value={formData.eventEnds ? `${formData.eventEnds.toLocaleDateString()} ${formData.eventEnds.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
                 readOnly
                 className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
               <img
                 src="/calendar.png"
                 alt="Calendar"
-                className="absolute top-0 right-[254px] m-2 cursor-pointer w-[15px] mr-[8rem]"
-                onClick={() => setShowEndCalendar(true)}
+                className="relative -top-[2rem] right-[254px] m-2 cursor-pointer w-[15px] ml-[23.5rem]"
+                onClick={() => {
+                  setShowEndCalendar(!showEndCalendar);
+                  setShowStartCalendar(false);
+                }}
               />
-              {showEndCalendar && (
-                <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
-                  <DatePicker
-                    selected={formData.endDate}
-                    onChange={(date) => handleDateChange(date, 'end')}
-                    dateFormat="MM/dd/yyyy"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                  <DatePicker
-                    selected={formData.endTime}
-                    onChange={(time) => handleTimeChange(time, 'end')}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={1}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -524,8 +523,8 @@ const UpdateEventModal = ({ visible, onClose }: any) => {
                 </Button>
               </div>
             </div>
-            <div className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
-              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "CREATING..." : "CREATE"}</Button>
+            <div className=' ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
+              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "UPDATING..." : "UPDATE"}</Button>
             </div>
           </div>
         </div>

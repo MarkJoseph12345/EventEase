@@ -71,6 +71,8 @@ const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void 
 const StudentEventCards = () => {
     const [studentPageCards, setStudentPageCards] = useState<EventCard[]>([]);
     useEffect(() => {
+        const department = localStorage.getItem("department");
+        console.log(department)
         const fetchData = async () => {
             try {
                 const response = await axios.get(API_ENDPOINTS.GET_ALL_EVENTS);
@@ -106,7 +108,7 @@ const StudentEventCards = () => {
 
                     const todayEvents = cardsWithPictures.filter((event: any) => {
                         const eventDate = new Date(event.eventStarts).toISOString().split('T')[0];
-                        return eventDate === todayDateString;
+                        return eventDate === todayDateString && event.department === department;
                     });
 
                     setStudentPageCards(todayEvents);
@@ -143,7 +145,7 @@ const StudentEventCards = () => {
                             </div>
                         </div>
                         <div className='self-end'>
-                            <button className='font-bold rounded px-3 py-1 bg-customYellow'>Joined</button>
+                            <button className='font-bold rounded px-3 py-1 bg-customYellow'>Join</button>
                         </div>
                     </div>
                 ))}

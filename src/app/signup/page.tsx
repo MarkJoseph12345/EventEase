@@ -181,12 +181,17 @@ const SignUp = () => {
             });
 
             console.log("Login successful:", loginResponse.data);
+            console.log("Login successful:", response.data);
             const authToken = response.data.token;
             const role = response.data.user.role;
             const name = response.data.user.name;
-            localStorage.setItem("token", authToken);
-            localStorage.setItem("role", role);
-            localStorage.setItem("name", name);
+            const userid = response.data.user.id;
+            const department = response.data.user.department;
+            window.localStorage.setItem("token", authToken);
+            window.localStorage.setItem("role", role);
+            window.localStorage.setItem("name", name);
+            window.localStorage.setItem("userid", userid);
+            window.localStorage.setItem("department", department);
             router.push('/dashboard')
             setFormData({
                 username: "",

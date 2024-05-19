@@ -28,7 +28,9 @@ interface User {
           const response = await axios.get(API_ENDPOINTS.GET_USER_BY_ID + userid);
   
           const { name, ...userData } = response.data;
-          const [firstName, lastName] = name.split(' ');
+        const lastSpaceIndex = name.lastIndexOf(' ');
+        const firstName = name.substring(0, lastSpaceIndex);
+        const lastName = name.substring(lastSpaceIndex + 1);
   
           setUser({ ...userData, firstName, lastName });
         } catch (error) {
@@ -77,7 +79,7 @@ interface User {
                             </div>
                             <div className="flex flex-col">
                                 <p className="font-poppins">Password<span className="text-red-800">*</span></p>
-                                <input className="indent-3 w-[18.75rem] h-[2.5rem] border-black border-2 rounded-full" placeholder="Password..." defaultValue={user?.password}></input>
+                                <input type="password" className="indent-3 w-[18.75rem] h-[2.5rem] border-black border-2 rounded-full" placeholder="Password..." defaultValue="Password..."></input>
                             </div>
                         </div>
                         <button className="bg-customYellow self-end font-bold px-3  rounded-lg">UPDATE</button>

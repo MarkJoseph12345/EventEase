@@ -1,6 +1,7 @@
 'use client'
 
 interface EventCard {
+    id: number;
     imageUrl: string;
     date: string;
     eventName: string;
@@ -19,8 +20,17 @@ interface EventCard {
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { API_ENDPOINTS } from '../api';
+import UpdateEventModal from './updateEvent';
 
 const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void }) => {
+    const handleModalOpen = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+    };
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const starthours = new Date(event.eventStarts).getHours();
     const startminutes = new Date(event.eventStarts).getMinutes();
 
@@ -42,7 +52,7 @@ const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void 
     return (
         <div className="fixed top-0 left-0 w-full  h-full flex flex-col justify-center items-center backdrop-blur-[4px] z-50">
             <div className="bg-white flex flex-col border border-gray-200 justify-center items-center  p-8 rounded-3xl relative gap-3">
-                    <button className="absolute top-[1px] right-2 px-2 py-1 font-bold text-2xl" onClick={onClose}>X</button>
+                <button className="absolute top-[1px] right-2 px-2 py-1 font-bold text-2xl" onClick={onClose}>X</button>
                 <div className=" relative flex flex-col items-center">
                     <div className='relative mt-3'>
                         <img className="h-[250px] w-[250px]  object-fill" src={event.eventPicture} />
@@ -65,7 +75,8 @@ const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void 
                     </div>
                 </div>
                 <div className='flex justify-end w-full mt-2'>
-                    <button className='font-bold rounded px-3 py-1 bg-customYellow'>Manage Details</button>
+                    <button className='font-bold rounded px-3 py-1 bg-customYellow' onClick={handleModalOpen}>Manage Details</button>
+                    <UpdateEventModal visible={isModalOpen} onClose={handleModalClose} id={event.id}/>
                 </div>
             </div>
         </div>
@@ -153,7 +164,7 @@ const AdminEventCards = () => {
 
                         </div>
                         <div className='flex flex-col'>
-                        <p>Event Name: {card.eventName}</p>
+                            <p>Event Name: {card.eventName}</p>
                             <div className="flex items-center">
                                 <p className="-ml-1.6">Time: {card.eventStartsHour}</p>
                             </div>
