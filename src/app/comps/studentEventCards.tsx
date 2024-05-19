@@ -42,8 +42,8 @@ const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void 
 
     return (
         <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-[4px] z-50">
-            <div className="bg-white p-8 rounded-3xl relative flex flex-col items-center">
-                <button className="absolute top-0 right-0 px-2 py-1 font-black text-4xl" onClick={onClose}>X</button>
+            <div className="bg-white  border border-gray-200 p-8 rounded-3xl relative flex flex-col items-center">
+                <button className="absolute top-[1px] right-2 px-2 py-1 font-bold text-2xl" onClick={onClose}>X</button>
                 <div className='relative'>
                     <img className="h-[250px] w-[250px]  object-fill" src={event.eventPicture} />
                     <div className="absolute -mt-5 -ml-5 top-0 left-0 bg-customYellow rounded-full text-sm font-bold w-12 h-12 flex justify-center items-center text-center flex-col">
@@ -59,8 +59,8 @@ const EventPopup = ({ event, onClose }: { event: EventCard; onClose: () => void 
                         <p className="font-bold">Event Details: <span className="font-normal">{event.eventDescription}</span></p>
                         <p className="font-bold">Event Type: <span className="font-normal">{event.eventType}</span></p>
                         <p className="font-bold">Department: <span className="font-normal">{event.department}</span></p>
-                        <p className="ml-10 mt-2 flex items-center gap-2"><img src="calendar.png" className='w-4 h-4' /> : {new Date(event.eventStarts).toLocaleDateString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                        <p className="ml-10 mt-2 flex items-center gap-2"><img src="time.png" className='w-4 h-4' /> : {formattedStartTime} - {formattedEndTime}</p>
+                        <p className="mt-.7 flex items-center gap-2"><span className='font-bold'>Time:</span> {new Date(event.eventStarts).toLocaleDateString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p className="mt-.7 flex items-center gap-2"><span className='font-bold'>Date:</span> {formattedStartTime} - {formattedEndTime}</p>
                     </div>
                 </div>
             </div>
@@ -131,19 +131,19 @@ const StudentEventCards = () => {
                             <img className="self-center h-[10.938rem] w-[15.625rem] object-fill" src={card.eventPicture} />
                             <div className="absolute -mt-5 -ml-5 top-0 left-0 bg-customYellow rounded-full text-base w-16 h-16 font-bold flex justify-center items-center text-center flex-col">
                                 <div>{new Date(card.eventStartsDate).toLocaleString('default', { month: 'short' }).toUpperCase()}</div>
-                                <div>{new Date(card.eventStartsDate).getDate()}</div>
+                                <div className='text-[12px]'>{new Date(card.eventStartsDate).getDate()}</div>
                             </div>
 
                         </div>
                         <div className='flex flex-col'>
                             <p>Event Name: {card.eventName}</p>
                             <div className="flex items-center">
-                                <img src="time.png" className="h-4 w-4" alt="Time Icon" />
-                                <p className="ml-2">Time: {card.eventStartsHour}</p>
+                                <p className="-ml-1.6">Time: {card.eventStartsHour}</p>
+                                
                             </div>
                         </div>
                         <div className='self-end'>
-                            <button className='font-bold rounded px-3 py-1 bg-customYellow'>Join</button>
+                            <button className='font-bold rounded px-3 py-1 bg-customYellow'>Joined</button>
                         </div>
                     </div>
                 ))}

@@ -302,8 +302,8 @@ const CreateEventModal = ({ visible, onClose }: any) => {
       className="backdrop-blur-[4px]"
     >
       <div
-        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative'
-        style={{ backgroundImage: "url('/inno.png')", backgroundSize: 'cover' }}
+        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative h-[26rem]'
+       
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
 
@@ -375,19 +375,21 @@ const CreateEventModal = ({ visible, onClose }: any) => {
 
           <div className="relative p-5 -mt-7">
             <p className="font-poppins text-sm font-regular -mt-6 ">Start Date <span className="text-red-800">*</span></p>
-            {/* {formErrors.startDate && (
-              <p className="text-red-800 text-xs font-poppins w-40">
+            <div className='relative'></div>
+            {formErrors.startDate && (
+            <div className="relative  left-0 mt-2">
+              <p className=" text-red-800 text-xs font-poppins w-40">
                 {formErrors.startDate}
               </p>
-            )} */}
-            {/*Ayuha ni maguba ig butang sa error*/}
+            </div>
+            )}{/*Ayuha ni maguba ig butang sa error*/}
             <div className="relative">
               <input
                 type='text'
                 placeholder='Select Date and Time'
                 value={
                   formData.startDate && formData.startTime
-                    ? `${formData.startDate.toLocaleDateString()} ${formData.startTime.toLocaleTimeString()}`
+                  ? `${formData.startDate.toLocaleDateString()} ${formData.startTime.toLocaleTimeString()}`
                     : ''
                 }
                 readOnly
@@ -397,39 +399,38 @@ const CreateEventModal = ({ visible, onClose }: any) => {
                 src="/calendar.png"
                 alt="Calendar"
                 className="absolute top-0 right-20 m-2 cursor-pointer w-[15px] mr-[30rem]"
-                onClick={() => setShowStartCalendar(true)}
+                onClick={() => {
+                  setShowStartCalendar(true);
+                  setShowEndCalendar(false);
+                }}
               />
               {showStartCalendar && (
-                <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
-                  <DatePicker
-                    selected={formData.startDate}
-                    onChange={(date) => handleDateChange(date, 'start')}
-                    dateFormat="MM/dd/yyyy"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                  <DatePicker
-                    selected={formData.startTime}
-                    onChange={(time) => handleTimeChange(time, 'start')}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={1}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                </div>
-              )}
+              <div className="absolute top-full left-0 mt-2 z-10">
+                <DatePicker
+                  inline
+                  selected={formData.startDate}
+                  onChange={(date) => handleDateChange(date, 'start')}
+                  showTimeSelect
+                  timeFormat="h:mm aa"
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  className="border-[1px] border-black mt-[5px] w-[16rem] font-regular text-[10px] rounded-2xl text-center"
+                />
+              </div>
+            )}
             </div>
           </div>
 
-          <div className="relative p-5 -mt-[5.5rem] ml-[11rem]">
+          <div className="absolute  p-5 mt-[16.4rem] ml-[11rem]">
             <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
-            {/* {formErrors.endDate && (
-              <p className="text-red-800 text-xs font-poppins text-balance w-40">
+            {formErrors.endDate && (
+            <div className="relative  left-0 mt-2">
+              <p className=" text-red-800 text-xs font-poppins w-40">
                 {formErrors.endDate}
               </p>
-            )} */}
-            {/*Ayuha ni maguba ig butang sa error*/}
+            </div>
+            )}{/*Ayuha ni maguba ig butang sa error*/}
             <div className="relative">
               <input
                 type='text'
@@ -445,29 +446,27 @@ const CreateEventModal = ({ visible, onClose }: any) => {
               <img
                 src="/calendar.png"
                 alt="Calendar"
-                className="absolute top-0 right-[254px] m-2 cursor-pointer w-[15px] mr-[8rem]"
-                onClick={() => setShowEndCalendar(true)}
+                className="relative -top-[2rem] right-[254px] m-2 cursor-pointer w-[15px] ml-[23.5rem]"
+                onClick={() => {
+                  setShowEndCalendar(true);
+                  setShowStartCalendar(false);
+                }}
               />
-              {showEndCalendar && (
-                <div className="absolute top-full w-[5rem] h-[32px] -left-1 -mt-3 p-4">
-                  <DatePicker
-                    selected={formData.endDate}
-                    onChange={(date) => handleDateChange(date, 'end')}
-                    dateFormat="MM/dd/yyyy"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                  <DatePicker
-                    selected={formData.endTime}
-                    onChange={(time) => handleTimeChange(time, 'end')}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={1}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    className="border-[1px] border-black mt-[5px] w-[7rem] font-regular text-[10px] rounded-2xl text-center"
-                  />
-                </div>
-              )}
+               {showEndCalendar && (
+              <div className="relative top-full left-0 mt-2 z-10">
+                <DatePicker
+                  inline
+                  selected={formData.startDate}
+                  onChange={(date) => handleDateChange(date, 'end')}
+                  showTimeSelect
+                  timeFormat="h:mm aa"
+                  timeIntervals={15}
+                  timeCaption="Time"
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  className="border-[1px] border-black mt-[5px] w-[16rem] font-regular text-[10px] rounded-2xl text-center"
+                />
+              </div>
+            )}
             </div>
           </div>
         </div>
@@ -524,7 +523,7 @@ const CreateEventModal = ({ visible, onClose }: any) => {
                 </Button>
               </div>
             </div>
-            <div className='ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
+            <div className=' ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
               <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "CREATING..." : "CREATE"}</Button>
             </div>
           </div>

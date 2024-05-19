@@ -83,16 +83,17 @@ const AdminSideBar = ({ isOpen = true }) => {
   
   return (
     <div>
-      <div className={`fixed  w-44 h-full bg-customYellow transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className={`fixed ml-44 w- [.5px] h-full bg-customGray transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}></div>
-        <button style={{ width: '8rem' }} className={`bg-black mt-[80px] h-[32px]  ml-[19px] -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`} onClick={handleModalOpen}>
+      <div className={`fixed  w-[13rem] h-full bg-customYellow transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}>
+      <img src="/honeyc.png" className="fixed w-[35rem] h-[20rem] p-2 ml-[12.4rem] -mt-3 " />
+        <div className={`fixed ml-[40rem] w- [1px] h-full bg-customGray transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0' : '-translate-x-full'}`}></div>
+        <button style={{ width: '9rem' }} className={`bg-black mt-[80px] h-[32px]  ml-[30px] -mr-30 rounded-xl flex items-center justify-center transition-all duration-500 ease-in-out ${isVisible ? 'w-full' : 'w-0'}`} onClick={handleModalOpen}>
           <img src="/plusicon.png" alt="Plus Icon" className="w-6 h-6 -ml-2.5" />
-          <span className="text-white font-regular  font-poppins text-[13px] ml-[3px]">Create Event</span>
+          <span className="text-white font-regular  font-poppins text-[13px] ml-[5px]">Create Event</span>
         </button>
         <CreateEventModal visible={isModalOpen} onClose={handleModalClose} />
         
-        <Link href="/dashboard" className='mt-5 ml-[4rem]'>Home</Link>
-        <p onClick={profileClicked} className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex items-center w-full font-bold text-base cursor-pointer"><img src="defaultpic.png" className="w-19 h-19" />{user?.name}</p>
+        <Link href="/dashboard" className='mt-5 ml-[4.5rem]'>Home</Link>
+        <p onClick={profileClicked} className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex items-center w-full font-bold text-sm cursor-pointer"><img src="defaultpic.png" className="w-19 h-19" />{user?.name}</p>
         {openProfile && (
           <div  ref={profileRef}  className='w-[90%] bg-white rounded absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col'>
             <div className='flex items-center'>
