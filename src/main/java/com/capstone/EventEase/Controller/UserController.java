@@ -70,6 +70,8 @@ public class UserController {
 
 
 
+
+
     @PutMapping("/updateProfilePicture/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestParam("image")
     MultipartFile file) throws IOException {

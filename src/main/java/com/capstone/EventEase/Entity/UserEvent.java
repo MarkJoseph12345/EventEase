@@ -1,9 +1,17 @@
 package com.capstone.EventEase.Entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_event")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEvent {
 
 
@@ -15,6 +23,9 @@ public class UserEvent {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
+
 
 
 

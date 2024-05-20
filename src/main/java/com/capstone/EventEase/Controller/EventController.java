@@ -41,6 +41,10 @@ public class EventController {
         return new ResponseEntity(eventService.updateEvent(eventId,event),HttpStatus.OK);
     }
 
+
+
+
+
     @PutMapping("/updateEventPicture/{eventId}")
     public ResponseEntity<?> uploadEventPicture(@PathVariable Long eventId,@RequestParam("eventImage") MultipartFile file) throws IOException{
         return new ResponseEntity<>(imageService.uploadEventImage(eventId,file),HttpStatus.OK);
