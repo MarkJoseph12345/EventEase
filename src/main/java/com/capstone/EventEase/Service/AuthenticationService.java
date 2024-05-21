@@ -45,7 +45,7 @@ public class AuthenticationService {
         User newUser = User.builder().username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.STUDENT)
-                .name(registerRequest.getFirstName() + " " + registerRequest.getLastName())
+                .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .build();
 
@@ -83,8 +83,13 @@ public class AuthenticationService {
                 "User with id: " + userId + " not found!"
         ));
 
-        if( user.getName() != null &&  !user.getName().isEmpty()){
-            userPerson.setName(user.getName());
+
+
+        if( user.getFirstName() != null &&  !user.getFirstName().isEmpty()){
+            userPerson.setFirstName(user.getFirstName());
+        }
+        if( user.getLastName() != null &&  !user.getLastName().isEmpty()){
+            userPerson.setLastName(user.getLastName());
         }
 
         if(user.getPassword() != null &&  !user.getPassword().isBlank()){
