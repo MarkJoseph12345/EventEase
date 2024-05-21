@@ -274,7 +274,7 @@ const CreateEventModal = ({ visible, onClose }: any) => {
       className="backdrop-blur-[4px]"
     >
       <div
-        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] relative h-[26rem]'
+        className='bg-white p-4 rounded-3xl left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[48rem] -mt-5 relative h-[28rem]'
 
       >
         <h2 className='text-lg font-bold -mt-4 p-4'>Create Event</h2>
@@ -344,15 +344,15 @@ const CreateEventModal = ({ visible, onClose }: any) => {
               <option value="ALL">ALL</option>
             </select>
           </div>
-
-          <div className="relative p-5 -mt-7">
-            <p className="font-poppins text-sm font-regular -mt-6 ">Start Date <span className="text-red-800">*</span></p>
-            <div className='relative'></div>
+        </div>
+          
+        <div className="absolute p-5 -mt-2.5">
+          <p className="font-poppins text-sm font-regular -mt-6 ">Start Date <span className="text-red-800">*</span></p> 
             {formErrors.startDate && (
               <div className="relative  left-0 mt-2">
                 <p className=" text-red-800 text-xs font-poppins w-40">
                   {formErrors.startDate}
-                </p>
+                  </p>
               </div>
             )}
             <div className="relative">
@@ -366,14 +366,14 @@ const CreateEventModal = ({ visible, onClose }: any) => {
               <img
                 src="/calendar.png"
                 alt="Calendar"
-                className="absolute top-0 right-20 m-2 cursor-pointer w-[15px] mr-[30rem]"
+                className="absolute top-0 left-[7.1rem] m-2 cursor-pointer w-[15px] mr-[30rem]"
                 onClick={() => {
                   setShowStartCalendar(!showStartCalendar);
                   setShowEndCalendar(false);
                 }}
               />
               {showStartCalendar && (
-                <div className="absolute top-full left-0 mt-2 z-10">
+                <div className=" top-full left-0 mt-2 z-10">
                   <DatePicker
                     inline
                     selected={formData.startDate}
@@ -388,7 +388,7 @@ const CreateEventModal = ({ visible, onClose }: any) => {
                 </div>
               )}
               {showEndCalendar && (
-                <div className="absolute top-full left-0 mt-2 z-10">
+                <div className=" top-full left-0 mt-2 z-10">
                   <DatePicker
                     inline
                     selected={formData.endDate}
@@ -405,14 +405,15 @@ const CreateEventModal = ({ visible, onClose }: any) => {
             </div>
           </div>
 
-          <div className="absolute  p-5 mt-[16.4rem] ml-[11rem]">
-            <p className="font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
-            {formErrors.endDate && (
-              <div className="relative  left-0 mt-2">
-                <p className=" text-red-800 text-xs font-poppins w-40">
-                  {formErrors.endDate}
-                </p>
-              </div>
+          <div className="relative  p-5 -mt-[1rem] ml-[11rem]">
+            <div className="absolute p-5 -mt-4">
+              <p className=" absolute font-poppins text-sm font-regular -mt-6">End Date <span className="text-red-800">*</span></p>
+              {formErrors.endDate && (
+                <div className="relative  left-0 mt-2">
+                  <p className=" text-red-800 text-xs font-poppins w-40">
+                    {formErrors.endDate}
+                  </p>
+                </div>
             )}
             <div className="relative">
               <input
@@ -420,36 +421,34 @@ const CreateEventModal = ({ visible, onClose }: any) => {
                 placeholder='Select Date and Time'
                 value={formData.endDate ? `${formData.endDate.toLocaleDateString()} ${formData.endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
                 readOnly
-                className="p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
+                className=" relative p-1 w-[9rem] h-[32px] rounded-2xl border-[1.5px] border-black text-[10px]"
               />
               <img
                 src="/calendar.png"
                 alt="Calendar"
-                className="relative -top-[2rem] right-[254px] m-2 cursor-pointer w-[15px] ml-[23.5rem]"
+                className="relative -top-[2rem] right-[16rem] m-2 cursor-pointer w-[15px] ml-[23.5rem]"
                 onClick={() => {
                   setShowEndCalendar(!showEndCalendar);
                   setShowStartCalendar(false);
                 }}
               />
-
             </div>
           </div>
         </div>
 
-
-        <div className=' font-bold -mt-[25rem] ' >
+        <div className=' absolute font-bold -mt-[25rem] ' >
           <Button
             onClick={() => {
               onClose();
               setFormErrors({});
               setShowStartCalendar(false);
               setShowEndCalendar(false);
-            }} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem' }}>X</Button>
+            }} style={{ color: 'black', fontSize: '25px', marginLeft: '43rem', marginTop:'40px' }}>X</Button>
+        </div>
 
-          <div className="grid grid-cols-1 gap-5">
-
-            <div className="relative p-5 mt-[1rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
-              <div className="relative" style={{ width: '100%', height: '100%' }}>
+          <div className="grid grid-cols-1 gap-2">
+            <div className="absolute p-5 -mt-[16rem] ml-[28.5rem] rounded-2xl border-[2px] border-customYellow" style={{ width: '12rem', height: '12rem' }}>
+              <div className="absolute" style={{ width: '100%', height: '100%' }}>
                 <VisuallyHiddenInput
                   type="file"
                   accept="image/*"
@@ -488,11 +487,10 @@ const CreateEventModal = ({ visible, onClose }: any) => {
                 </Button>
               </div>
             </div>
-            <div className=' ml-[37rem] h-[2rem] mt-[3rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
-              <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "CREATING..." : "CREATE"}</Button>
-            </div>
-          </div>
-        </div>
+              <div className='  ml-[37rem] h-[2rem] -mt-[rem] bg-customYellow rounded-xl w-[6rem] text-center textcolor-white'>
+                <Button style={{ color: 'black', fontWeight: 'bold', fontSize: '14px', outline: 'none' }} onClick={() => { createEventFunction() }} disabled={loading} className={`${loading ? 'text-sm' : 'text-xl'}`}>{loading ? "CREATING..." : "CREATE"}</Button>
+              </div>
+          </div> 
       </div>
     </Modal>
   );
