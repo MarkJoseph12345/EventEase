@@ -37,8 +37,10 @@ public class EventService {
         if(event.getEventPicture() != null){
             imageService.deleteImage(event.getEventPicture());
         }
+        eventRepository.deleteById(eventId);
         return "Event Has been Deleted";
     }
+
 
 
 
