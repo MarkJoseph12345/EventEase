@@ -1,7 +1,10 @@
 package com.capstone.EventEase.Service;
 
 import com.capstone.EventEase.Entity.Event;
+import com.capstone.EventEase.Entity.UserEvent;
 import com.capstone.EventEase.Repository.EventRepository;
+import com.capstone.EventEase.Repository.UserEventRepository;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,67 +18,63 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventService {
 
-
     private final EventRepository eventRepository;
 
+    private final UserEventRepository userEventRepository;
 
     private final ImageService imageService;
 
-
-
-    public Event craeteEvent(Event event){
+    public Event craeteEvent(Event event) {
         return eventRepository.save(event);
     }
 
-    public Event getEvent(Long eventId){
+    public Event getEvent(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
     }
 
-
-    public String deleteEvent(Long eventId) throws IOException{
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
-        if(event.getEventPicture() != null){
+    public String deleteEvent(Long eventId) throws IOException {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
+        if (event.getEventPicture() != null) {
             imageService.deleteImage(event.getEventPicture());
+        }
+        List<UserEvent> userEvents = userEventRepository.findByEventId(eventId);
+        for (UserEvent userEvent : userEvents) {
+            userEventRepository.delete(userEvent);
         }
         eventRepository.deleteById(eventId);
         return "Event Has been Deleted";
     }
 
-
-
-
-    public List<Event> getAllEvents(){
+    public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
 
+    public Event updateEvent(Long eventId, Event event) {
+        Event oldEvent = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
 
-
-
-    public Event updateEvent(Long eventId,Event event){
-       Event oldEvent = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
-
-       if(oldEvent.getEventName() != null && !oldEvent.getEventName().isEmpty()){
-           oldEvent.setEventName(event.getEventName());
-       }
-        if(oldEvent.getEventDescription() != null && !oldEvent.getEventDescription().isEmpty()){
+        if (oldEvent.getEventName() != null && !oldEvent.getEventName().isEmpty()) {
+            oldEvent.setEventName(event.getEventName());
+        }
+        if (oldEvent.getEventDescription() != null && !oldEvent.getEventDescription().isEmpty()) {
             oldEvent.setEventDescription(event.getEventDescription());
         }
-        if(oldEvent.getEventStarts() != null){
+        if (oldEvent.getEventStarts() != null) {
             oldEvent.setEventStarts(event.getEventStarts());
         }
-        if(oldEvent.getEventEnds() != null){
+        if (oldEvent.getEventEnds() != null) {
             oldEvent.setEventEnds(event.getEventEnds());
         }
 
-        if(oldEvent.getDepartment() != null && !oldEvent.getDepartment().isEmpty()){
+        if (oldEvent.getDepartment() != null && !oldEvent.getDepartment().isEmpty()) {
             oldEvent.setDepartment(event.getDepartment());
         }
-        if(oldEvent.getEventType() != null && !oldEvent.getEventType().isEmpty()){
+        if (oldEvent.getEventType() != null && !oldEvent.getEventType().isEmpty()) {
             oldEvent.setEventType(event.getEventType());
         }
 
-       return eventRepository.save(oldEvent);
+        return eventRepository.save(oldEvent);
     }
-
 
 }
