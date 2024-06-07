@@ -31,7 +31,6 @@ public class UserService implements UserDetailsService {
 
 
 
-
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
@@ -54,15 +53,11 @@ public class UserService implements UserDetailsService {
     public String deleteUserById(Long userId) throws IOException {
         if(userRepository.existsById(userId)){
          User user = userRepository.findById(userId).get();
-           if(user.getProfilePicture() != null){
-               imageService.deleteImage(user.getProfilePicture());
-           }
            userRepository.delete(user);
            return "User deleted";
         }
        throw new EntityNotDeletedException("User is Still not Deleted!");
     }
-
 
     
     @Override

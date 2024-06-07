@@ -1,36 +1,36 @@
 package com.capstone.EventEase.Entity;
 
+
+
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
-@Table(name = "user_event")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEvent {
+@Table(name = "tbl_attendance")
+public class Attendance {
+
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userevent_id")
-    private Long id;
+    @Column(name = "attendance_id")
+    private Long attendanceId;
 
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "userevent_id")
+    private UserEvent userEvent;
 
 
-
-    
-
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    private Date attendedTime;
 }

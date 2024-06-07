@@ -19,12 +19,12 @@ public class AdminService {
 
 
 
-    public String checkAttendance(String IdNumber){
+    public String checkAttendance(String username){
 
-       User user = userRepository.findByIdNumber(IdNumber);
+        User user = userRepository.findByUsername(username);
         if(user == null){
-            throw new EntityNotFoundException("User not Found");
+            throw new EntityNotFoundException("Username dont Exists!");
         }
-        return "User attended";
+        return username + " attendance checked";
     }
 }

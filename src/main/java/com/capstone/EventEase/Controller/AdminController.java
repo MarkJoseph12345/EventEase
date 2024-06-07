@@ -20,16 +20,23 @@ public class AdminController {
     private final AdminService adminService;
 
 
-    @PostMapping("/attend/{idNumber}")
-    public ResponseEntity<?> attendUsers(@PathVariable String idNumber){
+
+
+
+
+
+
+    @PostMapping("/attend/{username}")
+    public ResponseEntity<?> attendUsers(@PathVariable String username){
         try{
-            return new ResponseEntity<>(adminService.checkAttendance(idNumber),HttpStatus.OK);
+            return new ResponseEntity<>(adminService.checkAttendance(username),HttpStatus.OK);
         }catch (EntityNotFoundException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 

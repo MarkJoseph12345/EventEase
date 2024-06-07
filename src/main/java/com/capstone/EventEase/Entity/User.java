@@ -29,6 +29,8 @@ public class User implements UserDetails {
     private Long id;
 
 
+
+
     private String username;
 
     private String password;
@@ -42,11 +44,20 @@ public class User implements UserDetails {
 
     private String department;
 
-    private String profilePicture;
+
+    @Lob
+    @Column(name = "profilePicture")
+    @Basic(fetch = FetchType.EAGER)
+    private byte[] profilePicture;
+
+    private String profilePictureType;
+
+    private String profilePictureName;
+
+
 
 
     private String qrCode;
-
 
 
 

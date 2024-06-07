@@ -5,11 +5,14 @@ import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserRepository;
+import com.capstone.EventEase.UTIL.ImageUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,9 +20,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+
 public class ImageService {
 
 
@@ -65,6 +70,8 @@ public class ImageService {
      */
 
 
+
+    /*
 
 
     public String uploadUserImage(Long userId,MultipartFile file) throws IOException{
@@ -148,6 +155,90 @@ public class ImageService {
     }
 
 
+
+     */
+
+
+
+
+
+    public String uploadEventImage(Long eventId, MultipartFile file){
+        if(file.isEmpty()){
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found!"));
+
+        try{
+            event.setEventName(file.getOriginalFilename());
+
+            byte[] images = ImageUtils.compressImage(file.getBytes());
+            event.setEventPicture(images);
+
+            event.setEventPictureType(file.getContentType());
+            eventRepository.save(event);
+            return "Uploaded imaged sucessfully";
+        }catch (IOException e){
+            throw new RuntimeException("Failed to read the image data");
+        }catch (Exception e){
+            throw new RuntimeException("Failed to upload image");
+        }
+    }
+
+    public String uploadUserImage(Long userId,MultipartFile file){
+
+        if(file.isEmpty()){
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not Found!"));
+
+        try{
+            user.setProfilePictureName(file.getOriginalFilename());
+
+            byte[] compressedImage = ImageUtils.compressImage(file.getBytes());
+
+
+            System.out.println("Compressed file size: " + compressedImage.length + " bytes");
+
+            user.setProfilePicture(compressedImage);
+
+
+            user.setProfilePictureType(file.getContentType());
+            userRepository.save(user);
+            return "Uploaded Image Sucessfulyy";
+        }catch (IOException e){
+                throw new RuntimeException("Failed to read the file data");
+        }catch (Exception e){
+                throw new RuntimeException("Failed to upload image" + e);
+
+        }
+    }
+
+
+
+
+
+
+    @Transactional(readOnly = true)
+    public byte[] downloadUserImage(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not Found!"));
+            if(user == null){
+                throw new EntityNotFoundException("User not Found!");
+            }else{
+            return  ImageUtils.decompressImage(user.getProfilePicture());
+            }
+    }
+
+
+
+    @Transactional(readOnly = true)
+    public byte[] downloadEventImage(Long eventId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        return ImageUtils.decompressImage(event.getEventPicture());
+    }
 
 
 }

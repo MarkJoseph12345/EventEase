@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,11 +35,9 @@ public class UserController {
 
 
 
-
-
     @GetMapping("/hello")
     public ResponseEntity<String> greet(){
-        return new ResponseEntity<>("Hello World",HttpStatus.OK);
+        return new ResponseEntity<>("Hello World yawa mo tanan",HttpStatus.OK);
     }
 
 
@@ -61,6 +61,10 @@ public class UserController {
     }
 
 
+
+
+
+
     @GetMapping("/getAllUsers")
     public List<User> getAllUsers(){
          return userService.getAllUsers();
@@ -68,15 +72,13 @@ public class UserController {
 
 
 
-
-
-
-
     @PutMapping("/updateProfilePicture/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestParam("image")
-    MultipartFile file) throws IOException {
+    MultipartFile file) throws Exception {
         return new ResponseEntity<>(imageService.uploadUserImage(userId,file),HttpStatus.OK);
     }
+
+
 
 
     @DeleteMapping("/deleteUser/{userId}")
@@ -89,6 +91,16 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<User> authenticatedUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser  = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(currentUser);
+    }
+
+
 
 
 

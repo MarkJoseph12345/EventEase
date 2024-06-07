@@ -26,6 +26,8 @@ public class UserEventController {
 
 
 
+
+
         @PostMapping("/joinEvent/{userId}/{eventId}")
         public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId){
                 try{

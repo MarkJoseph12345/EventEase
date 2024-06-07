@@ -47,6 +47,8 @@ public class UserEventService {
 
 
 
+
+
     public List<Event> getAllEventsJoinedByUser(Long userId) {
        return repository.findAll().stream().filter(userEvent -> userEvent.getUser().getId().equals(userId))
                 .map(UserEvent::getEvent)

@@ -22,6 +22,8 @@ public class Event {
     private Long id;
 
 
+
+
     private String eventName;
 
     private String eventDescription;
@@ -33,9 +35,13 @@ public class Event {
     private Date eventEnds;
 
 
-    private String eventPicture;
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    private byte[] eventPicture;
 
+    private String eventPictureType;
 
+    private String eventPictureName;
 
 
 

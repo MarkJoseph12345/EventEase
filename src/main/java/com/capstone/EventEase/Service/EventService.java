@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +33,13 @@ public class EventService {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
     }
 
+
+
+
+
     public String deleteEvent(Long eventId) throws IOException {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
-        if (event.getEventPicture() != null) {
-            imageService.deleteImage(event.getEventPicture());
-        }
         List<UserEvent> userEvents = userEventRepository.findByEventId(eventId);
         for (UserEvent userEvent : userEvents) {
             userEventRepository.delete(userEvent);
@@ -45,6 +47,8 @@ public class EventService {
         eventRepository.deleteById(eventId);
         return "Event Has been Deleted";
     }
+
+
 
     public List<Event> getAllEvents() {
         return eventRepository.findAll();

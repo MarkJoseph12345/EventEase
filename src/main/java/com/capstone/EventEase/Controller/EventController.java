@@ -43,17 +43,18 @@ public class EventController {
 
 
 
-
-
     @PutMapping("/updateEventPicture/{eventId}")
     public ResponseEntity<?> uploadEventPicture(@PathVariable Long eventId,@RequestParam("eventImage") MultipartFile file) throws IOException{
         return new ResponseEntity<>(imageService.uploadEventImage(eventId,file),HttpStatus.OK);
     }
 
+
+
     @GetMapping("getEventById/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) throws Exception{
         return new ResponseEntity<>(eventService.getEvent(eventId),HttpStatus.OK);
     }
+
 
     @GetMapping("/getEventPicture/{eventId}")
     public ResponseEntity<?> getEventPicture(@PathVariable Long eventId) throws IOException{
@@ -63,16 +64,24 @@ public class EventController {
 
 
 
+
+
     @GetMapping("/getAllEvents")
     public List<Event> getAllEvents(){
         return eventService.getAllEvents();
     }
 
 
+
+
     @DeleteMapping("deleteEventById/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) throws Exception {
         return new ResponseEntity<>(eventService.deleteEvent(eventId), HttpStatus.OK);
     }
+
+
+
+
 
 
 
