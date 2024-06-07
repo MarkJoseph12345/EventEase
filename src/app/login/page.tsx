@@ -1,6 +1,5 @@
 'use client'
 
-
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios, { AxiosError } from "axios";
@@ -12,7 +11,12 @@ import { API_ENDPOINTS } from "../api";
 const Login = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [showLoginPassword, setShowLoginPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
 
     useEffect(() => {
         const token = window.localStorage.getItem('token');
@@ -21,16 +25,9 @@ const Login = () => {
         }
     }, []);
 
-
-    const [showLoginPassword, setShowLoginPassword] = useState(false);
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
     };
-
-    const [formData, setFormData] = useState({
-        username: "",
-        password: "",
-    });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -38,7 +35,6 @@ const Login = () => {
             [e.target.name]: e.target.value
         });
     };
-
 
     const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,7 +52,8 @@ const Login = () => {
             window.localStorage.setItem("name", name);
             window.localStorage.setItem("userid", userid);
             window.localStorage.setItem("department", department);
-            router.push('/dashboard')
+            setShowSuccessDialog(true); // Set showSuccessDialog to true
+            router.push('/dashboard');
             setFormData({
                 username: "",
                 password: "",
@@ -68,6 +65,7 @@ const Login = () => {
             setLoading(false);
         }
     };
+
     return (
         <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex items-center lg:justify-end justify-center lg:px-60">
             <div className={`h-[400px] w-[450px] bg-black rounded-2xl lg:p-6 p-4  absolute top-[15%]`}>
@@ -116,6 +114,21 @@ const Login = () => {
                     </div>
                 </form>
             </div>
+            {showSuccessDialog && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+                    <div className="bg-white rounded-lg p-6">
+                        <p className="text-lg font-bold">Congratulations!</p>
+                        <p>You have successfully signed into your account.</p>
+                        <button
+                            onClick={() => setShowSuccessDialog(false)}
+                            className="mt-4 bg-black text-white px-4 py-2 rounded"
+                            style={{ backgroundColor: '#FDCC01', display: 'block', margin: '0 auto' }}
+                        >
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
