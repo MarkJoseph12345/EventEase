@@ -32,59 +32,51 @@ const SignUp = () => {
         password: "",
         firstName: "",
         lastName: "",
-        department: "CEA"
+        department: ""
     });
     const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
     const handleClickShowPassword = () => {
         setShowLoginPassword(!showLoginPassword);
     };
 
-    // Function to validate email format
     const isValidEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
-    // Function to validate password
     const isValidPassword = (password: string): boolean => {
-        // Regular expression for at least one uppercase letter, one number, and a minimum length of 8, with optional special characters
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,}$/;
         return passwordRegex.test(password);
     };
 
-    // Function to validate form data
     const validateFormData = () => {
         const errors: FormErrors = {};
 
-        // Validate first name
         if (!formData.firstName.trim()) {
             errors.firstName = "First name is required.";
         }
 
-        // Validate last name
         if (!formData.lastName.trim()) {
             errors.lastName = "Last name is required.";
         }
 
-        // Validate email
         if (!isValidEmail(formData.username)) {
             errors.username = "Please enter a valid email address.";
         }
 
-        // Validate department
         if (!formData.department) {
             errors.department = "Department is required.";
         }
 
-        // Validate password
         if (!isValidPassword(formData.password)) {
             errors.password = "Your password must be 8 characters with at least one uppercase letter and one number.";
         }
 
         setFormErrors(errors);
-        return Object.keys(errors).length === 0; // Return whether the form is valid
+        return Object.keys(errors).length === 0;
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
@@ -95,7 +87,6 @@ const SignUp = () => {
             [name]: value
         });
 
-        // Validate individual fields and update error state
         const errors = { ...formErrors };
 
         if (name === "firstName") {
@@ -149,7 +140,6 @@ const SignUp = () => {
             department: value
         });
 
-        // Validate department and update error state
         const errors = { ...formErrors };
         if (!value) {
             errors.department = "Department is required.";
@@ -164,11 +154,10 @@ const SignUp = () => {
         e.preventDefault();
         setLoading(true);
 
-        // Validate the form data before submission
         const isFormValid = validateFormData();
         if (!isFormValid) {
             setLoading(false);
-            return; // Prevent form submission if the form is invalid
+            return;
         }
 
         try {
@@ -181,7 +170,6 @@ const SignUp = () => {
             });
 
             console.log("Login successful:", loginResponse.data);
-            console.log("Login successful:", response.data);
             const authToken = response.data.token;
             const role = response.data.user.role;
             const name = response.data.user.name;
@@ -192,7 +180,7 @@ const SignUp = () => {
             window.localStorage.setItem("name", name);
             window.localStorage.setItem("userid", userid);
             window.localStorage.setItem("department", department);
-            router.push('/dashboard')
+            setShowSuccessDialog(true);
             setFormData({
                 username: "",
                 password: "",
@@ -208,9 +196,10 @@ const SignUp = () => {
             setLoading(false);
         }
     };
+
     return (
         <div className="bg-cover bg-no-repeat bg-center bg-[url('/BG.png')] h-screen w-screen flex items-center lg:justify-start justify-center lg:px-60">
-            <div className={`h-[600px] w-[500px] bg-black rounded-2xl lg:p-6 p-4 absolute top-[15%]`} >
+            <div className={`h-[600px] w-[500px] bg-black rounded-2xl lg:p-6 p-4 absolute top-[15%]`}>
                 <form onSubmit={handleSubmit} method="post" className="bg-customYellow h-full w-full flex flex-col items-center justify-between py-3 gap-5 shadow-inner">
                     <div className="flex flex-col items-center">
                         <h1 className="text-3xl font-extrabold">CREATE AN ACCOUNT</h1>
@@ -315,6 +304,24 @@ const SignUp = () => {
                     </div>
                 </form>
             </div>
+            {showSuccessDialog && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+                    <div className="bg-white rounded-lg p-6">
+                        <p className="text-lg font-bold">Congratulations!</p>
+                        <p>Your account has been successfully created.</p>
+                        <button
+                            onClick={() => {
+                                setShowSuccessDialog(false);
+                                router.push('/dashboard');
+                            }}
+                            className="mt-4 bg-black text-white px-4 py-2 rounded"
+                            style={{ backgroundColor: '#FDCC01', display: 'block', margin: '0 auto' }}
+                        >
+                            Continue
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
