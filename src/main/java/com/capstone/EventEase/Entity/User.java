@@ -23,12 +23,12 @@ public class User implements UserDetails {
 
 
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
-
-
 
 
     private String username;
@@ -45,25 +45,19 @@ public class User implements UserDetails {
     private String department;
 
 
-    @Lob
-    @Column(name = "profilePicture")
-    @Basic(fetch = FetchType.EAGER)
+
+    @Column(name = "profilePicture", columnDefinition = "BYTEA")
+    @Basic(fetch = FetchType.LAZY)
     private byte[] profilePicture;
 
     private String profilePictureType;
-
     private String profilePictureName;
-
-
-
-
     private String qrCode;
-
-
-
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
 
 
     @Override
@@ -81,6 +75,7 @@ public class User implements UserDetails {
         return true;
     }
 
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
@@ -90,6 +85,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 
 
 }

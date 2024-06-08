@@ -56,11 +56,30 @@ public class EventController {
     }
 
 
+
+
     @GetMapping("/getEventPicture/{eventId}")
     public ResponseEntity<?> getEventPicture(@PathVariable Long eventId) throws IOException{
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
-                .body(imageService.downloadEventImage(eventId));
+
+        String format = imageService.getEventPictureFormat(eventId);
+        MediaType mediaType;
+        switch (format){
+            case "png":
+                mediaType = MediaType.IMAGE_PNG;
+                break;
+            case "jpg":
+                mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "svg":
+                mediaType = MediaType.valueOf("image/svg+xml");
+                break;
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
+        }
+        byte[] eventImage = imageService.downloadEventImage(eventId);
+        return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(eventImage);
     }
+
 
 
 

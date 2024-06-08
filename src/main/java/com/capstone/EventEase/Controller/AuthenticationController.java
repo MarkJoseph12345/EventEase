@@ -6,6 +6,8 @@ import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,21 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/")
 @RequiredArgsConstructor
+@Tag(name = "Authentication Controller", description = "Authentication Controller mwheheh")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+
+
+
+
+
+    @GetMapping("/hello")
+    @Operation(summary = "Say Hello", description = "This will say hello")
+    public ResponseEntity<String> greet(){
+        return new ResponseEntity<>("Hello World",HttpStatus.OK);
+    }
 
 
 
@@ -57,8 +70,6 @@ public class AuthenticationController {
 
 
 
-
-
     @PutMapping("/updateUser/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
     User user){
@@ -73,10 +84,7 @@ public class AuthenticationController {
 
 
 
-    @GetMapping("/hello")
-    public ResponseEntity<?> greet() {
-        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
-    }
+
 
 
 

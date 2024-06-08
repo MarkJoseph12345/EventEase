@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,7 +24,6 @@ public class Event {
 
 
 
-
     private String eventName;
 
     private String eventDescription;
@@ -34,21 +34,20 @@ public class Event {
 
     private Date eventEnds;
 
-
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "BYTEA")
     private byte[] eventPicture;
 
     private String eventPictureType;
 
     private String eventPictureName;
 
-
-
-    private String department;
+    private List<String> department;
 
 
     private String eventType;
+
+
 
 
 }

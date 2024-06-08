@@ -20,12 +20,7 @@ public class AdminController {
     private final AdminService adminService;
 
 
-
-
-
-
-
-
+    
     @PostMapping("/attend/{username}")
     public ResponseEntity<?> attendUsers(@PathVariable String username){
         try{

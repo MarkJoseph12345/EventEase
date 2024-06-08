@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/userevent/")
+@RequestMapping("/api/v1/auth/userevent")
 public class UserEventController {
 
 

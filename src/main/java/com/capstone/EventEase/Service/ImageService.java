@@ -162,12 +162,20 @@ public class ImageService {
 
 
 
+
+    @Transactional
+
     public String uploadEventImage(Long eventId, MultipartFile file){
         if(file.isEmpty()){
             throw new IllegalArgumentException("File is empty");
         }
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found!"));
+
+        if(event.getEventPicture() != null){
+
+        }
+
 
         try{
             event.setEventName(file.getOriginalFilename());
@@ -185,6 +193,8 @@ public class ImageService {
         }
     }
 
+
+    @Transactional
     public String uploadUserImage(Long userId,MultipartFile file){
 
         if(file.isEmpty()){
@@ -221,6 +231,7 @@ public class ImageService {
 
 
 
+
     @Transactional(readOnly = true)
     public byte[] downloadUserImage(Long userId){
         User user = userRepository.findById(userId)
@@ -239,6 +250,24 @@ public class ImageService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
         return ImageUtils.decompressImage(event.getEventPicture());
     }
+
+
+    public String getUserPictureFormat(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
+
+        String profileName = user.getProfilePictureName();
+        String format = profileName.substring(profileName.lastIndexOf(".") + 1);
+        return format;
+    }
+
+    public String getEventPictureFormat(Long eventId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        String eventPictureName = event.getEventPictureName();
+        String format = eventPictureName.substring(eventPictureName.lastIndexOf(".") + 1);
+        return format;
+    }
+
+
 
 
 }

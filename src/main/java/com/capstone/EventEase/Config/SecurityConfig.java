@@ -3,6 +3,11 @@ package com.capstone.EventEase.Config;
 
 import com.capstone.EventEase.Entity.Role;
 import com.capstone.EventEase.Service.UserService;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +24,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+
+
+
+
 
 
     private final UserService userService;
@@ -32,12 +44,19 @@ public class SecurityConfig {
 
 
 
+
+
+
+    /*
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> request
                 .requestMatchers("/api/v1/auth/**")
-                .permitAll().requestMatchers("/api/v1/auth/user")
+                .permitAll().requestMatchers("/api/v1/user")
                 .hasAnyAuthority(Role.STUDENT.name())
+                        .requestMatchers("api/v1/admin")
+                        .hasAnyRole(Role.ADMIN.name())
+                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                 .anyRequest()
                 .authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -45,7 +64,23 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
-    
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                        .requestMatchers("/api/v1/auth/user").hasAnyAuthority(Role.STUDENT.name())
+                        .requestMatchers("/api/v1/auth/admin").hasAnyRole(Role.ADMIN.name())
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
 
 
 
@@ -53,6 +88,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 
 
 
@@ -73,5 +109,24 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
+    }
+
+
+
+    @Bean
+    public OpenAPI defineOpenApi(){
+        Server server = new Server();
+        server.setUrl("http://localhost:8080");
+        server.setDescription("EventEase");
+
+        Contact contact = new Contact();
+        contact.setName("Event Ease Team");
+        contact.setEmail("EventEase@gmail.com");
+
+        Info information = new Info().title("EventEase System API")
+                .version("1,0")
+                .description("This Api exposes the endpoints to Track Events")
+                .contact(contact);
+        return new OpenAPI().info(information).servers(List.of(server));
     }
 }

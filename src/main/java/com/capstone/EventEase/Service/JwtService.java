@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ import java.util.function.Function;
 
 public class JwtService {
 
-    private String jwtSigningKey ="413F4428472B4B6250655368566D5970337336763979244226452948404D6351";
 
+    @Value("${security.jwt.jwtSigningKey}")
+    private String jwtSigningKey;
 
 
 
