@@ -2,6 +2,8 @@ package com.capstone.EventEase.Controller;
 
 
 import com.capstone.EventEase.Service.UserEventService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -14,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth/userevent")
+@Tag(name = "USER EVENT CONTROLLER",description = "THIS IS WHERE THE USER EVENT CONTROLLERS ARE")
 public class UserEventController {
 
 
@@ -26,8 +29,8 @@ public class UserEventController {
 
 
 
-
-
+    //    @Tag(name = "POST")
+        @Operation(summary = "User can join event by passing userid and event id respectively")
         @PostMapping("/joinEvent/{userId}/{eventId}")
         public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId){
                 try{
@@ -38,6 +41,8 @@ public class UserEventController {
         }
 
 
+      //  @Tag(name = "GET")
+        @Operation(summary = "Get All Events Joined By User by passing a UserId")
         @GetMapping("/getAllEventsJoinedByUser/{userId}")
         public ResponseEntity<?> getAllEventsJoinedByUser(@PathVariable Long userId){
             try{
@@ -50,6 +55,9 @@ public class UserEventController {
         }
 
 
+
+     //   @Tag(name = "GET")
+        @Operation(summary = "Get All Users Joined To Event By Passing an EventId")
     @GetMapping("/getAllUsersJoinedToEvent/{eventId}")
     public ResponseEntity<?> getAllUsersJoinedToEvent(@PathVariable Long eventId){
         try{

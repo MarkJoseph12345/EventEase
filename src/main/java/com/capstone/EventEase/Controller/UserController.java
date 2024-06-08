@@ -24,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/user")
 @RequiredArgsConstructor
+@Tag(name = "USER CONTROLLER", description = "THIS IS WHERE THE USER CONTROLLERS ARE")
 public class UserController {
 
 
@@ -32,9 +33,7 @@ public class UserController {
     private final ImageService imageService;
 
 
-
-
-    @Tag(name = "GET")
+   // @Tag(name = "userGET")
     @Operation(summary = "Greet The User")
     @GetMapping("/hello")
     public ResponseEntity<String> greet(){
@@ -45,7 +44,7 @@ public class UserController {
 
 
 
-    @Tag(name = "GET")
+    //@Tag(name = "userGET")
     @Operation(summary = "Gets the User By Passing an Id", description = "This will return the user based on the id passed")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable Long userId) throws Exception{
@@ -53,7 +52,7 @@ public class UserController {
     }
 
 
-    @Tag(name = "GET")
+   // @Tag(name = "userGET")
     @Operation(summary = "Gets the users profile picture by sending an id")
     @GetMapping("/getProfilePicture/{userId}")
     public ResponseEntity<?> getProfilePicture(@PathVariable Long userId) throws IOException{
@@ -81,6 +80,8 @@ public class UserController {
     }
 
 
+    //@Tag(name = "userGET")
+    @Operation(summary = "gets all the users in the system")
     @GetMapping("/getAllUsers")
     public List<User> getAllUsers(){
          return userService.getAllUsers();
@@ -88,12 +89,18 @@ public class UserController {
 
 
 
+   // @Tag(name = "userPUT")
+    @Operation(summary = "Update Profile Picture",description = "The user can update his/her profile picture by" +
+            "passing an id and an image ")
     @PutMapping("/updateProfilePicture/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestParam("image")
     MultipartFile file) throws Exception {
         return new ResponseEntity<>(imageService.uploadUserImage(userId,file),HttpStatus.OK);
     }
 
+
+   //    @Tag(name = "userDELETE")
+    @Operation(summary = "User can delete account by passing their id")
     @DeleteMapping("/deleteUser/{userId}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long userId){
         try{
@@ -106,12 +113,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser  = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(currentUser);
-    }
+
 
 
 

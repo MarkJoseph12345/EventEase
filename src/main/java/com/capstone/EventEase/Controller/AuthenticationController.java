@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/")
 @RequiredArgsConstructor
-@Tag(name = "Authentication Controller", description = "Authentication Controller mwheheh")
+@Tag(name = "AUTHENTICATION CONTROLLER", description = "THIS IS THE AUTHENTICATION CONTROLLER")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -40,6 +40,8 @@ public class AuthenticationController {
 
 
 
+
+    @Operation(summary = "Register A User")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
 
@@ -54,6 +56,8 @@ public class AuthenticationController {
     }
 
 
+
+    @Operation(summary = "Login With User Credentials")
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
         try{
@@ -69,7 +73,7 @@ public class AuthenticationController {
 
 
 
-
+    @Operation(summary = "Update User By passing UserId and new User Credentials")
     @PutMapping("/updateUser/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
     User user){
