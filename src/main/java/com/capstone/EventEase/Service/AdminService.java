@@ -14,11 +14,6 @@ public class AdminService {
 
     private final UserRepository userRepository;
 
-
-
-
-
-
     public String checkAttendance(String username){
 
         User user = userRepository.findByUsername(username);

@@ -24,11 +24,6 @@ public class UserEventController {
         private  final UserEventService userEventService;
 
 
-
-
-
-
-
     //    @Tag(name = "POST")
         @Operation(summary = "User can join event by passing userid and event id respectively")
         @PostMapping("/joinEvent/{userId}/{eventId}")
@@ -38,6 +33,17 @@ public class UserEventController {
                 }catch (EntityNotFoundException e){
                     return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
                 }
+        }
+
+
+
+        @DeleteMapping("/unjoinEvent/{userId}/{eventId}")
+        public ResponseEntity<?> unjoinEvent(@PathVariable Long userId, @PathVariable long eventId){
+            try{
+                return new ResponseEntity<>(userEventService.unjoinEvent(userId,eventId),HttpStatus.OK);
+            }catch (Exception e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+            }
         }
 
 

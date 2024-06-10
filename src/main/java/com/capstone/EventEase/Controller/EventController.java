@@ -7,7 +7,9 @@ import com.capstone.EventEase.Service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -107,6 +111,27 @@ public class EventController {
     }
 
 
+
+
+
+    @Operation(summary = "Get Event By Current Date")
+    @GetMapping("/getEventByCurrentDate")
+    public ResponseEntity<?> getEventByCurrentDate(@RequestParam("currentDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime currentDate){
+            try{
+                return new ResponseEntity<>(eventService.getByEventStarts(currentDate),HttpStatus.OK);
+            }catch (EntityNotFoundException e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.BAD_REQUEST);
+            }catch (Exception e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+            }
+    }
+
+
+
+    @GetMapping("/getStartByEventId/{eventId}")
+    public ResponseEntity<?> getStartsByEvent(@PathVariable Long eventId){
+        return ResponseEntity.ok(eventService.getEventStarts(eventId));
+    }
 
 
 

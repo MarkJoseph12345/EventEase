@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +35,6 @@ public class EventService {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
     }
 
-
-
-
-
     public String deleteEvent(Long eventId) throws IOException {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
@@ -48,6 +46,16 @@ public class EventService {
         return "Event Has been Deleted";
     }
 
+
+
+
+    public Event getByEventStarts(OffsetDateTime date){
+        Event event = eventRepository.findByEventStarts(date);
+        if(event == null){
+            throw new EntityNotFoundException("Event with that date Not Found!");
+        }
+        return event;
+    }
 
 
     public List<Event> getAllEvents() {
@@ -81,4 +89,10 @@ public class EventService {
         return eventRepository.save(oldEvent);
     }
 
+
+
+    public OffsetDateTime getEventStarts(Long eventId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        return event.getEventStarts();
+    }
 }

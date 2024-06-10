@@ -11,8 +11,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,11 +38,44 @@ public class UserEventService {
         return userEvent;
     }
 
+
+
+    public UserEvent unjoinEvent(Long userId, Long eventId){
+      /*
+      Two Solutions But Solution 2 is faster and more readable
+        Optional<UserEvent> userEventOptional = repository.findAll().stream().filter(userEvent ->
+                userEvent.getEvent().getId().equals(eventId) && userEvent.getUser().getId().equals(userId))
+                .findFirst();
+
+        Long userEventId = userEventOptional.map(UserEvent::getId)
+                .orElseThrow(() -> new EntityNotFoundException("NO USER OR EVENT ASSOCIATED"));
+        Optional<UserEvent> userEvent = repository.findById(userEventId);
+
+        repository.deleteById(userEventId);
+       return userEvent;
+
+       */
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
+
+        UserEvent userEvent = repository.findByUserAndEvent(user, event);
+
+        if (userEvent == null) {
+            throw new EntityNotFoundException("No UserEvent associated with user " + userId + " and event " + eventId);
+        }
+
+        repository.deleteById(userEvent.getId());
+        return userEvent;
+
+    }
+
     public List<UserEvent> getAllEventsJoinedByAllUsers(){
             return repository.findAll();
     }
-
-
 
 
     public List<Event> getAllEventsJoinedByUser(Long userId) {

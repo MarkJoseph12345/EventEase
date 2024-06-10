@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +30,10 @@ public class Event {
     private String eventDescription;
 
 
-    private Date eventStarts;
+    private OffsetDateTime eventStarts;
 
 
-    private Date eventEnds;
+    private OffsetDateTime eventEnds;
 
     @Basic(fetch = FetchType.LAZY)
     @Column(columnDefinition = "BYTEA")
@@ -46,8 +47,6 @@ public class Event {
 
 
     private String eventType;
-
-
 
 
 }
