@@ -112,6 +112,25 @@ public class EventController {
 
 
 
+    @Operation(summary = "Like the event")
+    @PostMapping("/likeEvent/{eventId}/{userId}")
+    public ResponseEntity<?> likeEvent(@PathVariable Long eventId,@PathVariable Long userId){
+            try{
+                return new ResponseEntity<>(eventService.likeEvent(eventId,userId),HttpStatus.OK);
+            }catch (Exception e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+            }
+    }
+
+    @Operation(summary = "Like the event")
+    @PostMapping("/dislikeEvent/{eventId}/{userId}")
+    public ResponseEntity<?> dislikeEvent(@PathVariable Long eventId,@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(eventService.dislikeEvent(eventId,userId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     @Operation(summary = "Get Event By Current Date")

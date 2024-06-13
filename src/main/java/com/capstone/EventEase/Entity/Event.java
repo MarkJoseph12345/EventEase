@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -31,6 +33,18 @@ public class Event {
 
 
     private OffsetDateTime eventStarts;
+
+
+    private int likes = 0;
+
+    private int dislikes = 0;
+
+
+    private Set<String> usersLiked = new HashSet<>();
+
+    private Set<String> usersDisliked = new HashSet<>();
+
+
 
 
     private OffsetDateTime eventEnds;

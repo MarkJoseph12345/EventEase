@@ -63,10 +63,26 @@ public class AttendanceService {
                 .count();
     }
 
+    private long getNumberOfAttendanceInEvent(Long eventId, List<Attendance> attendances){
+        return attendances.stream().filter(attendance -> attendance.getUserevent().getEvent().getId().equals(eventId))
+                .count();
+    }
 
 
 
 
+    public List<EventAttendance> getAttendanceOfUsersInAllEvents(){
+        List <Attendance> attendances = attendanceRepository.findAll();
+
+        List<Event> events = attendances.stream().map(attendance -> attendance.getUserevent()
+                .getEvent()).distinct().collect(Collectors.toList());
+
+        List<EventAttendance> eventAttendances = events.stream().map(
+                event -> new EventAttendance(event,getNumberOfAttendanceInEvent(event.getId(),attendances))).
+                collect(Collectors.toList());
+
+        return eventAttendances;
+    }
 
 
     public List<UserAttendance> getTopThreeUsersByAttendance(){
@@ -83,6 +99,9 @@ public class AttendanceService {
         return userAttendances.stream().sorted((user1,user2) -> Long.compare(user2.getAttendanceCount(),user1.getAttendanceCount()))
                 .limit(3).collect(Collectors.toList());
     }
+
+
+
 
 
 

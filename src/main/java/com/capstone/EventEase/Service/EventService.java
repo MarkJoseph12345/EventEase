@@ -1,10 +1,12 @@
 package com.capstone.EventEase.Service;
 
 import com.capstone.EventEase.Entity.Event;
+import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
 import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 
+import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class EventService {
     private final EventRepository eventRepository;
 
     private final UserEventRepository userEventRepository;
+
+    private final UserRepository userRepository;
+
 
     private final ImageService imageService;
 
@@ -95,4 +100,52 @@ public class EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         return event.getEventStarts();
     }
+
+
+    public Event likeEvent(Long eventId, Long userId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found"));
+
+        if(event.getUsersLiked().contains(user.getUsername())){
+                throw new RuntimeException("User already Liked");
+        }else{
+            event.setLikes(event.getLikes()+1);
+            event.getUsersLiked().add(user.getUsername());
+            if(event.getUsersDisliked().contains(user.getUsername())){
+                event.setDislikes(event.getDislikes()-1);
+                event.getUsersDisliked().remove(user.getUsername());
+            }
+
+            eventRepository.save(event);
+        }
+
+       return event;
+    }
+
+    public Event dislikeEvent(Long eventId, Long userId){
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found"));
+
+
+        if(event.getUsersDisliked().contains(user.getUsername())){
+            throw new RuntimeException("User already DisLiked");
+        }else{
+            event.setDislikes(event.getDislikes()+1);
+            event.getUsersDisliked().add(user.getUsername());
+
+            if(event.getUsersLiked().contains(user.getUsername())){
+                event.setLikes(event.getLikes()-1);
+                event.getUsersLiked().remove(user.getUsername());
+            }
+
+            eventRepository.save(event);
+        }
+
+        return event;
+    }
+
+
+
+
+
 }

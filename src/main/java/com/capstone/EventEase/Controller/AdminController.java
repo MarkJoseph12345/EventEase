@@ -2,6 +2,7 @@
 package com.capstone.EventEase.Controller;
 
 
+import com.capstone.EventEase.Entity.EventAttendance;
 import com.capstone.EventEase.Entity.UserAttendance;
 import com.capstone.EventEase.Service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,6 +56,14 @@ public class AdminController {
     public ResponseEntity<List<UserAttendance>> getTopThree() {
         List<UserAttendance> topThreeUsers = attendanceService.getTopThreeUsersByAttendance();
         return ResponseEntity.ok(topThreeUsers);
+    }
+
+
+    @Operation(summary = "Get the number of attendes in each event")
+    @GetMapping("/getAttendanceByAllEvents")
+    public ResponseEntity<List<EventAttendance>> eventAttendances(){
+        List<EventAttendance> eventAttendances = attendanceService.getAttendanceOfUsersInAllEvents();
+        return ResponseEntity.ok(eventAttendances);
     }
 
 
