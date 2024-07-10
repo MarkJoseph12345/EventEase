@@ -232,6 +232,9 @@ public class ImageService {
 
 
 
+
+
+
     @Transactional(readOnly = true)
     public byte[] downloadUserImage(Long userId){
         User user = userRepository.findById(userId)
@@ -250,6 +253,8 @@ public class ImageService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
         return ImageUtils.decompressImage(event.getEventPicture());
     }
+
+
 
 
     public String getUserPictureFormat(Long userId){

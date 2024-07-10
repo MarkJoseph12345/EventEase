@@ -32,19 +32,10 @@ import java.util.List;
 public class SecurityConfig {
 
 
-
-
-
-
-
     private final UserService userService;
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-
-
-
 
 
     /*
@@ -83,17 +74,14 @@ public class SecurityConfig {
 
 
 
-
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
 
-
-
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         authenticationProvider.setUserDetailsService(userService);
@@ -101,20 +89,14 @@ public class SecurityConfig {
     }
 
 
-
-
-
-
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
 
-
     @Bean
-    public OpenAPI defineOpenApi(){
+    public OpenAPI defineOpenApi() {
         Server server = new Server();
         server.setUrl("http://localhost:8080");
         server.setDescription("EventEase");
@@ -129,4 +111,5 @@ public class SecurityConfig {
                 .contact(contact);
         return new OpenAPI().info(information).servers(List.of(server));
     }
-}
+    }
+
