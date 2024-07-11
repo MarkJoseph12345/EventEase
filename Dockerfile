@@ -1,5 +1,5 @@
 # First stage: build the application
-FROM maven:3.8.5-openjdk-22 AS build
+FROM maven:3.9.8-eclipse-temurin-22-alpine AS build
 
 # Set the working directory inside the container
 WORKDIR /app
