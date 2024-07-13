@@ -32,12 +32,13 @@ public class AuthenticationController {
 
 
 
+
+
     @GetMapping("/hello")
     @Operation(summary = "Say Hello", description = "This will say hello")
     public ResponseEntity<String> greet(){
         return new ResponseEntity<>("Hello World",HttpStatus.OK);
     }
-
 
 
 
@@ -55,6 +56,11 @@ public class AuthenticationController {
         }
     }
 
+
+    @GetMapping("/test")
+    public String greetings(){
+        return "Welcome to the testing unit";
+    }
 
 
     @Operation(summary = "Login With User Credentials")

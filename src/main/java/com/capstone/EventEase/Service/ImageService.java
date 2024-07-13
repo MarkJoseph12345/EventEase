@@ -178,7 +178,7 @@ public class ImageService {
 
 
         try{
-            event.setEventName(file.getOriginalFilename());
+            event.setEventPictureName(file.getOriginalFilename());
 
             byte[] images = ImageUtils.compressImage(file.getBytes());
             event.setEventPicture(images);
