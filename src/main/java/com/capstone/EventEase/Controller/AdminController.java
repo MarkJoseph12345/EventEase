@@ -41,6 +41,23 @@ public class AdminController {
     }
 
 
+
+
+    @Operation(summary = "Check if The User Attended the Event")
+    @PostMapping("/checkAttend/{eventId}/{userId}")
+    public ResponseEntity<?> checkIfUserAttended(@PathVariable Long eventId, @PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(attendanceService.checkIfAttendedEvent(eventId,userId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
     /*
     @Operation(summary = "Get The Number of Attended by UserId")
     @GetMapping("/getAttendance/{userId}")

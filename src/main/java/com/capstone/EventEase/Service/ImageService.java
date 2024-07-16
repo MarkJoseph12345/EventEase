@@ -194,6 +194,8 @@ public class ImageService {
     }
 
 
+    
+
     @Transactional
     public String uploadUserImage(Long userId,MultipartFile file){
 

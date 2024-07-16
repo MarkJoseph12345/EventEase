@@ -57,6 +57,26 @@ public class AttendanceService {
     }
 
 
+
+    public boolean checkIfAttendedEvent(Long eventId, Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
+        if(user == null){
+            throw new EntityNotFoundException("User not Found!");
+        }
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
+        UserEvent userEvent = repository.findByUserAndEvent(user,event);
+        Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
+
+        if(!attendance.isPresent()){
+            return false;
+        }
+        return true;
+    }
+
+
+
+
     private long getNumberofAttendance(Long userId, List<Attendance> allAttendances) {
         return allAttendances.stream()
                 .filter(attendance -> attendance.getUserevent().getUser().getId().equals(userId))

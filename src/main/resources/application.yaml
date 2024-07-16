@@ -5,6 +5,7 @@ spring:
     password: 8wbqQ6KvXzUZiJyCIsNZ8pgaaHc11vLI
     driver-class-name: org.postgresql.Driver
 
+
   servlet:
     multipart:
       max-file-size: 10MB
