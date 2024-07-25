@@ -157,20 +157,12 @@ const CreateEvent = () => {
         <div>
             <Sidebar />
             <div className="mt-2 mx-2 mb-5">
-<<<<<<< HEAD
                 <p className="text-2xl mt-10 font-poppins font-bold text-center">Create Event</p>
-=======
-                <p className="text-2xl font-poppins font-bold text-center">Create Event</p>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto flex flex-col gap-5 ">
                     <div className="relative w-full flex flex-col items-center justify-center">
                         {newPicture && <img src={preview} className="mx-auto max-w-72 max-h-72 object-scale-down" />}
                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-<<<<<<< HEAD
                         <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="bg-customYellow font-poppins font-medium px-4 py-2 rounded-md mt-4">{newPicture ? "Change Event Image" : "Upload Event Image"}</button>
-=======
-                        <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4">{newPicture ? "Change Event Image" : "Upload Event Image"}</button>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                     </div>
                     <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
                         <input placeholder="Event Name" name="eventName" onChange={handleInputChange}
@@ -328,11 +320,7 @@ const CreateEvent = () => {
                     </div>
                     <div className="flex flex-col items-center justify-center gap-2">
                         <button
-<<<<<<< HEAD
                             className={`bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
-=======
-                            className={`bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4 ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                             onClick={handleCreateEvent}
                             disabled={isCreating}
                         >

@@ -18,10 +18,7 @@
     "chart.js": "^4.4.3",
     "next": "14.1.4",
     "next-navigation": "^1.0.6",
-<<<<<<< HEAD
     "postcss-cli": "^11.0.0",
-=======
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-datepicker": "^6.9.0",
@@ -37,13 +34,8 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
-<<<<<<< HEAD
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",
-=======
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
     "typescript": "^5"
   }
 }

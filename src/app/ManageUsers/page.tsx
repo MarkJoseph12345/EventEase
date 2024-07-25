@@ -110,13 +110,8 @@ const ManageUsers = () => {
     return (
         <div>
             <Sidebar />
-<<<<<<< HEAD
             <div className="mt-[6rem] ml-[2rem] mx-2 mb-5">
                 <p className="text-xl font-semibold font-bevietnam mb-2 tablet:text-3xl">Users</p>
-=======
-            <div className="mt-2 mx-2 mb-5">
-                <p className="text-2xl font-semibold mb-2 tablet:text-3xl">Users</p>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 <div>
                     <div className="flex items-center mb-5">
                         <div className="relative mr-3">
@@ -153,13 +148,8 @@ const ManageUsers = () => {
                             <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2" onClick={() => handleUserClick(user)}>
                                 <img  src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
                                 <div>
-<<<<<<< HEAD
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
                                     <p className="text-gray-600 font-poppins">{user.department}</p>
-=======
-                                    <p className="font-semibold">{`${user.firstName} ${user.lastName}`}</p>
-                                    <p className="text-gray-600">{user.department}</p>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                                 </div>
                             </div>
                         ))
@@ -173,7 +163,6 @@ const ManageUsers = () => {
             </div>
             {selectedUser && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-<<<<<<< HEAD
                     <div className="bg-white px-4 rounded-md shadow-md w-[21rem]">
                         <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={handleClosePopup}>✖</p>
                         <div className="my-2 flex flex-col items-center">
@@ -187,18 +176,6 @@ const ManageUsers = () => {
                             <button
                                 onClick={handleDeleteUser}
                                 className="mt-6 px-4 py-2  mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium">
-=======
-                    <div className="bg-white px-4 rounded-md shadow-md">
-                        <p className="sticky top-0 text-end text-customYellow font-bold text-2xl z-10 cursor-pointer" onClick={handleClosePopup}>✖</p>
-                        <div className="my-2 flex flex-col items-center">
-                            <img src={userImages[selectedUser.id!] || "/defaultpic.png"} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-64 h-64 object-cover rounded-md mt-2" />
-                            <p><strong>Name:</strong> {`${selectedUser.firstName} ${selectedUser.lastName}`}</p>
-                            <p><strong>Email:</strong> {selectedUser.username}</p>
-                            <p><strong>Department:</strong> {selectedUser.department}</p>
-                            <button
-                                onClick={handleDeleteUser}
-                                className="mt-4 px-4 py-2 bg-customRed text-white rounded-md">
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                                 Delete User
                             </button>
                         </div>

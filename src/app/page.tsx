@@ -36,15 +36,9 @@ const Home = () => {
       <div>
         <img src="/wil4 1.png" className="w-full" />
       </div>
-<<<<<<< HEAD
       <p className="text-center font-poppins text-2xl font-bold mt-10">EventEase</p>
       <p className="text-center font-regular font-poppins text-pretty">A platform for tracking events in Wildcat Innovation Labs</p>
       <div className="mt-9 mx-4">
-=======
-      <p className="text-center text-2xl font-bold underline decoration-customYellow decoration-wavy mt-5">EventEase</p>
-      <p className="text-center font-medium font-poppins text-pretty">A platform for tracking events in Wildcat Innovation Labs</p>
-      <div className="mt-5 mx-4">
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
         <p className="font-poppins text-lg font-medium laptop:text-center">Closest Event</p>
         <div className="mt-2 flex justify-center items-center gap-10">
           <img src="/wil4 1.png" className="w-44 h-44 object-cover" />
@@ -93,8 +87,4 @@ const Home = () => {
   );
 };
 
-<<<<<<< HEAD
 export default Home;
-=======
-export default Home;
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818

@@ -68,19 +68,11 @@ const AdminDashboard = () => {
   return (
     <div>
       <Sidebar />
-<<<<<<< HEAD
       <div className="mt-[6rem] mx-2 mb-4 ml-[2rem]">
         <p className="text-xl font-semibold tablet:text-3xl font-bevietnam">Hello, admin</p>
         <p className="tablet:text-xl text-[10px] font-poppins">Manage your events!</p>
         <div className="w-full border-t my-4" />
         <p className="text-xl font-medium font-poppins underline">Closest Events</p>
-=======
-      <div className="mt-2 mx-2 mb-4">
-        <p className="text-2xl font-semibold tablet:text-3xl">Hello, admin</p>
-        <p className="tablet:text-xl">Manage your events!</p>
-        <div className="w-full border-t my-4" />
-        <p className="text-2xl font-medium">Closest Events</p>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
 
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
           {error ? (

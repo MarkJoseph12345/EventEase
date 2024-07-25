@@ -59,13 +59,8 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                 </div>
                 <div className="flex w-full justify-end">
                     <div className=" flex gap-3">
-<<<<<<< HEAD
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button>
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
-=======
-                        <button className="bg-customYellow font-poppins font-bold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button>
-                        <button className="bg-customYellow font-poppins font-bold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
->>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                     </div>
 
                 </div>
