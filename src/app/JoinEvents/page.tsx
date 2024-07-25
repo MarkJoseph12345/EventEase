@@ -77,8 +77,13 @@ const JoinEvents = () => {
     return (
         <div>
             <StudentSidebar />
+<<<<<<< HEAD
             <div className="mt-[6rem] mx-2 ml-[2rem]">
                 <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{userdepartment} Events</p>
+=======
+            <div className="mt-2 mx-2">
+                <p className="text-2xl mb-2 font-semibold tablet:text-3xl">{userdepartment} Events</p>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 <div className="mb-5">
                     <div className="relative mb-5 z-0">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

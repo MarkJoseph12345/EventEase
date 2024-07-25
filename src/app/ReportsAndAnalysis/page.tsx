@@ -119,7 +119,11 @@ const ReportsAndAnalysis: React.FC = () => {
         <div>
             <Sidebar />
             <div className="mt-5 mx-2 flex flex-col items-center">
+<<<<<<< HEAD
                 <h2 className="text-2xl font-semibold font-bevietnam mb-5">Reports and Analysis</h2>
+=======
+                <h2 className="text-2xl font-bold mb-5">Reports and Analysis</h2>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 <div className="laptop:flex laptop:flex-wrap laptop:gap-5 laptop:items-center">
                     <div className="border-2 border-black w-full max-w-[24rem] mx-auto">
                         <h3 className='border-b-2 border-black bg-customYellow font-bold text-xl text-center'>TOP 3 NUMBER OF ATTENDEES</h3>

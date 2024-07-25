@@ -88,11 +88,19 @@ const StudentDasboard = () => {
   return (
     <div>
       <Sidebar />
+<<<<<<< HEAD
       <div className="mt-[6rem] mx-2 mb-4 ml-[2rem]">
         <p className="text-xl font-semibold font-bevietnam  tablet:text-3xl">Hello, {user.firstName}</p>
         <p className="tablet:text-xl font-poppins">Discover exciting events for your department!</p>
         <div className="w-full border-t my-4" />
         <p className="text-xl font-medium font-poppins underline">Closest {userdepartment} Events</p>
+=======
+      <div className="mt-2 mx-2 mb-4">
+        <p className="text-2xl font-semibold tablet:text-3xl">Hello, {user.firstName}</p>
+        <p className="tablet:text-xl">Discover exciting events for your department!</p>
+        <div className="w-full border-t my-4" />
+        <p className="text-2xl font-medium">Closest {userdepartment} Events</p>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
           {error ? (
             <div className="flex flex-col items-center gap pt-2">

@@ -111,6 +111,7 @@ const Sidebar = () => {
                 <p className="ml-2 text-4xl font-bold cursor-pointer" onClick={toggleSidebar}>≡</p>
                 <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" onClick={handleLogoClick} />
             </div>
+<<<<<<< HEAD
             <div className={`min-h-dvh ${isSidebarOpen ? "w-3/4 border-r smartphone:w-72 tablet:w-96" : "w-0"} bg-white fixed inset-0  transition-all duration-100 ease-in-out`} ref={sidebarRef}>
                 <div className={`min-h-dvh ${isSidebarOpen ? "block" : "hidden"} `}>
                     <div>
@@ -120,12 +121,24 @@ const Sidebar = () => {
                     <div className="grid mx-10 gap-5 mt-10 smartphone:w-fit smartphone:mx-auto ">
                         {sideBarLinks.map((link, index) => (
                             <Link href={link.href} key={index} className={`rounded-xl font-regular font-poppins bg-customYellow flex items-center justify-center py-2 smartphone:py-0 smartphone:px-4 tablet:py-2 tablet:text-xl`} onClick={() => handleClick(link.href)}>
+=======
+            <div className={`min-h-dvh ${isSidebarOpen ? "w-3/4 border-r border-black smartphone:w-72 tablet:w-96" : "w-0"} bg-white fixed inset-0  transition-all duration-100 ease-in-out`} ref={sidebarRef}>
+                <div className={`min-h-dvh ${isSidebarOpen ? "block" : "hidden"} `}>
+                    <div>
+                        <img src="/logo.png" alt="Logo" className="m-3 h-10 w-40 object-cover bg-customYellow cursor-pointer tablet:h-14 tablet:w-44" onClick={handleLogoClick} />
+                        <p className=" font-bold absolute top-1 right-4 cursor-pointer tablet:text-3xl" onClick={toggleSidebar}>✖</p>
+                    </div>
+                    <div className="grid mx-10 gap-5 mt-5 smartphone:w-fit smartphone:mx-auto ">
+                        {sideBarLinks.map((link, index) => (
+                            <Link href={link.href} key={index} className={`rounded-xl font-bold bg-customYellow flex items-center justify-center py-2 smartphone:py-0 smartphone:px-4 tablet:py-2 tablet:text-xl`} onClick={() => handleClick(link.href)}>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                                 {link.imageUrl && <img src={link.imageUrl} alt={link.name} className="h-6 w-6 mr-2" />}
                                 <span>{link.name}</span>
                             </Link>
                         ))}
                     </div>
                     <div className="absolute bottom-0 mx-5 flex items-center gap-2" onClick={() => setOpenProfile(!openProfile)}>
+<<<<<<< HEAD
                         <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill ml-2 mb-5 w-4 h-4 tablet:h-20 tablet:w-20" />
                         <div className="font-regular font-bebas mb-4 text-lg flex flex-col items-start tablet:text-2xl">
                             <p>{user!.firstName} {user!.lastName}</p>
@@ -136,6 +149,19 @@ const Sidebar = () => {
                             <div className="flex items-center gap-3">
                                 <div>
                                     <img src={imageUrl || "/defaultpic.png"} className="rounded-full object-fill ml-2 mt-2 w-4 h-4 tablet:h-16 tablet:w-16" />
+=======
+                        <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill w-16 h-16 tablet:h-20 tablet:w-20" />
+                        <div className="font-semibold text-lg flex flex-col items-start tablet:text-2xl">
+                            <p>{user!.firstName}</p>
+                            <p>{user!.lastName}</p>
+                        </div>
+                    </div>
+                    {openProfile && (
+                        <div ref={profileRef} className="border border-black w-[90%] bg-white rounded-2xl absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col">
+                            <div className="flex items-center gap-3">
+                                <div>
+                                    <img src={imageUrl || "/defaultpic.png"} className="rounded-full object-fill w-12 h-12 tablet:h-16 tablet:w-16" />
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                                 </div>
                                 <div className="flex flex-col items-start tablet:text-xl">
                                     <p>{user!.firstName} {user!.lastName}</p>

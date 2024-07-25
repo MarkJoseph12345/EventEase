@@ -50,7 +50,11 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
                 <img src={preview || picture} className="mx-auto w-72 h-72 object-cover" />
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                 <div className="flex flex-col items-center">
+<<<<<<< HEAD
                     <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="block bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4">{newPicture ? "Upload Another Image" : "Upload Image"}</button>
+=======
+                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="block bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4">{newPicture ? "Upload Another Image" : "Upload Image"}</button>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                     {newPicture && (
                         <button onClick={handleUpload} className="block bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4">Save Profile</button>
                     )}
@@ -133,6 +137,7 @@ const Profile = () => {
 
 
     return (
+<<<<<<< HEAD
         <div className="bg-white-200 h-screen text-center pb-4 smartphone:h-fit tablet:h-screen">
             <Sidebar />
             <div>
@@ -143,6 +148,18 @@ const Profile = () => {
             {clickedProfilePic && <ProfilePopup picture={clickedProfilePic} onClose={handleClosePopup} />}
             <div className="h-fit rounded-2xl mt-4 border-2 p-2 bg-customWhite mx-auto w-fit smartphone:w-9/12 laptop:w-[48rem]">
                 <h1 className="text-center text-xl font-semibold font-poppins">Change your account details</h1>
+=======
+        <div className="bg-gray-200 h-screen text-center pb-4 smartphone:h-fit tablet:h-screen">
+            <Sidebar />
+            <div>
+                <img src={imageUrl || "/defaultpic.png"} alt="Profile Pic" className="my-4 w-32 h-32 rounded-full object-cover object-center mx-auto" onClick={(e) => { handleProfilePicClick(imageUrl || "/defaultpic.png") }} />
+            </div>
+            <h2 className="text-2xl font-bold">{user.firstName} {user.lastName}</h2>
+            <p className="text-gray-700">{user.username}</p>
+            {clickedProfilePic && <ProfilePopup picture={clickedProfilePic} onClose={handleClosePopup} />}
+            <div className="h-fit rounded-2xl mt-4 border-2 p-2 bg-customWhite mx-auto w-fit smartphone:w-9/12 laptop:w-[48rem]">
+                <h1 className="text-center text-xl font-bold">Change your account details</h1>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 <form onSubmit={handleUpdateUser} className="mt-2 flex flex-col gap-3">
                     <div className="relative h-11 w-full ">
                         <input placeholder="Email Address" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
@@ -190,7 +207,11 @@ const Profile = () => {
                             Password
                         </label>
                     </div>
+<<<<<<< HEAD
                     <button type="submit" className="mt-4 bg-customYellow font-semibold py-2 px-4 mb-2 rounded font-poppins">Update Details</button>
+=======
+                    <button type="submit" className="mt-4 bg-customYellow font-bold py-2 px-4 rounded">Update Details</button>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                 </form>
             </div>
             {/* {message && (

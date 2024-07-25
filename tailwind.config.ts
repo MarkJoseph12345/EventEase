@@ -28,9 +28,14 @@ const config: Config = {
         'widescreen': '1920px',
       },
       fontFamily: {
+<<<<<<< HEAD
         poppins: ['Poppins', 'sans-serif'],
         bebas: ['Bebas Neue', 'cursive'],
         bevietnam: ['Be Vietnam', 'sans-serif']
+=======
+        'poppins': ['Poppins', 'sans-serif'],
+        'bebas': ['Bebas Neue', 'cursive'],
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
       },
     },
   },

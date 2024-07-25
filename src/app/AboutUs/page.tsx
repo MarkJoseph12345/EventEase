@@ -1,5 +1,6 @@
 "use client"
 
+<<<<<<< HEAD
 import NavBar from "../Comps/NavBar";
 
 const AboutUs = () => {
@@ -93,6 +94,12 @@ const AboutUs = () => {
                 <p className="font-poppins font-light text-sm text-center">2024 EventEase. All rights reserved</p>
             </div>
             </div> 
+=======
+const AboutUs = () => {
+    return (
+        <div>
+            AboutUs
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
         </div>
     )
 }

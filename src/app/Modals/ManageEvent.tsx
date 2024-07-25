@@ -154,7 +154,11 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                             </div>
                         }
                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+<<<<<<< HEAD
                         <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="bg-customYellow font-poppins font-medium px-4 py-2 rounded-md mt-4">Change Event Image</button>
+=======
+                        <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4">Change Event Image</button>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                     </div>
                     <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
                         <input placeholder="Event Name"
@@ -321,8 +325,13 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center gap-2 self-end">
+<<<<<<< HEAD
                         <button className="bg-customRed text-white font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={handleDeleteEvent}>Delete Event</button>
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={handleUpdateEvent}>Update Event</button>
+=======
+                        <button className="bg-customRed text-white font-poppins font-bold px-4 py-2 rounded-md mt-4" onClick={handleDeleteEvent}>Delete Event</button>
+                        <button className="bg-customYellow font-poppins font-bold px-4 py-2 rounded-md mt-4" onClick={handleUpdateEvent}>Update Event</button>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
                     </div>
                 </div>
             </div>

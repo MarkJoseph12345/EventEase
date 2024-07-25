@@ -14,8 +14,13 @@ const Footer = () => {
     <div>
       <div className="mt-4 mx-4 laptop:flex laptop:gap-10 laptop:text-wrap desktop:justify-center">
         <div className="w-5/6 laptop:w-auto">
+<<<<<<< HEAD
           <img src="/logo.png" className="bg-customYellow h-10 w-32 object-cover mr-20" />
           <p className="my-4 font-poppins text-lg font-medium laptop:w-80 laptop:text-pretty">Event Tracking Platform for Wildcat Innovation Labs</p>
+=======
+          <img src="/logo.png" className="bg-customYellow h-10 w-32 object-cover" />
+          <p className="my-4 font-poppins text-lg font-bold laptop:w-80 laptop:text-pretty">Event Tracking Platform for Wildcat Innovation Labs</p>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
           <div className="flex gap-2">
             <img src="/Facebook.png" alt="Facebook" className="h-8 w-8 object-cover cursor-pointer" />
             <img src="/Instagram.png" alt="Instagram" className="h-8 w-8 object-cover cursor-pointer" />
@@ -52,7 +57,11 @@ const Footer = () => {
         </div>
       </div>
       <div className="w-full border-t mt-4" />
+<<<<<<< HEAD
       <p className="font-poppins font-light text-sm text-center">2024  EventEase. All rights reserved</p>
+=======
+      <p className="text-center">2024  EventEase. All rights reserved</p>
+>>>>>>> 589a77d5d9fb449dc19d3bcd4b547951cef64818
     </div>
   );
 };
