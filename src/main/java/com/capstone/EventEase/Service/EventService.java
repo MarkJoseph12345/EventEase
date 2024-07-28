@@ -14,9 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -145,6 +147,9 @@ public class EventService {
     }
 
 
+    public Optional<Event> getEventByNow() {
+        return eventRepository.findByCurrentEvent(OffsetDateTime.now());
+    }
 
 
 

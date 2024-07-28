@@ -154,6 +154,11 @@ public class EventController {
 
 
 
+    @GetMapping("/getEventNow")
+    public ResponseEntity<?> getEventNow(){
+            return ResponseEntity.ok(eventService.getEventByNow());
+    }
+
 
 
 

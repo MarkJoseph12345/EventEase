@@ -39,14 +39,17 @@ public class AttendanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
         UserEvent userEvent = repository.findByUserAndEvent(user,event);
         if(userEvent == null){
-            throw new EntityNotFoundException("User Event Not Found!");
+            throw new EntityNotFoundException("User Is Not Joined To an Event!");
         }
 
         Optional<Attendance> attendanceCheck = attendanceRepository.findByUserevent(userEvent);
 
         if(attendanceCheck.isPresent()){
             throw new EntityExistsException("Attendance Already Checked");
+
         }
+
+
 
 
 
