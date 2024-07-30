@@ -1,6 +1,10 @@
 package com.capstone.EventEase.Controller;
 
 
+import com.capstone.EventEase.Exceptions.DoubleJoinException;
+import com.capstone.EventEase.Exceptions.EventFullException;
+import com.capstone.EventEase.Exceptions.GenderNotAllowedException;
+import com.capstone.EventEase.Exceptions.UserBlockedException;
 import com.capstone.EventEase.Service.UserEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +34,14 @@ public class UserEventController {
         public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId){
                 try{
                     return new ResponseEntity<>(userEventService.joinEvent(userId,eventId),HttpStatus.OK);
+                }catch (UserBlockedException e){
+                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+                }catch (EventFullException e){
+                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+                }catch (DoubleJoinException e){
+                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+                }catch (GenderNotAllowedException e){
+                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
                 }catch (EntityNotFoundException e){
                     return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
                 }

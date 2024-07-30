@@ -4,7 +4,8 @@ package com.capstone.EventEase.Service;
 import com.capstone.EventEase.DTO.Request.LoginRequest;
 import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
-import com.capstone.EventEase.Entity.Role;
+import com.capstone.EventEase.ENUMS.Gender;
+import com.capstone.EventEase.ENUMS.Role;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -12,12 +13,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.IOException;
 
 @Service
@@ -47,6 +45,7 @@ public class AuthenticationService {
                 .role(Role.STUDENT)
                 .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
+                .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
                 .build();
 
 
@@ -83,10 +82,6 @@ public class AuthenticationService {
         User userPerson = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
                 "User with id: " + userId + " not found!"
         ));
-
-
-
-
 
 
 

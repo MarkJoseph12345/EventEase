@@ -1,4 +1,4 @@
-package com.capstone.EventEase.Entity;
+package com.capstone.EventEase.ENUMS;
 
 public enum Role {
 

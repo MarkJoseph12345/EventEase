@@ -1,5 +1,6 @@
 package com.capstone.EventEase.DTO.Request;
 
+import com.capstone.EventEase.ENUMS.Gender;
 import lombok.Data;
 
 @Data
@@ -22,6 +23,8 @@ public class RegisterRequest {
 
     private String department;
 
+
+    private Gender gender;
 
 
 }

@@ -1,6 +1,6 @@
 package com.capstone.EventEase.Entity;
-
-
+import com.capstone.EventEase.ENUMS.Gender;
+import com.capstone.EventEase.ENUMS.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +20,6 @@ import java.util.List;
 @Entity
 @Table(name = "tbl_user")
 public class User implements UserDetails {
-
-
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -54,10 +49,14 @@ public class User implements UserDetails {
     private String profilePictureName;
     private String qrCode;
 
+
+    private boolean isBlocked;
+
+
+    private Gender gender;
+
     @Enumerated(EnumType.STRING)
     private Role role;
-
-
 
 
     @Override

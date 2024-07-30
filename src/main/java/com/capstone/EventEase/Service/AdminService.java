@@ -22,4 +22,20 @@ public class AdminService {
         }
         return username + " attendance checked";
     }
+
+    public User blockUser(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User Not Found!"));
+        user.setBlocked(true);
+        userRepository.save(user);
+        return user;
+    }
+    public User unBlockUser(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User Not Found!"));
+        user.setBlocked(false);
+        userRepository.save(user);
+        return user;
+    }
+
+
+
 }

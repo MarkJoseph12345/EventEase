@@ -1,5 +1,6 @@
 package com.capstone.EventEase.Entity;
 
+import com.capstone.EventEase.ENUMS.AllowedGender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +39,16 @@ public class Event {
     private int likes = 0;
 
     private int dislikes = 0;
+
+
+    private int eventLimit;
+
+    private int usersJoined = 0;
+
+
+    private AllowedGender allowedGender;
+
+
 
 
     private Set<String> usersLiked = new HashSet<>();

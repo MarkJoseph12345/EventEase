@@ -4,6 +4,7 @@ package com.capstone.EventEase.Controller;
 
 import com.capstone.EventEase.Entity.EventAttendance;
 import com.capstone.EventEase.Entity.UserAttendance;
+import com.capstone.EventEase.Service.AdminService;
 import com.capstone.EventEase.Service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +28,8 @@ public class AdminController {
 
 
     private final AttendanceService attendanceService;
+
+    private final AdminService adminService;
     @Operation(summary = "Check The Attendance of the User")
     @PostMapping("/attend/{eventId}/{username}/")
     public ResponseEntity<?> attendUsers(@PathVariable Long eventId, @PathVariable String username,@RequestParam("attendanceDate") @DateTimeFormat(
@@ -56,6 +59,30 @@ public class AdminController {
     }
 
 
+    @Operation(summary = "This will Block The User")
+    @PostMapping("/block/{userId}")
+    public ResponseEntity<?> blockUser(@PathVariable Long userId){
+            try{
+                return new ResponseEntity<>(adminService.blockUser(userId),HttpStatus.OK);
+            }catch (EntityNotFoundException e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+            }catch (Exception e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+            }
+    }
+
+    @Operation(summary = "This will UnBlock The User")
+    @PostMapping("/unblock/{userId}")
+    public ResponseEntity<?> unBlockUser(@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(adminService.unBlockUser(userId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
     /*
@@ -82,6 +109,7 @@ public class AdminController {
         List<EventAttendance> eventAttendances = attendanceService.getAttendanceOfUsersInAllEvents();
         return ResponseEntity.ok(eventAttendances);
     }
+
 
 
 

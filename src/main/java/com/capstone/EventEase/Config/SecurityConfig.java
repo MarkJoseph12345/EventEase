@@ -1,7 +1,7 @@
 package com.capstone.EventEase.Config;
 
 
-import com.capstone.EventEase.Entity.Role;
+import com.capstone.EventEase.ENUMS.Role;
 import com.capstone.EventEase.Service.UserService;
 
 import io.swagger.v3.oas.models.OpenAPI;
