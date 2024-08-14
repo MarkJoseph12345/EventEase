@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from "next/link";
-import { role, userid } from "@/utils/data"
+import { role, userid } from "@/utils/data";
 import { deleteCookie } from '@/utils/cookies';
 import { User } from '@/utils/interfaces';
 import { fetchProfilePicture, getUserById } from '@/utils/apiCalls';
@@ -28,6 +28,8 @@ const Sidebar = () => {
     const [openProfile, setOpenProfile] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [imageUrl, setImageUrl] = useState("");
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -46,7 +48,7 @@ const Sidebar = () => {
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
-        setOpenProfile(false)
+        setOpenProfile(false);
     };
 
     const handleClick = (href: string) => {
@@ -93,6 +95,26 @@ const Sidebar = () => {
         };
     }, [isSidebarOpen, openProfile]);
 
+    const handleDeleteClick = () => {
+        setShowDeleteConfirmation(true);
+        setOpenProfile(false);
+    };
+
+    const handleConfirmDelete = () => {
+        console.log("Account deleted");
+        setShowDeleteConfirmation(false);
+        setShowSuccessMessage(true);
+
+        // Hide the success message after 3 seconds
+        setTimeout(() => {
+            setShowSuccessMessage(false);
+        }, 3000);
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeleteConfirmation(false);
+    };
+
     const sideBarLinks = role === "ADMIN" ? adminSideBarLinks : studentSideBarLinks;
 
     if (!user) {
@@ -101,21 +123,20 @@ const Sidebar = () => {
                 <p className="ml-2 text-4xl font-bold cursor-pointer tracking-widest">≡</p>
                 <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" />
             </div>
-        )
+        );
     }
-
 
     return (
         <div className="w-full sticky top-0 z-10">
             <div className="flex items-center bg-customYellow">
                 <p className="ml-2 text-4xl font-bold cursor-pointer" onClick={toggleSidebar}>≡</p>
-                <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" onClick={handleLogoClick} />
+                <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover ml-4 cursor-pointer tablet:h-16 tablet:w-56" onClick={handleLogoClick} />
             </div>
-            <div className={`min-h-dvh ${isSidebarOpen ? "w-3/4 border-r smartphone:w-72 tablet:w-96" : "w-0"} bg-white fixed inset-0  transition-all duration-100 ease-in-out`} ref={sidebarRef}>
+            <div className={`min-h-dvh ${isSidebarOpen ? "w-3/4 border-r smartphone:w-72 tablet:w-96" : "w-0"} bg-white fixed inset-0 transition-all duration-100 ease-in-out`} ref={sidebarRef}>
                 <div className={`min-h-dvh ${isSidebarOpen ? "block" : "hidden"} `}>
                     <div>
                         <img src="/logo.png" alt="Logo" className="m-3 h-10 w-40 object-cover bg-customYellow cursor-pointer tablet:h-14 tablet:w-44" onClick={handleLogoClick} />
-                        <p className=" font-semibold absolute top-1 right-4 cursor-pointer tablet:text-3xl" onClick={toggleSidebar}>✖</p>
+                        <p className="font-semibold absolute top-1 right-4 cursor-pointer tablet:text-3xl" onClick={toggleSidebar}>✖</p>
                     </div>
                     <div className="grid mx-10 gap-5 mt-10 smartphone:w-fit smartphone:mx-auto ">
                         {sideBarLinks.map((link, index) => (
@@ -144,13 +165,41 @@ const Sidebar = () => {
                             </div>
                             <div className="flex flex-col tablet:text-xl" onClick={() => setOpenProfile(false)}>
                                 <Link href="Profile" className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => handleClick("/Profile")}>Profile</Link>
-                                <p className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1">Delete Account</p>
-                                <p className="text-start cursor-pointer hover:bg-black hover:rounded-b-2xl hover:text-customYellow indent-3 py-1" onClick={() => { deleteCookie("token"); deleteCookie("role"); window.location.href = "/" }}>Sign Out</p>
+                                <p className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={handleDeleteClick}>Delete Account</p>
+                                <p className="text-start cursor-pointer hover:rounded-b-2xl hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => { deleteCookie("token"); deleteCookie("role"); window.location.href = "/" }}>Sign Out</p>
                             </div>
                         </div>
                     )}
                 </div>
             </div>
+            {showDeleteConfirmation && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <p className="mb-4">Are you sure you want to delete the account?</p>
+                        <div className="flex justify-center space-x-2">
+                            <button 
+                                className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+                                onClick={handleConfirmDelete}
+                            >
+                                Yes
+                            </button>
+                            <button 
+                                className="px-4 py-2 bg-gray-300 text-yellow rounded hover:bg-black-400"
+                                onClick={handleCancelDelete}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showSuccessMessage && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
+                    <div className="bg-white p-6 rounded-lg shadow-lg border-black border-[2px]">
+                        <p className="my-4 font-poppins text-[18px] font-regular text-customYellow ">Account Successfully Deleted!</p>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

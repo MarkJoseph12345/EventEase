@@ -60,14 +60,36 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
     );
 };
 
-
-
+const ConfirmationPopup = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+                <p className="mb-4">Are you sure you want to save changes in your Profile?</p>
+                <div className="flex justify-center space-x-2">
+                    <button 
+                        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+                        onClick={onConfirm}
+                    >
+                        Yes
+                    </button>
+                    <button 
+                        className="px-4 py-2 bg-gray-300 text-yellow rounded hover:bg-black-400"
+                        onClick={onCancel}
+                    >
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const Profile = () => {
     const [clickedProfilePic, setClickedProfilePic] = useState("");
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>(null);
     const [imageUrl, setImageUrl] = useState("");
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -83,9 +105,7 @@ const Profile = () => {
 
         fetchUser();
         fetchImage();
-    }, [userid]);
-
-
+    }, []);
 
     const handleProfilePicClick = (picture: string) => {
         setClickedProfilePic(picture);
@@ -95,8 +115,6 @@ const Profile = () => {
         setClickedProfilePic("");
     };
 
-
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setUser((prevForm) => ({
@@ -105,10 +123,7 @@ const Profile = () => {
         }));
     };
 
-
-    const handleUpdateUser = async (event: React.FormEvent) => {
-        event.preventDefault();
-
+    const handleUpdateUser = async () => {
         if (!user) return;
 
         const { firstName, lastName, password } = user;
@@ -127,10 +142,23 @@ const Profile = () => {
         window.location.reload();
     };
 
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        setShowConfirmation(true);
+    };
+
+    const handleConfirmSave = () => {
+        setShowConfirmation(false);
+        handleUpdateUser();
+    };
+
+    const handleCancelSave = () => {
+        setShowConfirmation(false);
+    };
+
     if (loading || !user) {
         return <Loading />;
     }
-
 
     return (
         <div className="bg-white-200 h-screen text-center pb-4 smartphone:h-fit tablet:h-screen">
@@ -143,7 +171,7 @@ const Profile = () => {
             {clickedProfilePic && <ProfilePopup picture={clickedProfilePic} onClose={handleClosePopup} />}
             <div className="h-fit rounded-2xl mt-4 border-2 p-2 bg-customWhite mx-auto w-fit smartphone:w-9/12 laptop:w-[48rem]">
                 <h1 className="text-center text-xl font-semibold font-poppins">Change your account details</h1>
-                <form onSubmit={handleUpdateUser} className="mt-2 flex flex-col gap-3">
+                <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-3">
                     <div className="relative h-11 w-full ">
                         <input placeholder="Email Address" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
                             value={user!.username} onChange={handleInputChange}
@@ -169,14 +197,6 @@ const Profile = () => {
                             Last Name
                         </label>
                     </div>
-                    {/* <div className="relative h-11 w-full ">
-                        <input placeholder="ID Number" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-                            defaultValue={user.idNumber} onChange={handleInputChange}
-                            name="idNumber" />
-                        <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                            ID Number
-                        </label>
-                    </div> */}
                     <div className="relative h-11 w-full">
                         <input
                             placeholder="Password"
@@ -193,13 +213,12 @@ const Profile = () => {
                     <button type="submit" className="mt-4 bg-customYellow font-semibold py-2 px-4 mb-2 rounded font-poppins">Update Details</button>
                 </form>
             </div>
-            {/* {message && (
-                <div className={`fixed top-1 right-1 block pl-1 pr-5 text-base leading-5 text-white opacity-95 font-regular border-2 ${message.type === "success" ? "bg-green-500 border-green-900" : "bg-red-500 border-red-900"
-                    }`}>
-                    <span>{message.text}</span>
-                    <span className="absolute right-1" onClick={closeAlert}>✖</span>
-                </div>
-            )} */}
+            {showConfirmation && (
+                <ConfirmationPopup 
+                    onConfirm={handleConfirmSave}
+                    onCancel={handleCancelSave}
+                />
+            )}
         </div>
     );
 }

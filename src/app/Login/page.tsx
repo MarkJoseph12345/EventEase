@@ -10,6 +10,7 @@ const Login = () => {
         password: "",
     })
     const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | undefined>()
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value } = e.target;
 
@@ -19,23 +20,19 @@ const Login = () => {
         });
     }
 
-    const closeAlert = () => {
-        setMessage(undefined);
-    };
-
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
+        setLoading(true);
         const { username, password } = userForm;
 
         const result = await loginAccount(username, password);
         if (result.success) {
-            window.location.href = "/Dashboard";
+            setMessage({ text: "Login successful!", type: "success" });
         } else {
-            setMessage({ text: result.message, type: "error" });
-            setTimeout(() => setMessage(undefined), 3000);
+            setMessage({ text: result.message || "Login failed", type: "error" });
         }
+        setLoading(false);
     };
-
 
     return (
         <div className="p-5 relative">
@@ -70,15 +67,28 @@ const Login = () => {
                     <button type="submit" className="mt-4 bg-customYellow font-bold py-2 px-4 rounded" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
                     <div className="flex justify-between">
                         <span className="text-blue-500 text-xs font-semibold">Forgot Password?</span>
-                        <span className="text-end text-xs">Don&apos;t have an account? <Link href="/SignUp" replace className="font-semibold text-blue-500 underline decoration-2">SIGN UP</Link></span>
+                        <span className="text-end text-xs">Don't have an account? <Link href="/SignUp" replace className="font-semibold text-blue-500 underline decoration-2">SIGN UP</Link></span>
                     </div>
                 </form>
             </div>
             {message && (
-                <div className={`fixed top-1 right-1 block pl-1 pr-5 text-base leading-5 text-white opacity-95 font-regular border-2 ${message.type === "success" ? "bg-green-500 border-green-900" : "bg-red-500 border-red-900"
-                    }`}>
-                    <span>{message.text}</span>
-                    <span className="absolute right-1 cursor-pointer" onClick={closeAlert}>✖</span>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="flex flex-col bg-white p-8 rounded-lg shadow-lg text-center border-2 border-customBlack">
+                        {message.text}
+                        {message.type === "success" && (
+                            <button
+                                className="mt-4 px-4 py-2 bg-customYellow text-black font-semibold rounded"
+                                onClick={async () => {
+                                    const loginResult = await loginAccount(String(userForm.username), String(userForm.password));
+                                    if (loginResult.success) {
+                                        window.location.href = "/Dashboard";
+                                    }
+                                }}
+                            >
+                                Continue
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
