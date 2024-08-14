@@ -105,7 +105,6 @@ const Sidebar = () => {
         setShowDeleteConfirmation(false);
         setShowSuccessMessage(true);
 
-        // Hide the success message after 3 seconds
         setTimeout(() => {
             setShowSuccessMessage(false);
         }, 3000);
