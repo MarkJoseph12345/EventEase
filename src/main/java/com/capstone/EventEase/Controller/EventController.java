@@ -1,7 +1,12 @@
 package com.capstone.EventEase.Controller;
 
 
+import com.capstone.EventEase.ENUMS.Gender;
 import com.capstone.EventEase.Entity.Event;
+import com.capstone.EventEase.Exceptions.DoubleJoinException;
+import com.capstone.EventEase.Exceptions.EventFullException;
+import com.capstone.EventEase.Exceptions.GenderNotAllowedException;
+import com.capstone.EventEase.Exceptions.UserBlockedException;
 import com.capstone.EventEase.Service.EventService;
 import com.capstone.EventEase.Service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,16 +40,22 @@ public class EventController {
 
     @Operation(summary = "CREATE AN EVENT")
     @PostMapping("createEvent")
-    public ResponseEntity<?> createEvent(@RequestBody Event event){
-      return new ResponseEntity(eventService.craeteEvent(event),HttpStatus.OK);
+    public ResponseEntity<?> createEvent(@RequestBody Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException
+    ,EntityNotFoundException{
+        try{
+            return new ResponseEntity<>(eventService.craeteEvent(event),HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
     }
+
 
 
 
     @Operation(summary = "Update Event By Passing Event Id With New Event Credentials")
     @PutMapping("updateEvent/{eventId}")
     public ResponseEntity<?> updateEvent(@PathVariable Long eventId,@RequestBody Event event){
-        return new ResponseEntity(eventService.updateEvent(eventId,event),HttpStatus.OK);
+        return new ResponseEntity<>(eventService.updateEvent(eventId,event),HttpStatus.OK);
     }
 
 

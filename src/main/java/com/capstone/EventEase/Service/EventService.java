@@ -3,6 +3,10 @@ package com.capstone.EventEase.Service;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
+import com.capstone.EventEase.Exceptions.DoubleJoinException;
+import com.capstone.EventEase.Exceptions.EventFullException;
+import com.capstone.EventEase.Exceptions.GenderNotAllowedException;
+import com.capstone.EventEase.Exceptions.UserBlockedException;
 import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 
@@ -10,16 +14,17 @@ import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
+//import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +39,29 @@ public class EventService {
 
     private final ImageService imageService;
 
-    public Event craeteEvent(Event event) {
-        return eventRepository.save(event);
+    private final UserEventService userEventService;
+
+    public Event craeteEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
+            EntityNotFoundException{
+        Set<String> usernames = event.getPreRegisteredUsers();
+        Event newEvent = eventRepository.save(event);
+        List<User> users = new ArrayList<>();
+        for(String username: usernames){
+                User user = userRepository.findByUsername(username);
+                if(user == null) throw new EntityNotFoundException("User Not Found");
+                UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
+        }
+        return eventRepository.save(newEvent);
     }
+
 
     public Event getEvent(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
     }
+
+
+
+
 
     public String deleteEvent(Long eventId) throws IOException {
         Event event = eventRepository.findById(eventId)
@@ -95,6 +116,8 @@ public class EventService {
 
         return eventRepository.save(oldEvent);
     }
+
+
 
 
 

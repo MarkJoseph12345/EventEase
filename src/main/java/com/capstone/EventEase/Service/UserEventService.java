@@ -37,17 +37,20 @@ public class UserEventService {
 
 
 
-    public UserEvent joinEvent(Long userId, Long eventId)throws EventFullException, UserBlockedException, DoubleJoinException,
-            GenderNotAllowedException, EntityNotFoundException{
+
+    public UserEvent joinEvent(Long userId, Long eventId)throws EventFullException, UserBlockedException, DoubleJoinException, GenderNotAllowedException, EntityNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Event> eventOptional = eventRepository.findById(eventId);
+
 
         if (userOptional.isEmpty() && eventOptional.isEmpty()) {
             throw new EntityNotFoundException("Both User and Event don't exist");
         }
 
+
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
         Event event = eventOptional.orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
+
 
 
         UserEvent userAndEvent = repository.findByUserAndEvent(user, event);
@@ -58,6 +61,7 @@ public class UserEventService {
             if(!allowedGender.equals(userGender)){
                 throw new GenderNotAllowedException("User with the gender is not allowed in this event");
             }
+
 
             if(user.isBlocked()){
             throw new UserBlockedException("User is currently Blocked and cannot join an event");
@@ -120,6 +124,8 @@ public class UserEventService {
                 .map(UserEvent::getEvent)
                 .collect(Collectors.toList());
     }
+
+
 
 
 

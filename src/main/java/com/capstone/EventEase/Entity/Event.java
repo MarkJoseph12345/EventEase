@@ -26,8 +26,6 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     private String eventName;
 
     private String eventDescription;
@@ -45,15 +43,14 @@ public class Event {
 
     private int usersJoined = 0;
 
-
     private AllowedGender allowedGender;
-
-
-
 
     private Set<String> usersLiked = new HashSet<>();
 
     private Set<String> usersDisliked = new HashSet<>();
+
+
+    private Set<String> preRegisteredUsers = new HashSet<>();
 
 
 
@@ -69,9 +66,5 @@ public class Event {
     private String eventPictureName;
 
     private List<String> department;
-
-
     private String eventType;
-
-
 }

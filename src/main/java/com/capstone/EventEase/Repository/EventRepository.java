@@ -19,6 +19,8 @@ public interface EventRepository extends JpaRepository<Event,Long> {
     @Query("SELECT e FROM Event e WHERE :now BETWEEN e.eventStarts AND e.eventEnds")
     Optional<Event> findByCurrentEvent(@Param("now") OffsetDateTime now);
 
+
+
 }
 
 

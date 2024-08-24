@@ -15,3 +15,5 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 
     <Optional> UserEvent findByUserAndEvent(User user, Event event);
 }
+
+

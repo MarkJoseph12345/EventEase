@@ -39,13 +39,9 @@ public class AuthenticationController {
     public ResponseEntity<String> greet(){
         return new ResponseEntity<>("Hello World",HttpStatus.OK);
     }
-
-
-
     @Operation(summary = "Register A User")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
-
         try{
             LoginResponse loginResponse = authenticationService.registerUser(registerRequest);
             return new ResponseEntity<>(loginResponse, HttpStatus.OK);
@@ -61,8 +57,6 @@ public class AuthenticationController {
     public String greetings(){
         return "Welcome to the testing unit";
     }
-
-
     @Operation(summary = "Login With User Credentials")
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
@@ -79,13 +73,14 @@ public class AuthenticationController {
 
 
 
+
     @Operation(summary = "Update User By passing UserId and new User Credentials")
     @PutMapping("/updateUser/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
-    User user){
+    User user) throws EntityExistsException{
         try{
             LoginResponse updatedUser = authenticationService.updateUser(userId,user);
-            return new ResponseEntity<>(updatedUser,HttpStatus.OK);
+            return new ResponseEntity<>(updatedUser,HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }

@@ -4,6 +4,8 @@ package com.capstone.EventEase.Controller;
 
 import com.capstone.EventEase.Entity.EventAttendance;
 import com.capstone.EventEase.Entity.UserAttendance;
+import com.capstone.EventEase.Exceptions.AttendanceCheckedException;
+import com.capstone.EventEase.Exceptions.UserNotJoinedToAnEventException;
 import com.capstone.EventEase.Service.AdminService;
 import com.capstone.EventEase.Service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +38,7 @@ public class AdminController {
             iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime attendanceDate){
         try{
             return new ResponseEntity<>(attendanceService.checkAttendance(eventId,username,attendanceDate),HttpStatus.OK);
-        }catch (EntityNotFoundException e){
+        }catch (EntityNotFoundException e){ 
             return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
@@ -44,6 +46,19 @@ public class AdminController {
     }
 
 
+
+    @Operation(summary = "Timeout User")
+    @PostMapping("/timeout/{eventId}/{username}/")
+    public ResponseEntity<?> timeoutUsers(@PathVariable Long eventId, @PathVariable String username,@RequestParam("timeoutDate") @DateTimeFormat(
+            iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime timeoutDate){
+        try{
+            return new ResponseEntity<>(attendanceService.checkTimeout(eventId,username,timeoutDate),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
     @Operation(summary = "Check if The User Attended the Event")
@@ -84,7 +99,6 @@ public class AdminController {
     }
 
 
-
     /*
     @Operation(summary = "Get The Number of Attended by UserId")
     @GetMapping("/getAttendance/{userId}")
@@ -95,6 +109,8 @@ public class AdminController {
      */
 
 
+
+
     @Operation(summary = "Get The Number of Attended by UserId")
     @GetMapping("/getTopThree")
     public ResponseEntity<List<UserAttendance>> getTopThree() {
@@ -103,7 +119,7 @@ public class AdminController {
     }
 
 
-    @Operation(summary = "Get the number of attendes in each event")
+    @Operation(summary = "Get the number of attendees in each event")
     @GetMapping("/getAttendanceByAllEvents")
     public ResponseEntity<List<EventAttendance>> eventAttendances(){
         List<EventAttendance> eventAttendances = attendanceService.getAttendanceOfUsersInAllEvents();
@@ -112,10 +128,35 @@ public class AdminController {
 
 
 
+    @Operation(summary = "Get The User if it fits all the criterias")
+    @GetMapping("/getUserByUsername/{eventId}/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String username){
+            try{
+                return new ResponseEntity<>(attendanceService.verifyUser(eventId,username),HttpStatus.OK);
+            }catch (UserNotJoinedToAnEventException e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+            }catch (AttendanceCheckedException e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+            }catch (Exception e){
+                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+            }
+    }
 
 
 
+    @Operation(summary = "Get How Many Days an Event is Going")
+    @GetMapping("/getCountDaysEvent/{eventId}")
+    public ResponseEntity<?> getCountDaysEvent(@PathVariable Long eventId){
+        return new ResponseEntity<>(attendanceService.countDays(eventId),HttpStatus.OK);
+    }
 
+
+
+    @Operation(summary = "Counter Attendance")
+    @GetMapping("/count/{eventId}")
+    public ResponseEntity<?> counterAttendance(@PathVariable Long eventId){
+        return new ResponseEntity<>(attendanceService.counterAttendance(eventId),HttpStatus.OK);
+    }
 }
 
 

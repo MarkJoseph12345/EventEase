@@ -10,7 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,18 +24,28 @@ public class Attendance {
 
 
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attendance_id")
     private Long attendanceId;
-
-
-
 
     @ManyToOne
     @JoinColumn(name = "userevent_id")
     private UserEvent userevent;
 
 
-    private OffsetDateTime attendedTime;
+    @ElementCollection
+    @CollectionTable(name = "Attend_Date",joinColumns = @JoinColumn(name = "attendance_id"))
+    @Column(name = "AttendedTime")
+    private List<OffsetDateTime> attendedTime = new ArrayList<>();
+
+
+
+    @ElementCollection
+    @CollectionTable(name = "Timeout_Date", joinColumns = @JoinColumn(name = "attendance_id"))
+    @Column(name = "TimeOut")
+    private List<OffsetDateTime> timeOut = new ArrayList<>();
+
 }

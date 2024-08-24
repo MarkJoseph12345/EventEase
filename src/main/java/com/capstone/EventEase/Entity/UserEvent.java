@@ -27,9 +27,6 @@ public class UserEvent {
 
 
 
-    
-
-
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
