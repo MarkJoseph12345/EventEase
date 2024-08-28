@@ -16,6 +16,7 @@ const SignUp = () => {
         lastName: "",
         department: "CEA",
         idNumber: "",
+        gender: "",
     })
     const [confirmPass, setConfirmPass] = useState("");
     const [message, setMessage] = useState<{ text: JSX.Element, type: "success" | "error" } | undefined>();
@@ -46,7 +47,7 @@ const SignUp = () => {
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setLoading(true)
-        if (!userForm.firstName || !userForm.lastName || !userForm.username || !userForm.password) {
+        if (!userForm.firstName || !userForm.lastName || !userForm.username || !userForm.password || !userForm.gender) {
             setMessage({ text: <p className="text-red-500">Please fill out all required fields</p>, type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
@@ -58,7 +59,8 @@ const SignUp = () => {
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
-        }
+        }console.log(userForm);
+        
 
         if (passwordError) {
             setMessage({ text: <p className="text-red-500">{passwordError}</p>, type: "error" });
@@ -117,6 +119,12 @@ const SignUp = () => {
                             ID Number <span className="text-customRed">*</span>
                         </label>
                     </div>
+                    <div className="relative h-11 w-full ">
+                        <input placeholder="Gender" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={userForm.gender} onChange={handleInputChange} name="gender" />
+                        <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                            Gender <span className="text-customRed">*</span>
+                        </label>
+                    </div>
                     <div className="relative h-11 w-full mt-3">
                         <select
                             className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-customYellow focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" value={userForm.department} onChange={(e) => { handleInputChange(e); e.target.blur(); }} name="department">
@@ -132,12 +140,12 @@ const SignUp = () => {
                             Department
                         </label>
                     </div>
-                    <div className="relative h-11 w-full ">
+                    <div className="relative h-11 w-full mb-2 ">
                         <input placeholder="Password" type="password" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={userForm.password} onChange={handleInputChange} name="password" />
                         <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             Password <span className="text-customRed">*</span>
                         </label>
-                        {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
+                        {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
                     </div>
                     <div className="relative h-11 w-full ">
                         <input placeholder="Confirm Password" type="password" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} name="confirmPassword" />
@@ -145,7 +153,9 @@ const SignUp = () => {
                             Confirm Password <span className="text-customRed">*</span>
                         </label>
                     </div>
-                    <button type="submit" className="rounded-xl text-center text-sm bg-customYellow p-2 px-4 font-bold hover:scale-105 transition-all w-fit mx-auto mt-4">Sign Up</button>
+                    <button type="submit" className="rounded text-center text-sm bg-customYellow p-2 px-4 font-bold hover:scale-95 transition-all  mt-4">Sign Up</button>
+                    <span className="text-end text-xs">Already have an account? <Link href="/Login" replace className="font-semibold text-blue-500 underline decoration-2">LOGIN</Link></span>
+
                 </form>
             </div>
             {loading && (
@@ -163,7 +173,7 @@ const SignUp = () => {
                                 onClick={async () => {
                                     const loginResult = await loginAccount(String(userForm.username), String(userForm.password));
                                     if (loginResult.success) {
-                                        window.location.href = "/Dashboard";
+                                        window.location.href = "/Profile";
                                     }
                                 }}
                             >

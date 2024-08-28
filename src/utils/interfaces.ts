@@ -8,6 +8,7 @@ export interface User {
     department?: string;
     profilePicture?: Blob;
     role?: string;
+    gender?: string;
 }
 
 export interface Event {
@@ -23,6 +24,8 @@ export interface Event {
     eventPicture?: string;
     department: string[]; 
     eventType: string[];
+    allowedGender?: string;
+    eventLimit?: number;
 }
 
 export interface EventDetailModal {

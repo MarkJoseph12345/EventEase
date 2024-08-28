@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { deleteCookie } from "./utils/cookies";
@@ -6,6 +7,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token');
   const roleCookie = request.cookies.get('role');
   const role = roleCookie ? roleCookie.value : null; 
+  const isProfile = request.cookies.get("naayprofile")
   const { pathname } = request.nextUrl;
 
   const routes: { [key: string]: string } = {

@@ -26,10 +26,8 @@ const Login = () => {
         const { username, password } = userForm;
 
         const result = await loginAccount(username, password);
-        if (result.success) {
-            setMessage({ text: "Login successful!", type: "success" });
-        } else {
-            setMessage({ text: result.message || "Login failed", type: "error" });
+        if (result.success) { 
+            window.location.href = "/Dashboard";
         }
         setLoading(false);
     };
@@ -71,26 +69,7 @@ const Login = () => {
                     </div>
                 </form>
             </div>
-            {message && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="flex flex-col bg-white p-8 rounded-lg shadow-lg text-center border-2 border-customBlack">
-                        {message.text}
-                        {message.type === "success" && (
-                            <button
-                                className="mt-4 px-4 py-2 bg-customYellow text-black font-semibold rounded"
-                                onClick={async () => {
-                                    const loginResult = await loginAccount(String(userForm.username), String(userForm.password));
-                                    if (loginResult.success) {
-                                        window.location.href = "/Dashboard";
-                                    }
-                                }}
-                            >
-                                Continue
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
+            
         </div>
     )
 }

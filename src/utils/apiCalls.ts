@@ -50,6 +50,7 @@ export const registerAccount = async (userForm: any) => {
             return { success: true, message: "Sign up successful!" };
         } else {
             return { success: false, message: data.message || "Sign up failed" };
+            
         }
     } catch (error) {
         return { success: false, message: "An error occurred. Please try again." };
@@ -77,6 +78,9 @@ export const getEvents = async (): Promise<Event[]> => {
     }
 };
 
+
+
+
 export const createEvent = async (eventData: any) => {
     try {
         const formattedEventData = {
@@ -86,7 +90,9 @@ export const createEvent = async (eventData: any) => {
             eventEnds: eventData.eventEnds,
             eventPicture: eventData.eventPicture.split(',')[1],
             department: eventData.department,
-            eventType: eventData.eventType.join(', ')
+            eventType: eventData.eventType,
+            allowedGender: eventData.allowedGender,
+            eventLimit: eventData.eventLimit
         };
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT, {
             method: 'POST',
@@ -98,11 +104,13 @@ export const createEvent = async (eventData: any) => {
 
         const data = await response.json();
         if (response.ok) {
+            console.log(response.status)
             return { success: true, message: "Event creation successful!", id:data.id };
         } else {
             return { success: false, message: data.message || "Failed to create event" };
         }
     } catch (error) {
+        console.log(error)
         return { success: false, message: "An error occurred, please try again" };
     }
 };
@@ -376,6 +384,8 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
 
 export const joinEvent = async (userId: number, eventId: number): Promise<boolean> => {
     try {
+
+        
         const response = await fetch(`${API_ENDPOINTS.JOIN_EVENT}${userId}/${eventId}`, {
             method: 'POST',
             headers: {

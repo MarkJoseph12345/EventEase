@@ -1,4 +1,8 @@
-const BASE_URL = "https://eventease-oor7.onrender.com";
+const BASE_URL = "http://localhost:8080";
+
+
+
+
 
 export const API_ENDPOINTS = {
   REGISTER: `${BASE_URL}/api/v1/auth/register`,
