@@ -118,7 +118,11 @@ public class EventController {
     @Operation(summary = "Delete Event By Passing eventId")
     @DeleteMapping("deleteEventById/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) throws Exception {
-        return new ResponseEntity<>(eventService.deleteEvent(eventId), HttpStatus.OK);
+       try{
+           return new ResponseEntity<>(eventService.deleteEvent(eventId), HttpStatus.OK);
+       }catch (EntityNotFoundException e){
+           return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.NOT_FOUND);
+       }
     }
 
 
@@ -142,6 +146,8 @@ public class EventController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
     @Operation(summary = "Get Event By Current Date")

@@ -1,5 +1,6 @@
 package com.capstone.EventEase.Service;
 
+import com.capstone.EventEase.Entity.Attendance;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
@@ -7,6 +8,7 @@ import com.capstone.EventEase.Exceptions.DoubleJoinException;
 import com.capstone.EventEase.Exceptions.EventFullException;
 import com.capstone.EventEase.Exceptions.GenderNotAllowedException;
 import com.capstone.EventEase.Exceptions.UserBlockedException;
+import com.capstone.EventEase.Repository.AttendanceRepository;
 import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 
@@ -36,6 +38,8 @@ public class EventService {
 
     private final UserRepository userRepository;
 
+    private final AttendanceRepository attendanceRepository;
+
 
     private final ImageService imageService;
 
@@ -63,10 +67,28 @@ public class EventService {
 
 
 
-    public String deleteEvent(Long eventId) throws IOException {
+
+    public String deleteEvent(Long eventId) throws EntityNotFoundException {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
         List<UserEvent> userEvents = userEventRepository.findByEventId(eventId);
+        //UserEvent userEvent =
+      // List<Attendance> attendance = attendanceRepository.findAllByUserevent(userEvents);
+
+        List<Attendance> attendanceList = attendanceRepository.findAll();
+
+        /*
+        for(Attendance attend:attendanceList){
+            Attendance attendance = attendanceRepository.findByUserevent()
+        }
+
+         */
+
+        for (UserEvent userEvent : userEvents) {
+            Optional<Attendance> attend = attendanceRepository.findByUserevent(userEvent);
+            attend.ifPresent(attendanceRepository::delete);
+        }
+
         for (UserEvent userEvent : userEvents) {
             userEventRepository.delete(userEvent);
         }

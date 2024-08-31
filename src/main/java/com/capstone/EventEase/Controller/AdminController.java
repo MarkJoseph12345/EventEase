@@ -99,6 +99,9 @@ public class AdminController {
     }
 
 
+
+
+
     /*
     @Operation(summary = "Get The Number of Attended by UserId")
     @GetMapping("/getAttendance/{userId}")
@@ -127,7 +130,6 @@ public class AdminController {
     }
 
 
-
     @Operation(summary = "Get The User if it fits all the criterias")
     @GetMapping("/getUserByUsername/{eventId}/{username}")
     public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String username){
@@ -141,7 +143,6 @@ public class AdminController {
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
             }
     }
-
 
 
     @Operation(summary = "Get How Many Days an Event is Going")

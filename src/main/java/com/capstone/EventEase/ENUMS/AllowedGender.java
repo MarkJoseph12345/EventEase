@@ -4,5 +4,5 @@ public enum AllowedGender {
 
     MALE,
     FEMALE,
-    ALL_GENDERS
+    ALL
 }

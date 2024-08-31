@@ -227,7 +227,7 @@ return null;
 
         // Check if the timeout date is within the event period
         if (zonedTimeoutDate.isBefore(eventStart) || zonedTimeoutDate.isAfter(eventEnd)) {
-            throw new IllegalArgumentException("Timeout date is outside the event period");
+            throw new EntityNotFoundException("Timeout date is outside the event period");
         }
 
         Optional<Attendance> attendanceCheck = attendanceRepository.findByUserevent(userEvent);
@@ -239,7 +239,7 @@ return null;
 
             // Check if user has attended for this period
             if (!isAlreadyAttended(attendedTimes, zonedTimeoutDate, eventStart, eventEnd)) {
-                throw new IllegalStateException("Cannot timeout. User has not attended for this period.");
+                throw new EntityNotFoundException("Cannot timeout. User has not attended for this period.");
             }
 
             // Check if user has already timed out for this period

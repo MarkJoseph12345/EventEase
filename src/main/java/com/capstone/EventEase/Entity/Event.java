@@ -39,6 +39,7 @@ public class Event {
     private int dislikes = 0;
 
 
+
     private int eventLimit;
 
     private int usersJoined = 0;
@@ -53,8 +54,6 @@ public class Event {
     private Set<String> preRegisteredUsers = new HashSet<>();
 
 
-
-
     private OffsetDateTime eventEnds;
 
     @Basic(fetch = FetchType.LAZY)
@@ -66,5 +65,7 @@ public class Event {
     private String eventPictureName;
 
     private List<String> department;
+
+
     private String eventType;
 }

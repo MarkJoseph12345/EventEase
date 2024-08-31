@@ -23,8 +23,8 @@ public class AuthenticatedController {
     @GetMapping("/me")
     public ResponseEntity<User> authenticatedUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser  = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(currentUser);
+            User currentUser  = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(currentUser);
     }
 
 }

@@ -23,9 +23,6 @@ import java.util.List;
 public class Attendance {
 
 
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attendance_id")
@@ -36,15 +33,13 @@ public class Attendance {
     private UserEvent userevent;
 
 
-    @ElementCollection
-    @CollectionTable(name = "Attend_Date",joinColumns = @JoinColumn(name = "attendance_id"))
+
     @Column(name = "AttendedTime")
     private List<OffsetDateTime> attendedTime = new ArrayList<>();
 
 
 
-    @ElementCollection
-    @CollectionTable(name = "Timeout_Date", joinColumns = @JoinColumn(name = "attendance_id"))
+
     @Column(name = "TimeOut")
     private List<OffsetDateTime> timeOut = new ArrayList<>();
 

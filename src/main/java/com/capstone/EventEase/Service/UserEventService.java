@@ -53,33 +53,38 @@ public class UserEventService {
 
 
 
+
         UserEvent userAndEvent = repository.findByUserAndEvent(user, event);
 
             String allowedGender = String.valueOf(AllowedGender.valueOf(event.getAllowedGender().toString()));
             String userGender = String.valueOf(Gender.valueOf(user.getGender().toString()));
+
+
+            if(allowedGender.equals("ALL")){
+                if(user.isBlocked()){
+                    throw new UserBlockedException("User is currently Blocked and cannot join an event");
+                }
+                if(userAndEvent != null) throw new DoubleJoinException("User Already Joined");
+                if(event.getUsersJoined() < event.getEventLimit()){
+                    UserEvent userEvent = new UserEvent();
+                    userEvent.setUser(user);
+                    userEvent.setEvent(event);
+                    repository.save(userEvent);
+                    event.setUsersJoined(event.getUsersJoined() + 1);
+                    eventRepository.save(event);
+                    return userEvent;
+                }else{
+                    throw new EventFullException("Event is Currently Full");
+                }
+
+            }
 
             if(!allowedGender.equals(userGender)){
                 throw new GenderNotAllowedException("User with the gender is not allowed in this event");
             }
 
 
-            if(user.isBlocked()){
-            throw new UserBlockedException("User is currently Blocked and cannot join an event");
-            }
-            if(userAndEvent != null) throw new DoubleJoinException("User Already Joined");
-            if(event.getUsersJoined() < event.getEventLimit()){
-                UserEvent userEvent = new UserEvent();
-                userEvent.setUser(user);
-                userEvent.setEvent(event);
-                repository.save(userEvent);
-                event.setUsersJoined(event.getUsersJoined() + 1);
-                eventRepository.save(event);
-                return userEvent;
-            }else{
-                throw new EventFullException("Event is Currently Full");
-            }
-
-
+        return null;
     }
 
     public UserEvent unjoinEvent(Long userId, Long eventId){
