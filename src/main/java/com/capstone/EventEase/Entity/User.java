@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
     private String profilePictureType;
     private String profilePictureName;
-    private String qrCode;
+
 
 
     private boolean isBlocked;
@@ -68,6 +68,10 @@ public class User implements UserDetails {
     public boolean isAccountNonExpired() {
         return true;
     }
+
+
+
+
 
     @Override
     public boolean isAccountNonLocked() {

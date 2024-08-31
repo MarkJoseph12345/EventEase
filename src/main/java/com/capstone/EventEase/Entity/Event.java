@@ -39,11 +39,15 @@ public class Event {
     private int dislikes = 0;
 
 
-
     private int eventLimit;
 
     private int usersJoined = 0;
 
+
+
+
+
+    @Enumerated(EnumType.STRING)
     private AllowedGender allowedGender;
 
     private Set<String> usersLiked = new HashSet<>();

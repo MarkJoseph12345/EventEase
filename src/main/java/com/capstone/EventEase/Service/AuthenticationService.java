@@ -11,12 +11,16 @@ import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +39,22 @@ public class AuthenticationService {
     private final UserRepository userRepository;
 
 
+
+
+    private byte[] getDefaultProfilePicture (){
+
+        try{
+
+            Path path = Paths.get(new ClassPathResource("static/images/profile.png").getURI());
+            return Files.readAllBytes(path);
+        }catch (IOException e){
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
+
+
     public LoginResponse registerUser(RegisterRequest registerRequest){
         if(userRepository.findByUsername(registerRequest.getUsername()) != null){
             throw new EntityExistsException("Username Already Exists!");
@@ -46,6 +66,9 @@ public class AuthenticationService {
                 .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
+                .profilePicture(getDefaultProfilePicture())
+                .profilePictureName("profile.png")
+                .profilePictureType("image/png")
                 .build();
 
 

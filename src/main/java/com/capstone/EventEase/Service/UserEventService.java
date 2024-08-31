@@ -60,6 +60,10 @@ public class UserEventService {
             String userGender = String.valueOf(Gender.valueOf(user.getGender().toString()));
 
 
+
+
+
+
             if(allowedGender.equals("ALL")){
                 if(user.isBlocked()){
                     throw new UserBlockedException("User is currently Blocked and cannot join an event");

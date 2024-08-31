@@ -231,12 +231,6 @@ public class ImageService {
 
 
 
-
-
-
-
-
-
     @Transactional(readOnly = true)
     public byte[] downloadUserImage(Long userId){
         User user = userRepository.findById(userId)
@@ -247,6 +241,8 @@ public class ImageService {
             return  ImageUtils.decompressImage(user.getProfilePicture());
             }
     }
+
+
 
 
 
