@@ -60,6 +60,10 @@ public class AuthenticationService {
             throw new EntityExistsException("Username Already Exists!");
         }
 
+
+
+
+
         User newUser = User.builder().username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.STUDENT)
@@ -70,7 +74,6 @@ public class AuthenticationService {
                 .profilePictureName("profile.png")
                 .profilePictureType("image/png")
                 .build();
-
 
 
 

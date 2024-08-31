@@ -54,7 +54,7 @@ public class User implements UserDetails {
 
     private boolean isBlocked;
 
-
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
