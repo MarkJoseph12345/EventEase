@@ -10,8 +10,19 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jaybertbajenting99@gmail.com
+    password: vrwv nlbd qlxy nvvb
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
-  servlet:
+
+
+
+    servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB

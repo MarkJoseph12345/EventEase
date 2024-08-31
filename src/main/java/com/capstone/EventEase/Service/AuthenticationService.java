@@ -48,7 +48,7 @@ public class AuthenticationService {
             Path path = Paths.get(new ClassPathResource("static/images/profile.png").getURI());
             return Files.readAllBytes(path);
         }catch (IOException e){
-            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
             return new byte[0];
         }
     }

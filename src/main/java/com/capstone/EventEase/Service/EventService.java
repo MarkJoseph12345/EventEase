@@ -1,5 +1,6 @@
 package com.capstone.EventEase.Service;
 
+import com.capstone.EventEase.DTO.Request.EmailSendRequestDTO;
 import com.capstone.EventEase.Entity.Attendance;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
@@ -15,6 +16,7 @@ import com.capstone.EventEase.Repository.UserEventRepository;
 import com.capstone.EventEase.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 //import org.springframework.web.multipart.MultipartFile;
@@ -45,16 +47,28 @@ public class EventService {
 
     private final UserEventService userEventService;
 
+    private final EmailService emailService;
+
     public Event craeteEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
             EntityNotFoundException{
         Set<String> usernames = event.getPreRegisteredUsers();
         Event newEvent = eventRepository.save(event);
         List<User> users = new ArrayList<>();
+        List<EmailSendRequestDTO> emails = new ArrayList<>();
+
         for(String username: usernames){
                 User user = userRepository.findByUsername(username);
-                if(user == null) throw new EntityNotFoundException("User Not Found");
-                UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
+                if(user == null){
+                    throw new EntityNotFoundException("User Not Found");
+                }else{
+                    emails.add(EmailSendRequestDTO.builder().
+                            message("You have Been Joined To An Event From EventEase")
+                            .subject("EventEase Event").receiver(username)
+                            .build());
+                    UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
+                }
         }
+        emailService.emailSend(emails);
         return eventRepository.save(newEvent);
     }
 
