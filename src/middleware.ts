@@ -1,15 +1,19 @@
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { deleteCookie } from "./utils/cookies";
+import { API_ENDPOINTS } from "./utils/api";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token');
-  const roleCookie = request.cookies.get('role');
-  const role = roleCookie ? roleCookie.value : null; 
-  const isProfile = request.cookies.get("naayprofile")
+  const tokenValue = token?.value.replace(/['"]/g, '');
+  const response = await fetch(API_ENDPOINTS.ME, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${tokenValue}`
+    },
+  });
   const { pathname } = request.nextUrl;
-
   const routes: { [key: string]: string } = {
     "/createevent": "/CreateEvent",
     "/manageevents": "/ManageEvents",
@@ -45,17 +49,18 @@ export function middleware(request: NextRequest) {
   if (token && (lowercasePathname === "/login" || lowercasePathname === "/signup")) {
     return NextResponse.redirect(new URL("/Dashboard", request.url));
   }
-  
+
   if (token) {
-    if (adminRoutes.map(route => route.toLowerCase()).includes(lowercasePathname) && role !== "ADMIN") {
+    const data = await response.json();
+
+    if (adminRoutes.map(route => route.toLowerCase()).includes(lowercasePathname) && data.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/Dashboard", request.url));
     }
 
-    if (studentRoutes.map(route => route.toLowerCase()).includes(lowercasePathname) && role !== "STUDENT") {
+    if (studentRoutes.map(route => route.toLowerCase()).includes(lowercasePathname) && data.role !== "STUDENT") {
       return NextResponse.redirect(new URL("/Dashboard", request.url));
     }
   }
-
   return NextResponse.next();
 }
 

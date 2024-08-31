@@ -6,7 +6,6 @@ export function setCookie(name: string, value: string, days: number) {
       document.cookie = `${name}=${value}; ${expires}; path=/`;
   }
 }
-
 export function getCookie(name: string): string | null {
   if (typeof document !== 'undefined') {
       const nameEQ = name + "=";
@@ -14,12 +13,13 @@ export function getCookie(name: string): string | null {
       for (let i = 0; i < cookies.length; i++) {
           let cookie = cookies[i].trim();
           if (cookie.indexOf(nameEQ) === 0) {
-              return cookie.substring(nameEQ.length, cookie.length);
+              return cookie.substring(nameEQ.length).replace(/^"|"$/g, '');
           }
       }
   }
   return null;
 }
+
 
 export function deleteCookie(name: string) {
   setCookie(name, "", -1);

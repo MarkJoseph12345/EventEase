@@ -3,6 +3,28 @@ import { getCookie, setCookie } from "@/utils/cookies";
 import { Event, User } from "./interfaces";
 import { arrayBufferToBase64 } from "./data";
 
+export const me = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.ME, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorData = await response.json();
+            return { success: false, message: errorData.message || 'An error occurred, please try again' };
+        }
+    } catch (error) {
+        return { success: false, message: 'No' };
+    }
+}
+
 export const loginAccount = async (username: string, password: string) => {
     try {
         const response = await fetch(API_ENDPOINTS.LOGIN, {
@@ -14,16 +36,8 @@ export const loginAccount = async (username: string, password: string) => {
         });
 
         const data = await response.json();
-
         if (response.ok) {
-            const tokenData = {
-                id: data.user.id,
-                username: data.user.username,
-                role: data.user.role,
-                department: data.user.department
-            };
-
-            setCookie("token", JSON.stringify(tokenData), 1);
+           setCookie("token", JSON.stringify(data.token), 1);
             return { success: true };
         } else {
             return { success: false, message: data.message || "Invalid username or password" };
@@ -50,7 +64,7 @@ export const registerAccount = async (userForm: any) => {
             return { success: true, message: "Sign up successful!" };
         } else {
             return { success: false, message: data.message || "Sign up failed" };
-            
+
         }
     } catch (error) {
         return { success: false, message: "An error occurred. Please try again." };
@@ -92,8 +106,10 @@ export const createEvent = async (eventData: any) => {
             department: eventData.department,
             eventType: eventData.eventType,
             allowedGender: eventData.allowedGender,
-            eventLimit: eventData.eventLimit
+            eventLimit: eventData.eventLimit,
+            preRegisteredUsers: eventData.preRegisteredUsers
         };
+        console.log(formattedEventData)
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT, {
             method: 'POST',
             headers: {
@@ -105,7 +121,7 @@ export const createEvent = async (eventData: any) => {
         const data = await response.json();
         if (response.ok) {
             console.log(response.status)
-            return { success: true, message: "Event creation successful!", id:data.id };
+            return { success: true, message: "Event creation successful!", id: data.id };
         } else {
             return { success: false, message: data.message || "Failed to create event" };
         }
@@ -349,15 +365,15 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
 export const fetchProfilePicture = async (userid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_PROFILE_PICTURE}${userid}`);
-        
+
         if (!response.ok) {
             throw new Error('Failed to fetch profile picture');
         }
-        
+
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
         return `data:image/jpeg;base64,${base64String}`;
-        
+
     } catch (error) {
         console.error('Error fetching profile picture:', error);
         return "";
@@ -367,15 +383,15 @@ export const fetchProfilePicture = async (userid: number): Promise<string> => {
 export const fetchEventPicture = async (eventid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_EVENT_PICTURE}${eventid}`);
-        
+
         if (!response.ok) {
             throw new Error('Failed to fetch profile picture');
         }
-        
+
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
         return `data:image/jpeg;base64,${base64String}`;
-        
+
     } catch (error) {
         console.error('Error fetching profile picture:', error);
         return "";
@@ -385,7 +401,7 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
 export const joinEvent = async (userId: number, eventId: number): Promise<boolean> => {
     try {
 
-        
+
         const response = await fetch(`${API_ENDPOINTS.JOIN_EVENT}${userId}/${eventId}`, {
             method: 'POST',
             headers: {
@@ -412,7 +428,7 @@ export const unjoinEvent = async (userId: number, eventId: number): Promise<bool
                 'Content-Type': 'application/json',
             },
         });
-        
+
         if (!response.ok) {
             throw new Error('Failed to unjoin event');
         }

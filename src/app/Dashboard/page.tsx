@@ -3,25 +3,27 @@
 import { useEffect, useState } from "react";
 import AdminDashboard from "./AdminDashboard";
 import StudentDashboard from "./StudentDashboard";
-import { role } from "@/utils/data";
 import Loading from "../Loader/Loading";
-
+import { me } from "@/utils/apiCalls";
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const fetchRole = async () => {
-      setLoading(false);
+        setLoading(true);
+        const result = await me();
+        setRole(result.role)
+        setLoading(false);
     };
 
     fetchRole();
-  }, []);
+}, []);
 
   if (loading) {
     return <Loading/>;
   }
-
-  return (
+  return (    
     <div>
       {role === "ADMIN" && <AdminDashboard />}
       {role === "STUDENT" && <StudentDashboard />}

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Event, User } from "../../utils/interfaces";
 import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
-import { fetchEventPicture, getEvents, getUserById } from "@/utils/apiCalls";
-import { formatDate, userdepartment, userid } from "@/utils/data";
+import { fetchEventPicture, getEvents, getUserById, me } from "@/utils/apiCalls";
+import { formatDate } from "@/utils/data";
 
 
 const StudentDasboard = () => {
@@ -17,7 +17,7 @@ const StudentDasboard = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const fetchedUser = await getUserById(userid);
+        const fetchedUser = await me();
         setUser(fetchedUser);
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -25,7 +25,7 @@ const StudentDasboard = () => {
     };
 
     fetchUserDetails();
-  }, [userid]);
+  }, []);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -53,7 +53,7 @@ const StudentDasboard = () => {
           const upcomingEvents = processedEvents.filter(
             (event) =>
               new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-              event.department.includes(userdepartment!)
+              event.department.includes(user?.department!)
           );
 
           const sortedEvents = upcomingEvents.sort((a, b) =>
@@ -71,7 +71,7 @@ const StudentDasboard = () => {
     };
 
     loadEvents();
-  }, [userdepartment]);
+  }, []);
 
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
@@ -92,7 +92,7 @@ const StudentDasboard = () => {
         <p className="text-xl font-semibold font-bevietnam  tablet:text-3xl">Hello, {user.firstName}</p>
         <p className="tablet:text-xl font-poppins">Discover exciting events for your department!</p>
         <div className="w-full border-t my-4" />
-        <p className="text-xl font-medium font-poppins underline">Closest {userdepartment} Events</p>
+        <p className="text-xl font-medium font-poppins underline">Closest {user.department} Events</p>
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
           {error ? (
             <div className="flex flex-col items-center gap pt-2">

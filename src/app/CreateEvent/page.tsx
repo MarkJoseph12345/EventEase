@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Event } from "@/utils/interfaces";
@@ -21,7 +21,8 @@ const CreateEvent = () => {
     eventType: [],
     department: [],
     eventLimit: 0,
-    allowedGender: "",
+    allowedGender: "ALL",
+    preRegisteredUsers: []
   });
   const [isCreating, setIsCreating] = useState(false);
   const [message, setMessage] = useState<
@@ -43,15 +44,23 @@ const CreateEvent = () => {
     });
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setEvent((prevEvent) => ({
-      ...prevEvent,
-      [name]: value,
-    }));
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+
+    if (name === "preRegisteredUsers") {
+      const usersArray = value.split(',').map(user => user.trim()).filter(user => user !== "");
+      setEvent(prevEvent => ({
+        ...prevEvent,
+        [name]: usersArray
+      }));
+    } else {
+      setEvent(prevEvent => ({
+        ...prevEvent,
+        [name]: value
+      }));
+    }
   };
+
 
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
@@ -226,13 +235,27 @@ const CreateEvent = () => {
           </div>
           <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
             <input
-              placeholder="Gender"
-              name="allowedGender"
+              placeholder="Preregistered Users (comma-separated)"
+              name="preRegisteredUsers"
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
             <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Gender <span className="text-customRed">*</span>
+              Preregistered Users
+            </label>
+          </div>
+
+
+          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+            <select
+              className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={event.allowedGender} onChange={(e) => { handleInputChange(e); e.target.blur(); }} name="allowedGender">
+              <option value="ALL">ALL</option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+            </select>
+            <label
+              className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-black peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-black peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-black peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+              Gender
             </label>
           </div>
           <div className="relative flex w-full max-w-[24rem] mx-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md tablet:max-w-[90%]">
@@ -386,9 +409,8 @@ const CreateEvent = () => {
           </div>
           <div className="flex flex-col items-center justify-center gap-2">
             <button
-              className={`bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${
-                isCreating ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isCreating ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               onClick={handleCreateEvent}
               disabled={isCreating}
             >
@@ -397,13 +419,13 @@ const CreateEvent = () => {
           </div>
         </div>
       </div>
+      {/* Diri mo add sa ubos*/}
       {message && (
         <div
-          className={`z-20 fixed top-1 right-1 block pl-1 pr-5 text-base leading-5 text-white opacity-95 font-regular border-2 ${
-            message.type === "success"
-              ? "bg-green-500 border-green-900"
-              : "bg-red-500 border-red-900"
-          }`}
+          className={`z-20 fixed top-1 right-1 block pl-1 pr-5 text-base leading-5 text-white opacity-95 font-regular border-2 ${message.type === "success"
+            ? "bg-green-500 border-green-900"
+            : "bg-red-500 border-red-900"
+            }`}
         >
           <span>{message.text}</span>
           <span

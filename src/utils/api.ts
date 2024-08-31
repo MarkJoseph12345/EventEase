@@ -1,10 +1,7 @@
 const BASE_URL = "http://localhost:8080";
 
-
-
-
-
 export const API_ENDPOINTS = {
+  ME: `${BASE_URL}/api/v1/authenticated/me`,
   REGISTER: `${BASE_URL}/api/v1/auth/register`,
   LOGIN: `${BASE_URL}/api/v1/auth/login`,
   CREATE_EVENT: `${BASE_URL}/api/v1/auth/event/createEvent`,

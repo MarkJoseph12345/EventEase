@@ -16,7 +16,7 @@ const SignUp = () => {
         lastName: "",
         department: "CEA",
         idNumber: "",
-        gender: "",
+        gender: "MALE",
     })
     const [confirmPass, setConfirmPass] = useState("");
     const [message, setMessage] = useState<{ text: JSX.Element, type: "success" | "error" } | undefined>();
@@ -47,8 +47,8 @@ const SignUp = () => {
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setLoading(true)
-        if (!userForm.firstName || !userForm.lastName || !userForm.username || !userForm.password || !userForm.gender) {
-            setMessage({ text: <p className="text-red-500">Please fill out all required fields</p>, type: "error" });
+        if (!userForm.firstName || !userForm.lastName || !userForm.username || !userForm.password || !userForm.gender || !userForm.idNumber) {
+            setMessage({ text: <p className="text-red-500">Please fill out all required fields!</p>, type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
@@ -59,8 +59,8 @@ const SignUp = () => {
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
-        }console.log(userForm);
-        
+        } console.log(userForm);
+
 
         if (passwordError) {
             setMessage({ text: <p className="text-red-500">{passwordError}</p>, type: "error" });
@@ -86,6 +86,12 @@ const SignUp = () => {
             setTimeout(() => setMessage(undefined), 3000);
         }
     };
+    
+    if (loading) {
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <Loading />
+        </div>
+    }
 
     return (
         <div className="p-5 relative">
@@ -95,7 +101,7 @@ const SignUp = () => {
             <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">
                 <h1 className="text-center text-xl font-bold">Enter your account details</h1>
                 <form onSubmit={handleSignUp} className="mt-2 flex flex-col gap-3">
-                <div className="relative h-11 w-full ">
+                    <div className="relative h-11 w-full ">
                         <input placeholder="First Name" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-customYellow focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={userForm.firstName} onChange={handleInputChange} name="firstName" />
                         <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             First Name <span className="text-customRed">*</span>
@@ -119,10 +125,15 @@ const SignUp = () => {
                             ID Number <span className="text-customRed">*</span>
                         </label>
                     </div>
-                    <div className="relative h-11 w-full ">
-                        <input placeholder="Gender" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={userForm.gender} onChange={handleInputChange} name="gender" />
-                        <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                            Gender <span className="text-customRed">*</span>
+                    <div className="relative h-11 w-full mt-3">
+                        <select
+                            className="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-gray-900 focus:border-2 focus:border-customYellow focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" value={userForm.gender} onChange={(e) => { handleInputChange(e); e.target.blur(); }} name="gender">
+                            <option value="MALE">MALE</option>
+                            <option value="FEMALE">FEMALE</option>
+                        </select>
+                        <label
+                            className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-customYellow peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                            Gender
                         </label>
                     </div>
                     <div className="relative h-11 w-full mt-3">
@@ -158,11 +169,6 @@ const SignUp = () => {
 
                 </form>
             </div>
-            {loading && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <Loading />
-                </div>
-            )}
             {message && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-8 rounded-lg shadow-lg text-center border-2 border-customBlack">

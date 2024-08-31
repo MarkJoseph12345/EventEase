@@ -29,7 +29,9 @@ const Login = () => {
         if (result.success) { 
             window.location.href = "/Dashboard";
         }
-        setLoading(false);
+        else {
+            setLoading(false);
+        }
     };
 
     return (
@@ -61,7 +63,6 @@ const Login = () => {
                             Password <span className="text-customRed">*</span>
                         </label>
                     </div>
-
                     <button type="submit" className="mt-4 bg-customYellow font-bold py-2 px-4 rounded" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
                     <div className="flex justify-between">
                         <span className="text-blue-500 text-xs font-semibold">Forgot Password?</span>

@@ -26,6 +26,7 @@ export interface Event {
     eventType: string[];
     allowedGender?: string;
     eventLimit?: number;
+    preRegisteredUsers?: string[]
 }
 
 export interface EventDetailModal {

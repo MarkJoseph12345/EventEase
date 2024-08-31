@@ -2,11 +2,10 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from "next/link";
-import { role, userid } from "@/utils/data";
 import { deleteCookie } from '@/utils/cookies';
-import { User } from '@/utils/interfaces';
-import { fetchProfilePicture, getUserById } from '@/utils/apiCalls';
+import { fetchProfilePicture, me } from '@/utils/apiCalls';
 import Loading from '../Loader/Loading';
+import { User } from '@/utils/interfaces';
 
 const studentSideBarLinks = [
     { name: 'Join Events', imageUrl: "/join.png", href: "/JoinEvents" },
@@ -33,19 +32,31 @@ const Sidebar = () => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const userData = await getUserById(userid);
+          try {
+            const userData = await me();
             setUser(userData);
+          } catch (error) {
+            console.error('Failed to fetch user:', error);
+          }
         };
-
-        const fetchImage = async () => {
-            const url = await fetchProfilePicture(userid);
-            setImageUrl(url);
-        };
-
+    
         fetchUser();
-        fetchImage();
-    }, []);
+      }, []);
 
+      useEffect(() => {
+        const fetchImage = async () => {
+          if (user && user.id) {
+            try {
+              const url = await fetchProfilePicture(user.id);
+              setImageUrl(url);
+            } catch (error) {
+              console.error('Failed to fetch profile picture:', error);
+            }
+          }
+        };
+    
+        fetchImage();
+      }, [user]);
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
         setOpenProfile(false);
@@ -114,14 +125,15 @@ const Sidebar = () => {
         setShowDeleteConfirmation(false);
     };
 
-    const sideBarLinks = role === "ADMIN" ? adminSideBarLinks : studentSideBarLinks;
+    const sideBarLinks = user?.role === "ADMIN" ? adminSideBarLinks : studentSideBarLinks;
 
     if (!user) {
         return (
-            <div className="flex items-center bg-customYellow">
-                <p className="ml-2 text-4xl font-bold cursor-pointer tracking-widest">≡</p>
-                <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" />
-            </div>
+            // <div className="flex items-center bg-customYellow">
+            //     <p className="ml-2 text-4xl font-bold cursor-pointer tracking-widest">≡</p>
+            //     <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" />
+            // </div>
+            <Loading />
         );
     }
 

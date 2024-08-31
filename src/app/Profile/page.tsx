@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { userid } from '@/utils/data';
 import { User } from '@/utils/interfaces';
 import { fetchProfilePicture, getUserById, updateProfilePicture, updateUser } from '@/utils/apiCalls';
 
@@ -66,13 +65,13 @@ const ConfirmationPopup = ({ onConfirm, onCancel }: { onConfirm: () => void; onC
             <div className="bg-white p-6 rounded-lg shadow-lg">
                 <p className="mb-4">Are you sure you want to save changes in your Profile?</p>
                 <div className="flex justify-center space-x-2">
-                    <button 
+                    <button
                         className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
                         onClick={onConfirm}
                     >
                         Yes
                     </button>
-                    <button 
+                    <button
                         className="px-4 py-2 bg-gray-300 text-yellow rounded hover:bg-black-400"
                         onClick={onCancel}
                     >
@@ -128,7 +127,7 @@ const Profile = () => {
 
         const { firstName, lastName, password } = user;
         const userFormClone: Partial<User> = { firstName, lastName };
-       
+
         if (password) {
             userFormClone.password = password;
         }
@@ -214,7 +213,7 @@ const Profile = () => {
                 </form>
             </div>
             {showConfirmation && (
-                <ConfirmationPopup 
+                <ConfirmationPopup
                     onConfirm={handleConfirmSave}
                     onCancel={handleCancelSave}
                 />
