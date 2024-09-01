@@ -158,9 +158,9 @@ const Sidebar = () => {
                         ))}
                     </div>
                     <div className="absolute bottom-0 mx-5 flex items-center gap-2" onClick={() => setOpenProfile(!openProfile)}>
-                        <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill ml-2 mb-5 w-4 h-4 tablet:h-20 tablet:w-20" />
+                        <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill ml-2 mb-5 w-4 h-4 tablet:h-16 tablet:w-16" />
                         <div className="font-regular font-bebas mb-4 text-lg flex flex-col items-start tablet:text-2xl">
-                            <p>{user!.firstName} {user!.lastName}</p>
+                            <p className='cursor-pointer'>{user!.firstName} {user!.lastName}</p>
                         </div>
                     </div>
                     {openProfile && (
@@ -177,7 +177,7 @@ const Sidebar = () => {
                             <div className="flex flex-col tablet:text-xl" onClick={() => setOpenProfile(false)}>
                                 <Link href="Profile" className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => handleClick("/Profile")}>Profile</Link>
                                 <p className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={handleDeleteClick}>Delete Account</p>
-                                <p className="text-start cursor-pointer hover:rounded-b-2xl hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => { deleteCookie("token"); deleteCookie("role"); window.location.href = "/" }}>Sign Out</p>
+                                <p className="text-start cursor-pointer hover:rounded-b-2xl hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => { deleteCookie("token"); window.location.href = "/" }}>Sign Out</p>
                             </div>
                         </div>
                     )}

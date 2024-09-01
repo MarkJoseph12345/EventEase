@@ -12,9 +12,9 @@ const AboutUs = () => {
             <div className="flex flex-col items-center gap pt-2 mt-[2rem]">
                 <p className="text-2xl text-customYellow mt-10 font-poppins font-bold laptop:text-center">About Us</p>
                 <p className=" mt-2 text-sm font-poppins font-light laptop:text-center px-[10rem]">
-                Welcome to EventEase! We're here to transform events within our university's Wildcats Innovation Labs. 
+                Welcome to EventEase! We&#39;re here to transform events within our university&#39;s Wildcats Innovation Labs. 
                 Our goal is to assist organizers and participants in meeting their needs to create unforgettable events effortlessly. 
-                With a commitment to simplicity and innovation, we're dedicated to ensuring event planning is effortless and enjoyable for all involved.
+                With a commitment to simplicity and innovation, we&#39;re dedicated to ensuring event planning is effortless and enjoyable for all involved.
                 </p>
             </div>
             <div className="flex flex-col items-center gap pt-2 mt-[5rem]">

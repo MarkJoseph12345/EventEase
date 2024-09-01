@@ -20,7 +20,10 @@ export const API_ENDPOINTS = {
   JOIN_EVENT: `${BASE_URL}/api/v1/auth/userevent/joinEvent/`,
   UNJOIN_EVENT: `${BASE_URL}/api/v1/auth/userevent/unjoinEvent/`,
   GET_EVENTS_JOINED_BY_USER: `${BASE_URL}/api/v1/auth/userevent/getAllEventsJoinedByUser/`,
+  GET_ALL_USERS_JOINED_TO_EVENT: `${BASE_URL}/api/v1/auth/userevent/getAllUsersJoinedToEvent/`,
   DELETE_EVENT: `${BASE_URL}/api/v1/auth/event/deleteEventById/`,
   GET_ATTENDEES: `${BASE_URL}/api/v1/auth/admin/getAttendanceByAllEvents`,
   GET_TOP_THREE: `${BASE_URL}/api/v1/auth/admin/getTopThree`,
+  BLOCK_USER: `${BASE_URL}/api/v1/auth/admin/block/`,
+  UNBLOCK_USER: `${BASE_URL}/api/v1/auth/admin/unblock/`,
 };

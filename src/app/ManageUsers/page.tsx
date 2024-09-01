@@ -3,19 +3,19 @@ import { useEffect, useRef, useState } from 'react';
 import { User } from '@/utils/interfaces';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { deleteUser, fetchProfilePicture, getAllUsers } from '@/utils/apiCalls';
+import { blockUser, deleteUser, fetchProfilePicture, getAllUsers, unblockUser } from '@/utils/apiCalls';
 
 const ManageUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-    const [showDepartments, setShowDepartments] = useState<boolean>(false);    
+    const [showDepartments, setShowDepartments] = useState<boolean>(false);
     const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
-    const departments = Array.from(new Set(users.map(user => user.department)));
+    const departments = Array.from(new Set(users.map(user => user.department || '')));
 
     const filteredUsers = users.filter(user =>
-        (selectedDepartments.length === 0 || selectedDepartments.includes(user.department!)) &&
+        (selectedDepartments.length === 0 || selectedDepartments.includes(user.department || '')) &&
         `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -72,7 +72,7 @@ const ManageUsers = () => {
 
         fetchUsers();
     }, []);
-    
+
     const fetchUserImages = async (users: User[]) => {
         const imagePromises = users.map(async (user) => {
             if (user.id) {
@@ -103,6 +103,28 @@ const ManageUsers = () => {
         }
     };
 
+    const handleBlockUnblockUser = async () => {
+        if (selectedUser && selectedUser.id) {
+            try {
+                const isBlocked = selectedUser.blocked;
+                const action = isBlocked ? unblockUser : blockUser;
+                const response = await action(selectedUser.id);
+                if (response) {
+                    setUsers(prevUsers =>
+                        prevUsers.map(user =>
+                            user.id === selectedUser.id ? { ...user, blocked: !isBlocked } : user
+                        )
+                    );
+                    setSelectedUser(prevUser => prevUser ? { ...prevUser, blocked: !isBlocked } : null);
+                } else {
+                    console.error(`Failed to ${isBlocked ? 'unblock' : 'block'} user`);
+                }
+            } catch (error) {
+                console.error(`Failed to toggle user block status:`, error);
+            }
+        }
+    };
+
     if (loading) {
         return <Loading />;
     }
@@ -127,7 +149,7 @@ const ManageUsers = () => {
                                     {departments.map((department, index) => (
                                         <div key={index} className="flex items-center">
                                             <label className="flex items-center cursor-pointer">
-                                                <input type="checkbox" checked={selectedDepartments.includes(department!)} onChange={() => handleDepartmentChange(department!)} className="mr-2 cursor-pointer accent-customYellow" />
+                                                <input type="checkbox" checked={selectedDepartments.includes(department)} onChange={() => handleDepartmentChange(department)} className="mr-2 cursor-pointer accent-customYellow" />
                                                 {department}</label>
                                         </div>
                                     ))}
@@ -146,7 +168,7 @@ const ManageUsers = () => {
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
                             <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2" onClick={() => handleUserClick(user)}>
-                                <img  src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
+                                <img src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
                                 <div>
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
                                     <p className="text-gray-600 font-poppins">{user.department}</p>
@@ -173,9 +195,17 @@ const ManageUsers = () => {
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.username}</p>
                             <p className='font-poppins mt-2'><strong>Department:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.department}</p>
+                            <p className='font-poppins mt-2'><strong>Gender:</strong></p>
+                            <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.gender}</p>
+                            <button
+                                onClick={handleBlockUnblockUser}
+                                className={`mt-6 px-4 py-2 ${selectedUser.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium`}
+                            >
+                                {selectedUser.blocked ? 'Unblock User' : 'Block User'}
+                            </button>
                             <button
                                 onClick={handleDeleteUser}
-                                className="mt-6 px-4 py-2  mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium">
+                                className="mt-6 px-4 py-2 mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium">
                                 Delete User
                             </button>
                         </div>
@@ -183,7 +213,7 @@ const ManageUsers = () => {
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 export default ManageUsers;

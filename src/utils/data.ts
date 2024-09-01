@@ -1,4 +1,7 @@
+import { useState } from "react";
+import { me } from "./apiCalls";
 import { getCookie, setCookie } from "./cookies";
+import { User } from "./interfaces";
 
 // export const getRoleFromCookie = (): string | null => {
 //     const token = getCookie("token");
@@ -46,7 +49,6 @@ import { getCookie, setCookie } from "./cookies";
 // export const userid = getUserFromCookie();
 // export const userdepartment = getDepartmentFromCookie();
 // export const useremail = getEmailFromCookie();
-
 
 
 export const arrayBufferToBase64 = (arrayBuffer: ArrayBuffer): string => {

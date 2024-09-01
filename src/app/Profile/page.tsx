@@ -3,12 +3,27 @@ import { useEffect, useRef, useState } from 'react';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
 import { User } from '@/utils/interfaces';
-import { fetchProfilePicture, getUserById, updateProfilePicture, updateUser } from '@/utils/apiCalls';
+import { fetchProfilePicture, getUserById, me, updateProfilePicture, updateUser } from '@/utils/apiCalls';
+
+
 
 const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => void }) => {
     const [newPicture, setNewPicture] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await me();
+                setUser(userData);
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -29,7 +44,7 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
 
     const handleUpload = async () => {
         if (newPicture) {
-            const success = await updateProfilePicture(userid, newPicture);
+            const success = await updateProfilePicture(user!.id!, newPicture);
             if (success) {
                 window.location.reload();
                 onClose();
@@ -92,19 +107,33 @@ const Profile = () => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const userData = await getUserById(userid);
-            setUser(userData);
-            setLoading(false);
-        };
-
-        const fetchImage = async () => {
-            const url = await fetchProfilePicture(userid);
-            setImageUrl(url);
+            try {
+                const userData = await me();
+                setUser(userData);
+            } catch (error) {
+                console.error('Failed to fetch user', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchUser();
-        fetchImage();
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            const fetchImage = async () => {
+                try {
+                    const url = await fetchProfilePicture(user.id!);
+                    setImageUrl(url);
+                } catch (error) {
+                    console.error('Failed to fetch profile picture', error);
+                }
+            };
+
+            fetchImage();
+        }
+    }, [user]);
 
     const handleProfilePicClick = (picture: string) => {
         setClickedProfilePic(picture);
@@ -132,7 +161,7 @@ const Profile = () => {
             userFormClone.password = password;
         }
 
-        const success = await updateUser(userid, userFormClone);
+        const success = await updateUser(user!.id!, userFormClone);
         if (success) {
             console.log("User details updated successfully");
         } else {

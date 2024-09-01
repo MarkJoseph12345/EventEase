@@ -1,15 +1,31 @@
 "use client"
-import React, { useState } from 'react';
-import type { EventDetailModal } from '@/utils/interfaces';
+import React, { useEffect, useState } from 'react';
+import type { EventDetailModal, User } from '@/utils/interfaces';
 import ManageEvent from './ManageEvent';
 import ViewFeedback from './ViewFeedback';
 import { formatDate } from '@/utils/data';
+import { getAllUsersJoinedToEvent } from '@/utils/apiCalls';
 
 const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
     const [clickedManage, setClickedManage] = useState(false);
     const [clickedFeedback, setClickedFeedback] = useState(false);
-    const type = event.eventType.toString().split(', ')
 
+    const [usersJoinedToEvent, setUsersJoinedToEvent] = useState<User[]>([]);
+    useEffect(() => {
+        const fetchUsersJoinedToEvent = async () => {
+            try {
+                const usersArrays = await getAllUsersJoinedToEvent(event.id!);
+                const allUsers = usersArrays.flat();
+                setUsersJoinedToEvent(allUsers);
+            } catch (error) {
+                console.error("Error fetching users joined to event:", error);
+            }
+        };
+        fetchUsersJoinedToEvent()
+    },[])
+    
+    const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
+    const type = event.eventType.toString().split(', ');
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
             <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[50rem]">
@@ -25,15 +41,17 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                     </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
                     <div className="flex overflow-hidden">
-                    <div className="grid grid-cols-6 gap-5">
+                        <div className="grid grid-cols-6 gap-5">
                             <p className="col-span-2"><strong>Event Description:</strong></p>
                             <p className="col-span-4 text-pretty">{event.eventDescription}</p>
                             <p className="col-span-2"><strong>Event Type:</strong></p>
                             <p className="col-span-4">{type[0]}</p>
                             <p className="col-span-2"><strong>Department(s):</strong></p>
                             <p className="col-span-4">{event.department.join(', ')}</p>
-                            <p className="col-span-2"><strong>Event Classification:</strong></p>
-                            <p className="col-span-4">{type[1]}</p>
+                            <p className="col-span-2"><strong>Gender:</strong></p>
+                            <p className="col-span-4">{event.allowedGender}</p>
+                            <p className="col-span-2"><strong>Slots left:</strong></p>
+                            <p className="col-span-4">{availableSlots}</p>
                             <p className="col-span-2"><strong>Start Date:</strong></p>
                             <p className="col-span-4">{formatDate(event.eventStarts)}</p>
                             <p className="col-span-2"><strong>End Date:</strong></p>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Event, User } from "../../utils/interfaces";
 import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
-import { fetchEventPicture, getEvents, getUserById, me } from "@/utils/apiCalls";
+import { fetchEventPicture, getEvents, me } from "@/utils/apiCalls";
 import { formatDate } from "@/utils/data";
 
 
@@ -29,6 +29,7 @@ const StudentDasboard = () => {
 
   useEffect(() => {
     const loadEvents = async () => {
+      if (!user?.id) return; 
       try {
         const fetchedEvents = await getEvents();
 
@@ -71,7 +72,7 @@ const StudentDasboard = () => {
     };
 
     loadEvents();
-  }, []);
+  }, [user]);
 
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);

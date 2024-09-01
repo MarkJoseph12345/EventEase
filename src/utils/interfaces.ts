@@ -9,6 +9,7 @@ export interface User {
     profilePicture?: Blob;
     role?: string;
     gender?: string;
+    blocked? : boolean;
 }
 
 export interface Event {
@@ -41,5 +42,4 @@ export interface FilteredEventListProps {
     searchTerm: string;
     onEventClick: (event: Event) => void;
     eventType?: 'registered' | 'attended' | 'join';
-
 }

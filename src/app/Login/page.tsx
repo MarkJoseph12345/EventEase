@@ -66,7 +66,7 @@ const Login = () => {
                     <button type="submit" className="mt-4 bg-customYellow font-bold py-2 px-4 rounded" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
                     <div className="flex justify-between">
                         <span className="text-blue-500 text-xs font-semibold">Forgot Password?</span>
-                        <span className="text-end text-xs">Don't have an account? <Link href="/SignUp" replace className="font-semibold text-blue-500 underline decoration-2">SIGN UP</Link></span>
+                        <span className="text-end text-xs">Don&#39;t have an account? <Link href="/SignUp" replace className="font-semibold text-blue-500 underline decoration-2">SIGN UP</Link></span>
                     </div>
                 </form>
             </div>

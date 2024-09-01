@@ -3,6 +3,7 @@ import { getCookie, setCookie } from "@/utils/cookies";
 import { Event, User } from "./interfaces";
 import { arrayBufferToBase64 } from "./data";
 
+
 export const me = async () => {
     try {
         const response = await fetch(API_ENDPOINTS.ME, {
@@ -12,16 +13,14 @@ export const me = async () => {
                 'Authorization': `Bearer ${getCookie("token")}`
             },
         });
-
         if (response.ok) {
             const data = await response.json();
             return data;
         } else {
-            const errorData = await response.json();
-            return { success: false, message: errorData.message || 'An error occurred, please try again' };
+            return null;
         }
     } catch (error) {
-        return { success: false, message: 'No' };
+        return error;
     }
 }
 
@@ -34,10 +33,9 @@ export const loginAccount = async (username: string, password: string) => {
             },
             body: JSON.stringify({ username, password }),
         });
-
         const data = await response.json();
         if (response.ok) {
-           setCookie("token", JSON.stringify(data.token), 1);
+            setCookie("token", JSON.stringify(data.token), 1);
             return { success: true };
         } else {
             return { success: false, message: data.message || "Invalid username or password" };
@@ -46,7 +44,6 @@ export const loginAccount = async (username: string, password: string) => {
         return { success: false, message: "An error occurred, please try again" };
     }
 };
-
 
 export const registerAccount = async (userForm: any) => {
     try {
@@ -57,20 +54,16 @@ export const registerAccount = async (userForm: any) => {
             },
             body: JSON.stringify(userForm),
         });
-
         const data = await response.json();
-
         if (response.ok) {
             return { success: true, message: "Sign up successful!" };
         } else {
             return { success: false, message: data.message || "Sign up failed" };
-
         }
     } catch (error) {
         return { success: false, message: "An error occurred. Please try again." };
     }
 };
-
 
 export const getEvents = async (): Promise<Event[]> => {
     try {
@@ -80,7 +73,6 @@ export const getEvents = async (): Promise<Event[]> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to fetch events");
         }
@@ -91,9 +83,6 @@ export const getEvents = async (): Promise<Event[]> => {
         return [];
     }
 };
-
-
-
 
 export const createEvent = async (eventData: any) => {
     try {
@@ -109,7 +98,6 @@ export const createEvent = async (eventData: any) => {
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
-        console.log(formattedEventData)
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT, {
             method: 'POST',
             headers: {
@@ -117,17 +105,14 @@ export const createEvent = async (eventData: any) => {
             },
             body: JSON.stringify(formattedEventData),
         });
-
         const data = await response.json();
         if (response.ok) {
-            console.log(response.status)
             return { success: true, message: "Event creation successful!", id: data.id };
         } else {
             return { success: false, message: data.message || "Failed to create event" };
         }
     } catch (error) {
-        console.log(error)
-        return { success: false, message: "An error occurred, please try again" };
+        return error;
     }
 };
 
@@ -139,11 +124,9 @@ export const getAllUsers = async (): Promise<User[]> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to fetch users");
         }
-
         const data = await response.json();
         return data || [];
     } catch (error) {
@@ -160,11 +143,9 @@ export const getTopThree = async (): Promise<any[]> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to fetch top three");
         }
-
         const data = await response.json();
         return data || [];
     } catch (error) {
@@ -172,7 +153,6 @@ export const getTopThree = async (): Promise<any[]> => {
         return [];
     }
 };
-
 
 export const getAttendees = async (): Promise<any[]> => {
     try {
@@ -186,7 +166,6 @@ export const getAttendees = async (): Promise<any[]> => {
         if (!response.ok) {
             throw new Error("Failed to fetch attendees");
         }
-
         const data = await response.json();
         return data || [];
     } catch (error) {
@@ -203,8 +182,11 @@ export const updateEvent = async (eventId: number, eventData: any): Promise<any>
             eventStarts: eventData.eventStarts,
             eventEnds: eventData.eventEnds,
             department: eventData.department,
-            eventType: eventData.eventType.join(', ')
+            eventType: eventData.eventType,
+            allowedGender: eventData.allowedGender,
+            eventLimit: eventData.eventLimit
         };
+        console.log(formattedEventData)
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT}${eventId}`, {
             method: "PUT",
             headers: {
@@ -232,11 +214,9 @@ export const deleteEvent = async (eventId: number): Promise<boolean> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to delete event");
         }
-
         return true;
     } catch (error) {
         console.error("Error deleting event:", error);
@@ -252,11 +232,9 @@ export const deleteUser = async (userId: number): Promise<boolean> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to delete user");
         }
-
         return true;
     } catch (error) {
         console.error("Error deleting user:", error);
@@ -265,7 +243,6 @@ export const deleteUser = async (userId: number): Promise<boolean> => {
 };
 
 export const updateUser = async (userId: number, updatedUserData: User): Promise<boolean> => {
-    console.log(JSON.stringify(updatedUserData, null, 2))
     try {
         const response = await fetch(`${API_ENDPOINTS.UPDATE_USER}${userId}`, {
             method: "PUT",
@@ -274,11 +251,9 @@ export const updateUser = async (userId: number, updatedUserData: User): Promise
             },
             body: JSON.stringify(updatedUserData),
         });
-
         if (!response.ok) {
             throw new Error("Failed to update user");
         }
-
         return true;
     } catch (error) {
         console.error("Error updating user:", error);
@@ -294,11 +269,9 @@ export const getUserById = async (userId: number): Promise<User | null> => {
                 "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
             throw new Error("Failed to fetch user");
         }
-
         const user: User = await response.json();
         return user;
     } catch (error) {
@@ -310,17 +283,14 @@ export const getUserById = async (userId: number): Promise<User | null> => {
 export const updateProfilePicture = async (userId: number, file: File): Promise<boolean> => {
     const formData = new FormData();
     formData.append("image", file);
-
     try {
         const response = await fetch(`${API_ENDPOINTS.UPDATE_PROFILE_PICTURE}${userId}`, {
             method: "PUT",
             body: formData,
         });
-
         if (!response.ok) {
             throw new Error("Failed to update profile picture");
         }
-
         const contentType = response.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {
             const result = await response.json();
@@ -337,13 +307,11 @@ export const updateProfilePicture = async (userId: number, file: File): Promise<
 export const updateEventPicture = async (eventId: number, file: File): Promise<boolean> => {
     const formData = new FormData();
     formData.append("eventImage", file);
-
     try {
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT_PICTURE}${eventId}`, {
             method: "PUT",
             body: formData,
         });
-
         if (!response.ok) {
             throw new Error("Failed to update event picture");
         }
@@ -365,15 +333,12 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
 export const fetchProfilePicture = async (userid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_PROFILE_PICTURE}${userid}`);
-
         if (!response.ok) {
             throw new Error('Failed to fetch profile picture');
         }
-
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
         return `data:image/jpeg;base64,${base64String}`;
-
     } catch (error) {
         console.error('Error fetching profile picture:', error);
         return "";
@@ -383,11 +348,9 @@ export const fetchProfilePicture = async (userid: number): Promise<string> => {
 export const fetchEventPicture = async (eventid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_EVENT_PICTURE}${eventid}`);
-
         if (!response.ok) {
             throw new Error('Failed to fetch profile picture');
         }
-
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
         return `data:image/jpeg;base64,${base64String}`;
@@ -400,17 +363,15 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
 
 export const joinEvent = async (userId: number, eventId: number): Promise<boolean> => {
     try {
-
-
         const response = await fetch(`${API_ENDPOINTS.JOIN_EVENT}${userId}/${eventId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
-
         if (!response.ok) {
-            throw new Error('Failed to join event');
+            const errorData = await response.json();
+        console.error('Error response:', errorData);
         }
 
         return true;
@@ -432,7 +393,6 @@ export const unjoinEvent = async (userId: number, eventId: number): Promise<bool
         if (!response.ok) {
             throw new Error('Failed to unjoin event');
         }
-
         return true;
     } catch (error) {
         console.error('Error unjoining event:', error);
@@ -448,11 +408,9 @@ export const getEventsJoinedByUser = async (userId: number): Promise<Event[]> =>
                 'Content-Type': 'application/json',
             },
         });
-
         if (!response.ok) {
             throw new Error('Failed to fetch events joined by user');
         }
-
         const events = await response.json();
         return events;
     } catch (error) {
@@ -460,3 +418,66 @@ export const getEventsJoinedByUser = async (userId: number): Promise<Event[]> =>
         return [];
     }
 };
+
+export const getAllUsersJoinedToEvent = async (eventId: number): Promise<User[]> => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.GET_ALL_USERS_JOINED_TO_EVENT}${eventId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch users joined to event');
+        }
+
+        const users = await response.json();
+        return users;
+    } catch (error) {
+        console.error('Error fetching users joined to event:', error);
+        return [];
+    }
+};
+
+export const blockUser = async (userId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.BLOCK_USER}${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error blocking user: ${response.statusText}`);
+        }
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error('Failed to block user:', error);
+        throw error;
+    }
+}
+
+export const unblockUser = async (userId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.UNBLOCK_USER}${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error blocking user: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to block user:', error);
+        throw error;
+    }
+}

@@ -70,7 +70,7 @@ const Home = () => {
           <div className="flex flex-col items-center gap pt-2">
             <img src="no-event-image.png" alt="No events today" className="mb-4 w-32 h-32" />
             <p className="font-poppins text-center text-gray-700 mx-4">Oops! Looks like there are no events scheduled for today. Check back later or explore our upcoming events.</p>
-            <Link href={"/events"} className="mt-4 bg-customYellow font-poppins font-medium px-4 py-2 rounded">Explore Upcoming Events</Link>
+            <Link href={"/Events"} className="mt-4 bg-customYellow font-poppins font-medium px-4 py-2 rounded">Explore Upcoming Events</Link>
           </div>
         </div>
         <div className="bg-cover bg-no-repeat bg-center bg-[url('/discover.png')] my-10 px-10 py-2 flex flex-col items-center laptop:py-20 laptop:bg-bottom">
@@ -78,7 +78,7 @@ const Home = () => {
           <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent	">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
           <div className=" flex justify-center items-center gap-3 bg-white laptop:bg-transparent	  ">
             <Link href={"/signup"} className="box-border h-9 w-32 bg-customYellow px-4 py-1 text-center font-bold">JOIN</Link>
-            <Link href={"/signup"} className="box-border h-9 w-32 border-2 border-black px-4 py-1 text-center font-bold">EXPLORE</Link>
+            <Link href={"/Events"} className="box-border h-9 w-32 border-2 border-black px-4 py-1 text-center font-bold">EXPLORE</Link>
           </div>
         </div>
       </div>

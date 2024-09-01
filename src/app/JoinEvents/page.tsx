@@ -1,12 +1,11 @@
 "use client"
 import { useEffect, useState } from "react";
 import StudentSidebar from "../Comps/Sidebar";
-import { Event } from "../../utils/interfaces";
+import { Event, User } from "../../utils/interfaces";
 import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import StudentEventsFilteredList from "../Comps/StudentEvents";
 import Loading from "../Loader/Loading";
-import { fetchEventPicture, getEvents, getEventsJoinedByUser } from "@/utils/apiCalls";
-import { userdepartment, userid } from "@/utils/data";
+import { fetchEventPicture, getEvents, getEventsJoinedByUser, me } from "@/utils/apiCalls";
 
 
 const JoinEvents = () => {
@@ -15,12 +14,27 @@ const JoinEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userData = await me();
+                setUser(userData);
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
 
     useEffect(() => {
         const loadEvents = async () => {
+            if (!user?.id) return; 
             try {
                 const allEvents = await getEvents();
-                const joinedEvents = await getEventsJoinedByUser(userid);
+                const joinedEvents = await getEventsJoinedByUser(user!.id!);
     
                 const currentTime = new Date();
     
@@ -30,7 +44,7 @@ const JoinEvents = () => {
     
                 const upcomingEvents = notJoinedEvents.filter(event =>
                     new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                    event.department.includes(userdepartment!)
+                    event.department.includes(user!.department!)
                 );
     
                 const processedEvents = await Promise.all(
@@ -54,7 +68,7 @@ const JoinEvents = () => {
         };
     
         loadEvents();
-    }, []);
+    }, [user]);
     
 
     const removeJoinedEvent = (eventId: number) => {
@@ -70,7 +84,7 @@ const JoinEvents = () => {
         setSelectedEvent(null);
     };
 
-    if (loading) {
+    if (loading || !user) {
         return <Loading />;
     }
 
@@ -78,7 +92,7 @@ const JoinEvents = () => {
         <div>
             <StudentSidebar />
             <div className="mt-[6rem] mx-2 ml-[2rem]">
-                <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{userdepartment} Events</p>
+                <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{user!.department} Events</p>
                 <div className="mb-5">
                     <div className="relative mb-5 z-0">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

@@ -1,12 +1,11 @@
 "use client"
 import { useEffect, useState } from "react";
-import { Event } from "../../utils/interfaces";
+import { Event, User } from "../../utils/interfaces";
 import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import StudentEventsFilteredList from "../Comps/StudentEvents";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
-import { fetchEventPicture, getEventsJoinedByUser } from "../../utils/apiCalls";
-import { userid } from "@/utils/data";
+import { fetchEventPicture, getEventsJoinedByUser, me } from "../../utils/apiCalls";
 
 const RegisteredEvents = () => {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -14,10 +13,28 @@ const RegisteredEvents = () => {
     const [joinedEvents, setJoinedEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [user, setUser] = useState<User | null>(null);
     useEffect(() => {
+        const fetchUser = async () => {
+          try {
+            const userData = await me();
+            setUser(userData);
+          } catch (error) {
+            console.error('Failed to fetch user:', error);
+          }
+        };
+    
+        fetchUser();
+      }, []);
+
+
+    useEffect(() => {
+        if (!user?.id) {
+            return;
+        }
         const fetchJoinedEvents = async () => {
             try {
-                const events = await getEventsJoinedByUser(userid);
+                const events = await getEventsJoinedByUser(user!.id!);
                 const currentTime = new Date();
                 const filteredEvents = events.filter(event => new Date(event.eventEnds!).getTime() > currentTime.getTime());
 
@@ -40,7 +57,7 @@ const RegisteredEvents = () => {
         };
 
         fetchJoinedEvents();
-    }, []);
+    }, [user]);
 
     const handleEventClick = (event: Event) => {
         setSelectedEvent(event);
