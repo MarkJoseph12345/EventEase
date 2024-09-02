@@ -11,13 +11,11 @@ spring:
 
 
 
-
-
   mail:
     host: smtp.gmail.com
     port: 587
     username: jaybertbajenting99@gmail.com
-    password: vrwv nlbd qlxy nvvb
+    password:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
