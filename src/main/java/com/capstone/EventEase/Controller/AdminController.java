@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -158,6 +159,37 @@ public class AdminController {
     public ResponseEntity<?> counterAttendance(@PathVariable Long eventId){
         return new ResponseEntity<>(attendanceService.counterAttendance(eventId),HttpStatus.OK);
     }
+
+
+
+
+    @Operation(summary = "Get All Users Joined To Event After Attendance")
+    @GetMapping("/getUsersJoinedAfterAttendance/{eventId}")
+    public ResponseEntity<?> getUsersJoinedAfterAttending(@PathVariable Long eventId){
+
+        try{
+           return new ResponseEntity<>(attendanceService.getAllUsersJoinedToEventAfterAttendance(eventId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+
+    @Operation(summary = "Get All Events Joined By Event After Attendance")
+    @GetMapping("/getEventsJoinedAttendance/{userId}")
+    public ResponseEntity<?> getEventsJoinedAfterAttending(@PathVariable Long userId){
+
+        try{
+            return new ResponseEntity<>(attendanceService.getAllEventsJoinedByUserAfterAttendance(userId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
 }
+
+
+
+
 
 

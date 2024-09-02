@@ -480,6 +480,8 @@ return null;
         }
         return true;
     }
+
+
     public User verifyUser(Long eventId,String username) throws UserNotJoinedToAnEventException,
             AttendanceCheckedException {
         User user = userRepository.findByUsername(username);
@@ -555,6 +557,20 @@ return null;
     }
 
 
+
+    public List<Event> getAllEventsJoinedByUserAfterAttendance(Long userId){
+        return attendanceRepository.findAll().stream().filter(attendance -> attendance.getUserevent()
+                .getUser().getId().equals(userId))
+                 .map(attendance -> attendance.getUserevent().getEvent())
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getAllUsersJoinedToEventAfterAttendance(Long eventId){
+        return attendanceRepository.findAll().stream().filter(
+                attendance -> attendance.getUserevent().getEvent().getId().equals(eventId)
+        ).map(attendance -> attendance.getUserevent().getUser())
+                .collect(Collectors.toList());
+    }
 
 
 

@@ -38,6 +38,7 @@ public class UserEventService {
 
 
 
+
     public UserEvent joinEvent(Long userId, Long eventId)throws EventFullException, UserBlockedException, DoubleJoinException, GenderNotAllowedException, EntityNotFoundException{
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Event> eventOptional = eventRepository.findById(eventId);
@@ -80,9 +81,12 @@ public class UserEventService {
                 }
             }
 
+
             if(!allowedGender.equals(userGender)){
                 throw new GenderNotAllowedException("User with the gender is not allowed in this event");
             }
+
+
 
 
         return null;
@@ -133,6 +137,7 @@ public class UserEventService {
                 .map(UserEvent::getEvent)
                 .collect(Collectors.toList());
     }
+
 
 
 
