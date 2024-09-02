@@ -39,7 +39,7 @@ public class Event {
     private int dislikes = 0;
 
 
-    private int eventLimit;
+    private Integer eventLimit;
 
     private int usersJoined = 0;
 

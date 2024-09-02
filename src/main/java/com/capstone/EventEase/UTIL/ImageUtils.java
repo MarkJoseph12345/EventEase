@@ -1,11 +1,15 @@
 package com.capstone.EventEase.UTIL;
 
 import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+
+
+@Service
 public class ImageUtils {
 
 

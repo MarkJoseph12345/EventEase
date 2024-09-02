@@ -544,10 +544,10 @@ return null;
         List<Attendance> allAttendances = attendanceRepository.findAll();
 
         List<User> users = allAttendances.stream().map(attendance -> attendance.getUserevent().getUser())
-                .distinct().collect(Collectors.toList());
+                .distinct().toList();
 
         List<UserAttendance> userAttendances = users.stream().map(user ->
-                new UserAttendance(user,getNumberofAttendance(user.getId(),allAttendances))).collect(Collectors.toList());;
+                new UserAttendance(user,getNumberofAttendance(user.getId(),allAttendances))).toList();;
 
 
         return userAttendances.stream().sorted((user1,user2) -> Long.compare(user2.getAttendanceCount(),user1.getAttendanceCount()))

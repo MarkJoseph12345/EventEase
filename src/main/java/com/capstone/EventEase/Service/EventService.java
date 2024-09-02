@@ -56,6 +56,9 @@ public class EventService {
         List<User> users = new ArrayList<>();
         List<EmailSendRequestDTO> emails = new ArrayList<>();
 
+
+
+
         for(String username: usernames){
                 User user = userRepository.findByUsername(username);
                 if(user == null){
@@ -110,9 +113,6 @@ public class EventService {
         return "Event Has been Deleted";
     }
 
-
-
-
     public Event getByEventStarts(OffsetDateTime date){
         Event event = eventRepository.findByEventStarts(date);
         if(event == null){
@@ -130,25 +130,32 @@ public class EventService {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
 
-        if (oldEvent.getEventName() != null && !oldEvent.getEventName().isEmpty()) {
+        if (event.getEventName() != null && !event.getEventName().isEmpty()) {
             oldEvent.setEventName(event.getEventName());
         }
-        if (oldEvent.getEventDescription() != null && !oldEvent.getEventDescription().isEmpty()) {
+        if (event.getEventDescription() != null && !event.getEventDescription().isEmpty()) {
             oldEvent.setEventDescription(event.getEventDescription());
         }
-        if (oldEvent.getEventStarts() != null) {
+        if (event.getEventStarts() != null) {
             oldEvent.setEventStarts(event.getEventStarts());
         }
-        if (oldEvent.getEventEnds() != null) {
+        if (event.getEventEnds() != null) {
             oldEvent.setEventEnds(event.getEventEnds());
         }
-
-        if (oldEvent.getDepartment() != null && !oldEvent.getDepartment().isEmpty()) {
+        if (event.getDepartment() != null && !event.getDepartment().isEmpty()) {
             oldEvent.setDepartment(event.getDepartment());
         }
-        if (oldEvent.getEventType() != null && !oldEvent.getEventType().isEmpty()) {
+        if (event.getEventType() != null && !event.getEventType().isEmpty()) {
             oldEvent.setEventType(event.getEventType());
         }
+        if (event.getEventLimit() != null && event.getEventLimit() > 0) {
+            oldEvent.setEventLimit(event.getEventLimit());
+        }
+
+        if (event.getAllowedGender() != null) {
+            oldEvent.setAllowedGender(event.getAllowedGender());
+        }
+
 
         return eventRepository.save(oldEvent);
     }

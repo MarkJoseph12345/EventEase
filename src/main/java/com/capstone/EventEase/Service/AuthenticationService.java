@@ -8,6 +8,7 @@ import com.capstone.EventEase.ENUMS.Gender;
 import com.capstone.EventEase.ENUMS.Role;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Repository.UserRepository;
+import com.capstone.EventEase.UTIL.ImageUtils;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
 
+    private final ImageUtils imageUtils;
 
 
 
@@ -56,12 +58,9 @@ public class AuthenticationService {
 
 
     public LoginResponse registerUser(RegisterRequest registerRequest){
-        if(userRepository.findByUsername(registerRequest.getUsername()) != null){
+        if(userRepository.findByUsername(registerRequest.getUsername()) != null) {
             throw new EntityExistsException("Username Already Exists!");
         }
-
-
-
 
 
         User newUser = User.builder().username(registerRequest.getUsername())
@@ -70,14 +69,14 @@ public class AuthenticationService {
                 .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
-                .profilePicture(getDefaultProfilePicture())
+               .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
                 .profilePictureName("profile.png")
                 .profilePictureType("image/png")
                 .build();
 
 
-
         User user = userRepository.save(newUser);
+
         return new LoginResponse(user, jwtService.generateToken(user));
     }
 

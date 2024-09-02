@@ -60,9 +60,7 @@ public class UserEventService {
             String userGender = String.valueOf(Gender.valueOf(user.getGender().toString()));
 
 
-
-
-
+            
 
             if(allowedGender.equals("ALL")){
                 if(user.isBlocked()){
@@ -80,7 +78,6 @@ public class UserEventService {
                 }else{
                     throw new EventFullException("Event is Currently Full");
                 }
-
             }
 
             if(!allowedGender.equals(userGender)){
@@ -90,6 +87,9 @@ public class UserEventService {
 
         return null;
     }
+
+
+
 
     public UserEvent unjoinEvent(Long userId, Long eventId){
       /*
