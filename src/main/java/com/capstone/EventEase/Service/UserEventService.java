@@ -117,11 +117,18 @@ public class UserEventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
 
+
+
+
         UserEvent userEvent = repository.findByUserAndEvent(user, event);
+
 
         if (userEvent == null) {
             throw new EntityNotFoundException("No UserEvent associated with user " + userId + " and event " + eventId);
         }
+
+        event.setUsersJoined(event.getUsersJoined() -1);
+        eventRepository.save(event);
 
         repository.deleteById(userEvent.getId());
         return userEvent;

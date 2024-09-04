@@ -216,6 +216,7 @@ public class ImageService {
 
             user.setProfilePicture(compressedImage);
 
+            
 
             user.setProfilePictureType(file.getContentType());
             userRepository.save(user);
