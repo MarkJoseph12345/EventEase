@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #FDCC01;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .content {
+            padding: 40px;
+        }
+        .event-details {
+            background-color: #f9f9f9;
+            border-left: 4px solid #FDCC01;
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+        .event-details h2 {
+            color: #FDCC01;
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .event-info {
+            margin-bottom: 15px;
+        }
+        .event-info strong {
+            color: #555;
+        }
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #FDCC01;
+            text-decoration: none;
+            border-radius: 50px;
+            margin-top: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background-color: #e0b601;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 th:text="${subject}">EventEase Invite</h1>
+    </div>
+    <div class="content">
+        <p th:text="${body}" style="font-size: 18px; color: #555;">You have been invited to an event</p>
+        <div class="event-details">
+            <h2 th:text="${eventName}" style="margin-bottom: 15px;">Event Name</h2>
+            <div class="event-info">
+                <strong>Description:</strong>
+                <p th:text="${eventDescription}" style="margin-top: 10px; font-style: italic;">Event Description</p>
+            </div>
+            <div class="event-info">
+                <strong>Allowed Gender:</strong> <span th:text="${allowedGender}">Allowed Gender</span>
+            </div>
+            <div class="event-info">
+                <strong>Event Limit:</strong> <span th:text="${eventLimit}">Event Limit</span>
+            </div>
+        </div>
+        <a th:href="${actionUrl}" class="button">Join Now</a>
+    </div>
+</div>
+</body>
+</html>

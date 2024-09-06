@@ -47,8 +47,6 @@ public class ImageService {
     }
 
 
-
-
     /*
 
 
@@ -171,10 +169,6 @@ public class ImageService {
         }
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found!"));
-
-        if(event.getEventPicture() != null){
-
-        }
 
 
         try{

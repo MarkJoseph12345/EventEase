@@ -57,32 +57,35 @@ public class EventService {
         List<EmailSendRequestDTO> emails = new ArrayList<>();
 
 
-
-
         for(String username: usernames){
                 User user = userRepository.findByUsername(username);
                 if(user == null){
                     throw new EntityNotFoundException("User Not Found");
                 }else{
                     emails.add(EmailSendRequestDTO.builder().
-                            message("You have Been Joined To An Event From EventEase")
-                            .subject("EventEase Event").receiver(username)
+                            message("You have Been Invited To An Event From EventEase")
+                            .subject("EventEase Event Invite").receiver(username)
                             .build());
                     UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
                 }
         }
-        emailService.emailSend(emails);
+
+
+        emailService.emailSend(emails,eventRepository.save(newEvent));
+        eventData(eventRepository.save(newEvent));
         return eventRepository.save(newEvent);
+    }
+
+    public void eventData(Event event){
+
+        System.out.println("Event Data Picture is: " + Arrays.toString(event.getEventPicture()));
+        System.out.println("Event Name is : " + event.getEventName());
     }
 
 
     public Event getEvent(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
     }
-
-
-
-
 
 
     public String deleteEvent(Long eventId) throws EntityNotFoundException {
