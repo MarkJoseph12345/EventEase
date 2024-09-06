@@ -14,11 +14,15 @@ export async function middleware(request: NextRequest) {
         'Authorization': `Bearer ${tokenValue}`
       },
     });
-
-    userData = await response.json();
-
-    if (userData.blocked) {
-      return NextResponse.redirect(new URL("/Blocked", request.url));
+    if (!response.ok) {
+      const res = NextResponse.next();
+      res.headers.set('Set-Cookie', 'token=; Path=/; Max-Age=0;');
+      return res;
+    } else {
+      userData = await response.json();
+      if (userData.blocked) {
+        return NextResponse.redirect(new URL("/Blocked", request.url));
+      }
     }
   }
 
@@ -48,7 +52,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (token) {
+  if (token && userData) {
     if (adminRoutes.map(route => route.toLowerCase()).includes(lowercasePathname) && userData.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/Dashboard", request.url));
     }

@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from "@/utils/api";
-import { getCookie, setCookie } from "@/utils/cookies";
+import { deleteCookie, getCookie, setCookie } from "@/utils/cookies";
 import { Event, User } from "./interfaces";
 import { arrayBufferToBase64 } from "./data";
 
@@ -16,8 +16,6 @@ export const me = async () => {
         if (response.ok) {
             const data = await response.json();
             return data;
-        } else {
-            return null;
         }
     } catch (error) {
         return error;
@@ -186,7 +184,6 @@ export const updateEvent = async (eventId: number, eventData: any): Promise<any>
             allowedGender: eventData.allowedGender,
             eventLimit: eventData.eventLimit
         };
-        console.log(formattedEventData)
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT}${eventId}`, {
             method: "PUT",
             headers: {
@@ -371,7 +368,7 @@ export const joinEvent = async (userId: number, eventId: number): Promise<boolea
         });
         if (!response.ok) {
             const errorData = await response.json();
-        console.error('Error response:', errorData);
+            console.error('Error response:', errorData);
         }
 
         return true;
@@ -481,3 +478,119 @@ export const unblockUser = async (userId: number) => {
         throw error;
     }
 }
+
+export const getAllEventsAfterAttendance = async (userId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.GET_ALL_EVENTS_AFTER_ATTENDANCE}${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching events after attendance: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to fetch events after attendance:', error);
+        throw error;
+    }
+};
+
+export const getAllUsersAfterAttendance = async (eventId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.GET_ALL_USERS_AFTER_ATTENDANCE}${eventId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching users after attendance: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to fetch users after attendance:', error);
+        throw error;
+    }
+};
+
+export const getEventNow = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.EVENT_NOW, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching current event: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to fetch current event:', error);
+        throw error;
+    }
+};
+
+export const likeEvent = async (eventId: number, userId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.LIKE_EVENT}${eventId}/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to like event:', error);
+        throw error;
+    }
+};
+
+export const dislikeEvent = async (eventId: number, userId: number) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.DISLIKE_EVENT}${eventId}/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Failed to dislike event:', error);
+        throw error;
+    }
+};
+
+export const getEventById = async (eventId: number): Promise<Event | null> => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.GET_EVENT_BY_ID}${eventId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch event with ID ${eventId}`);
+        }
+        const data: Event = await response.json();
+        return data || null;
+    } catch (error) {
+        console.error(`Error fetching event with ID ${eventId}:`, error);
+        return null;
+    }
+};

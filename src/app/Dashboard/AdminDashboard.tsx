@@ -75,7 +75,7 @@ const AdminDashboard = () => {
         <p className="text-xl font-medium font-poppins underline">Closest Events</p>
 
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
-          {error ? (
+          {events.length == 0 ? (
             <div className="flex flex-col items-center gap pt-2">
               <img src="no-event-image.png" alt="No events today" className="mb-4 w-32 h-32" />
               <p className="font-poppins text-center text-gray-700 mx-4">Oops! Looks like there are no events found.</p>

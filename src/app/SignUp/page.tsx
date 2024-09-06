@@ -59,7 +59,7 @@ const SignUp = () => {
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
-        } console.log(userForm);
+        }
 
 
         if (passwordError) {

@@ -1,14 +1,16 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import type { EventDetailModal, User } from '@/utils/interfaces';
+import { EventDetailModal, User } from '@/utils/interfaces';
 import ManageEvent from './ManageEvent';
 import ViewFeedback from './ViewFeedback';
 import { formatDate } from '@/utils/data';
 import { getAllUsersJoinedToEvent } from '@/utils/apiCalls';
+import ViewJoined from './ViewJoined';
 
 const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
     const [clickedManage, setClickedManage] = useState(false);
     const [clickedFeedback, setClickedFeedback] = useState(false);
+    const [clickedJoined, setClickedJoined] = useState(false);
 
     const [usersJoinedToEvent, setUsersJoinedToEvent] = useState<User[]>([]);
     useEffect(() => {
@@ -22,8 +24,8 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
             }
         };
         fetchUsersJoinedToEvent()
-    },[])
-    
+    }, [])
+
     const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
     const type = event.eventType.toString().split(', ');
     return (
@@ -77,6 +79,7 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                 </div>
                 <div className="flex w-full justify-end">
                     <div className=" flex gap-3">
+                        <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedJoined(true) }}>View Joined</button>
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button>
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
                     </div>
@@ -86,6 +89,7 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
             </div>
             {clickedManage && <ManageEvent event={event} onClose={() => setClickedManage(false)} />}
             {clickedFeedback && <ViewFeedback event={event} onClose={() => setClickedFeedback(false)} />}
+            {clickedJoined && <ViewJoined event={event} onClose={() => setClickedJoined(false)} />}
         </div>
     );
 };

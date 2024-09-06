@@ -130,7 +130,7 @@ const ManageUsers = () => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col">
             <Sidebar />
             <div className="mt-[6rem] ml-[2rem] mx-2 mb-5">
                 <p className="text-xl font-semibold font-bevietnam mb-2 tablet:text-3xl">Users</p>
@@ -184,7 +184,7 @@ const ManageUsers = () => {
                 </div>
             </div>
             {selectedUser && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
                     <div className="bg-white px-4 rounded-md shadow-md w-[21rem]">
                         <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={handleClosePopup}>✖</p>
                         <div className="my-2 flex flex-col items-center">

@@ -10,6 +10,7 @@ export interface User {
     role?: string;
     gender?: string;
     blocked? : boolean;
+    hasAttended?: boolean;
 }
 
 export interface Event {
@@ -20,14 +21,14 @@ export interface Event {
     eventEnds: Date | null;
     likes?: number;
     dislikes?: number;
-    usersLiked?: Set<string>;
-    usersDisliked?: Set<string>;
+    usersLiked?: string[];
+    usersDisliked?: string[];
     eventPicture?: string;
     department: string[]; 
     eventType: string[];
     allowedGender?: string;
     eventLimit?: number;
-    preRegisteredUsers?: string[]
+    preRegisteredUsers?: string[];
 }
 
 export interface EventDetailModal {

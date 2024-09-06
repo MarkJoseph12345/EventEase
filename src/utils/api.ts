@@ -26,4 +26,9 @@ export const API_ENDPOINTS = {
   GET_TOP_THREE: `${BASE_URL}/api/v1/auth/admin/getTopThree`,
   BLOCK_USER: `${BASE_URL}/api/v1/auth/admin/block/`,
   UNBLOCK_USER: `${BASE_URL}/api/v1/auth/admin/unblock/`,
+  GET_ALL_EVENTS_AFTER_ATTENDANCE:`${BASE_URL}/api/v1/auth/admin/getEventsJoinedAttendance/`,
+  GET_ALL_USERS_AFTER_ATTENDANCE:`${BASE_URL}/api/v1/auth/admin/getUsersJoinedAfterAttendance/`,
+  EVENT_NOW: `${BASE_URL}/api/v1/auth/event/getEventNow`,
+  LIKE_EVENT: `${BASE_URL}/api/v1/auth/event/likeEvent/`,
+  DISLIKE_EVENT: `${BASE_URL}/api/v1/auth/event/dislikeEvent/`,
 };

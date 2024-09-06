@@ -112,7 +112,6 @@ const Sidebar = () => {
     };
 
     const handleConfirmDelete = () => {
-        console.log("Account deleted");
         setShowDeleteConfirmation(false);
         setShowSuccessMessage(true);
 

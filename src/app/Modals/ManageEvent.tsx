@@ -12,7 +12,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
     const [preview, setPreview] = useState<string>(event.eventPicture || "");
     const [updateEventData, setUpdateEventData] = useState<any>({
         ...event,
-        eventType: event.eventType ? event.eventType.toString().split(', ') : [],
+        // eventType: event.eventType ? event.eventType.toString().split(', ') : [],
         eventStarts: event.eventStarts ? new Date(event.eventStarts) : null,
         eventEnds: event.eventEnds ? new Date(event.eventEnds) : null,
     });

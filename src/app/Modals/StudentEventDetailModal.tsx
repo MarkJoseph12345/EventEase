@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import type { EventDetailModal, User } from '@/utils/interfaces';
 import { formatDate } from '@/utils/data';
-import { getAllUsersJoinedToEvent, getEventsJoinedByUser, joinEvent, me, unjoinEvent } from '@/utils/apiCalls';
+import { dislikeEvent, getAllUsersJoinedToEvent, getEventById, getEventsJoinedByUser, joinEvent, likeEvent, me, unjoinEvent } from '@/utils/apiCalls';
 
 const POLL_INTERVAL = 10000;
 
-const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, onJoinUnjoin }: EventDetailModal) => {
+interface StudentEventDetailModalProps extends EventDetailModal {
+    eventType?: string;
+}
+
+const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
+    event,
+    onClose,
+    onJoinUnjoin,
+    eventType = "join"
+}) => {
     const [isJoined, setIsJoined] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [usersJoinedToEvent, setUsersJoinedToEvent] = useState<User[]>([]);
     const [user, setUser] = useState<User | null>(null);
     const [genderMismatch, setGenderMismatch] = useState(false);
+    const [activeButton, setActiveButton] = useState<'like' | 'dislike' | null>(null);
+
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -31,6 +42,27 @@ const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, o
     }, [event]);
 
     useEffect(() => {
+        const checkUserStatus = async () => {
+            const currentEvent = await getEventById(event!.id!)
+            if (!user || !currentEvent) return;
+
+            const userHasLiked = currentEvent.usersLiked?.includes(user.username!) ?? false;
+            const userHasDisliked = currentEvent.usersDisliked?.includes(user.username!) ?? false;
+
+            if (userHasLiked) {
+                setActiveButton('like');
+            } else if (userHasDisliked) {
+                setActiveButton('dislike');
+            } else {
+                setActiveButton(null);
+            }
+        };
+
+        checkUserStatus();
+    }, [event, user]);
+
+
+    useEffect(() => {
         if (!user?.id || !event?.id) {
             setIsLoading(false);
             return;
@@ -47,6 +79,7 @@ const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, o
                 setIsLoading(false);
             }
         };
+
 
         const fetchUsersJoinedToEvent = async () => {
             try {
@@ -96,6 +129,16 @@ const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, o
         }
     };
 
+    const handleLike = async () => {
+        setActiveButton('like');
+        const res = await likeEvent(event.id!, user!.id!)
+    };
+
+    const handleDislike = async () => {
+        setActiveButton('dislike');
+        const res = await dislikeEvent(event.id!, user!.id!)
+    };
+
     const type = event.eventType.toString().split(', ');
     const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
     const isJoinDisabled = genderMismatch || (!isJoined && availableSlots <= 0);
@@ -111,7 +154,7 @@ const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, o
                 <div className="flex flex-col overflow-auto mx-20">
                     <div className="flex flex-col items-center w-full">
                         <div
-                            className=" relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-sm bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40 h-44 w-72">
+                            className="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-sm bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40 h-44 w-72">
                             <img src={event.eventPicture} alt={event.eventName} className="h-full w-full" />
                         </div>
                     </div>
@@ -136,13 +179,50 @@ const StudentEventDetailModal: React.FC<EventDetailModal> = ({ event, onClose, o
                     </div>
                 </div>
                 <div className="flex w-full justify-end">
-                    <button
-                        onClick={handleJoinUnjoin}
-                        className={`font-poppins font-bold px-4 py-2 rounded-md self-end my-4 mr-8 ${isJoinDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-customYellow'}`}
-                        disabled={isJoinDisabled}
-                    >
-                        {isJoined ? 'Unjoin' : 'Join'}
-                    </button>
+                    {eventType === "attended" ? (
+                        <div className="flex gap-4 my-4">
+                            <div className="group">
+                                <button
+                                    onClick={handleLike}
+                                    className="font-poppins font-bold px-4 py-2 rounded-md bg-green-500 text-white flex items-center transition-colors group-hover:bg-green-600"
+                                >
+                                    <svg
+                                        className="w-6 h-6 transition-transform duration-300 transform group-hover:scale-110"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill={activeButton === 'like' ? '#FDCC01' : ''}
+                                        stroke={activeButton === 'like' ? '#FDCC01' : ''}
+                                    >
+                                        <path d="M11 0h1v3l3 7v8a2 2 0 0 1-2 2H5c-1.1 0-2.31-.84-2.7-1.88L0 12v-2a2 2 0 0 1 2-2h7V2a2 2 0 0 1 2-2zm6 10h3v10h-3V10z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="group">
+                                <button
+                                    onClick={handleDislike}
+                                    className="font-poppins font-bold px-4 py-2 rounded-md bg-red-500 text-white flex items-center transition-colors group-hover:bg-red-600"
+                                >
+                                    <svg
+                                        className="w-6 h-6 transition-transform duration-300 transform group-hover:scale-110"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill={activeButton === 'dislike' ? '#FDCC01' : ''}
+                                        stroke={activeButton === 'dislike' ? '#FDCC01' : ''}
+                                    >
+                                        <path d="M11 20a2 2 0 0 1-2-2v-6H2a2 2 0 0 1-2-2V8l2.3-6.12A3.11 3.11 0 0 1 5 0h8a2 2 0 0 1 2 2v8l-3 7v3h-1zm6-10V0h3v10h-3z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleJoinUnjoin}
+                            className={`font-poppins font-bold px-4 py-2 rounded-md self-end my-4 mr-8 ${isJoinDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-customYellow'}`}
+                            disabled={isJoinDisabled}
+                        >
+                            {isJoined ? 'Unjoin' : 'Join'}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

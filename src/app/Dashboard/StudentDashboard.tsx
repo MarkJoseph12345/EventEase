@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { Event, User } from "../../utils/interfaces";
 import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
-import { fetchEventPicture, getEvents, me } from "@/utils/apiCalls";
+import { fetchEventPicture, getEvents, me, getAllEventsAfterAttendance } from "@/utils/apiCalls";
 import { formatDate } from "@/utils/data";
 
-
-const StudentDasboard = () => {
+const StudentDashboard = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -29,42 +28,50 @@ const StudentDasboard = () => {
 
   useEffect(() => {
     const loadEvents = async () => {
-      if (!user?.id) return; 
+      if (!user?.id) return;
+
       try {
+        // Fetch all events
         const fetchedEvents = await getEvents();
 
         if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
           setError(true);
-        } else {
-          setError(false);
-
-          const currentTime = new Date();
-
-          const processedEvents = await Promise.all(
-            fetchedEvents.map(async (event) => {
-              if (event.eventType && Array.isArray(event.eventType)) {
-                const eventTypeString = event.eventType[0];
-                event.eventType = eventTypeString.split(", ");
-              }
-              event.eventPicture = await fetchEventPicture(event.id!);
-              return event;
-            })
-          );
-
-          const upcomingEvents = processedEvents.filter(
-            (event) =>
-              new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-              event.department.includes(user?.department!)
-          );
-
-          const sortedEvents = upcomingEvents.sort((a, b) =>
-            new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
-          );
-
-          const closestEvents = sortedEvents.slice(0, 3);
-
-          setEvents(closestEvents);
+          return;
         }
+
+        // Fetch attended events
+        const attendedEvents = await getAllEventsAfterAttendance(user.id);
+        const attendedEventIds = new Set(attendedEvents.map((event: Event) => event.id));
+
+        const currentTime = new Date();
+
+        const processedEvents = await Promise.all(
+          fetchedEvents.map(async (event) => {
+            if (event.eventType && Array.isArray(event.eventType)) {
+              const eventTypeString = event.eventType[0];
+              event.eventType = eventTypeString.split(", ");
+            }
+            event.eventPicture = await fetchEventPicture(event.id!);
+            return event;
+          })
+        );
+
+        // Filter out attended events
+        const upcomingEvents = processedEvents.filter(
+          (event) =>
+            new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+            event.department.includes(user.department!) &&
+            !attendedEventIds.has(event.id)
+        );
+
+        const sortedEvents = upcomingEvents.sort((a, b) =>
+          new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
+        );
+
+        const closestEvents = sortedEvents.slice(0, 3);
+
+        setEvents(closestEvents);
+        setError(false);
       } catch (error) {
         console.error("Error loading events:", error);
         setError(true);
@@ -90,12 +97,12 @@ const StudentDasboard = () => {
     <div>
       <Sidebar />
       <div className="mt-[6rem] mx-2 mb-4 ml-[2rem]">
-        <p className="text-xl font-semibold font-bevietnam  tablet:text-3xl">Hello, {user.firstName}</p>
+        <p className="text-xl font-semibold font-bevietnam tablet:text-3xl">Hello, {user.firstName}</p>
         <p className="tablet:text-xl font-poppins">Discover exciting events for your department!</p>
         <div className="w-full border-t my-4" />
         <p className="text-xl font-medium font-poppins underline">Closest {user.department} Events</p>
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
-          {error ? (
+          {events.length == 0 ? (
             <div className="flex flex-col items-center gap pt-2">
               <img src="no-event-image.png" alt="No events today" className="mb-4 w-32 h-32" />
               <p className="font-poppins text-center text-gray-700 mx-4">Oops! Looks like there are no events found.</p>
@@ -104,7 +111,7 @@ const StudentDasboard = () => {
             events.map(event => (
               <div
                 key={event.id}
-                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center"
+                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer"
                 onClick={() => handleEventClick(event)}
               >
                 <img
@@ -120,11 +127,10 @@ const StudentDasboard = () => {
             ))
           )}
         </div>
-
       </div>
       {selectedEvent && <StudentEventDetailModal event={selectedEvent} onClose={handleClosePopup} />}
     </div>
-  )
-}
+  );
+};
 
-export default StudentDasboard;
+export default StudentDashboard;

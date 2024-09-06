@@ -5,7 +5,7 @@ import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import StudentEventsFilteredList from "../Comps/StudentEvents";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
-import { fetchEventPicture, getEventsJoinedByUser, me } from "../../utils/apiCalls";
+import { fetchEventPicture, getEventsJoinedByUser, me, getAllEventsAfterAttendance } from "../../utils/apiCalls";
 
 const RegisteredEvents = () => {
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -14,27 +14,28 @@ const RegisteredEvents = () => {
     const [loading, setLoading] = useState(true);
 
     const [user, setUser] = useState<User | null>(null);
+    
     useEffect(() => {
         const fetchUser = async () => {
-          try {
-            const userData = await me();
-            setUser(userData);
-          } catch (error) {
-            console.error('Failed to fetch user:', error);
-          }
+            try {
+                const userData = await me();
+                setUser(userData);
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+            }
         };
     
         fetchUser();
-      }, []);
-
+    }, []);
 
     useEffect(() => {
         if (!user?.id) {
             return;
         }
+        
         const fetchJoinedEvents = async () => {
             try {
-                const events = await getEventsJoinedByUser(user!.id!);
+                const events = await getEventsJoinedByUser(user.id!);
                 const currentTime = new Date();
                 const filteredEvents = events.filter(event => new Date(event.eventEnds!).getTime() > currentTime.getTime());
 
@@ -48,7 +49,12 @@ const RegisteredEvents = () => {
                         return event;
                     })
                 );
-                setJoinedEvents(processedEvents);
+                
+                const attendedEvents = await getAllEventsAfterAttendance(user.id!);
+                const attendedEventIds = attendedEvents.map((event: Event) => event.id);
+                const finalEvents = processedEvents.filter(event => !attendedEventIds.includes(event.id));
+
+                setJoinedEvents(finalEvents);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching joined events:", error);
@@ -70,12 +76,11 @@ const RegisteredEvents = () => {
     if (loading) {
         return <Loading />;
     }
-    
+
     const removeUnjoinedEvent = (eventId: number) => {
         setJoinedEvents(joinedEvents.filter(event => event.id !== eventId));
-        window.location.reload()
+        window.location.reload();
     };
-    
 
     return (
         <div>
