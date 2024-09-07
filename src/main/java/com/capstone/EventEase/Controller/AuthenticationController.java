@@ -1,13 +1,17 @@
 package com.capstone.EventEase.Controller;
 
 
+import com.capstone.EventEase.DTO.Request.ForgotPasswordRequest;
 import com.capstone.EventEase.DTO.Request.LoginRequest;
+import com.capstone.EventEase.DTO.Request.NewPasswordRequest;
 import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Service.AuthenticationService;
+import com.capstone.EventEase.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +34,32 @@ public class AuthenticationController {
 
 
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request){
+        try{
+            return new ResponseEntity<>(authenticationService.sendForgotPasswordToken(request.getEmail()),
+            HttpStatus.OK);
+        }catch (MessagingException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 
+
+    @PostMapping("/new-password")
+    public ResponseEntity<?> newPassword(@RequestParam("token") String token, @RequestBody NewPasswordRequest newPasswordRequest){
+        authenticationService.newPassword(token, newPasswordRequest.getNewPassword());
+        return ResponseEntity.ok("Password has been reset");
+    }
 
     @GetMapping("/hello")
     @Operation(summary = "Say Hello", description = "This will say hello")
+
+
+
     public ResponseEntity<String> greet(){
         return new ResponseEntity<>("Hello World",HttpStatus.OK);
     }

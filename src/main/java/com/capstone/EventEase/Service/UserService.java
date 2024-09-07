@@ -1,14 +1,18 @@
 package com.capstone.EventEase.Service;
 
 import com.capstone.EventEase.Entity.Attendance;
+import com.capstone.EventEase.Entity.PasswordResetToken;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
 import com.capstone.EventEase.Exceptions.EntityNotDeletedException;
 import com.capstone.EventEase.Repository.AttendanceRepository;
+import com.capstone.EventEase.Repository.PasswordResetTokenRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 import com.capstone.EventEase.Repository.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -32,6 +37,9 @@ public class UserService implements UserDetailsService {
     private final AttendanceRepository attendanceRepository;
 
     private final ImageService imageService;
+
+
+
 
 
 

@@ -2,7 +2,9 @@ package com.capstone.EventEase.Service;
 
 import com.capstone.EventEase.DTO.Request.EmailSendRequestDTO;
 import com.capstone.EventEase.Entity.Event;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,10 +18,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
+
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private static final String ACTION_URL = "http://localhost:3000/Preregister"; // Update with your actual URL
+    private static final String ACTION_URL = "http://localhost:3000/Preregister";
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
@@ -30,7 +34,7 @@ public class EmailService {
 
         for (EmailSendRequestDTO email : emails) {
             try {
-                // Set up context for email template
+
                 Context context = new Context();
                 context.setVariable("subject", "EventEase Invite");
                 context.setVariable("body", "You have been invited to an event");
@@ -40,10 +44,9 @@ public class EmailService {
                 context.setVariable("allowedGender", event.getAllowedGender().toString());
                 context.setVariable("eventLimit", event.getEventLimit()); // Add event limit
 
-                // Process email template
+
                 String htmlContent = templateEngine.process("email-template", context);
 
-                // Create and send email
                 MimeMessage message = javaMailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setTo(email.getReceiver());
@@ -58,5 +61,27 @@ public class EmailService {
             }
         }
         return String.format("Emails sent successfully: %d, failed: %d", successCount, failureCount);
+    }
+
+
+
+
+    public void forgotPasswordEmail(String email, String token) throws MessagingException {
+
+        Context context = new Context();
+        context.setVariable("subject","Forgot Password");
+        context.setVariable("token",token);
+
+
+        System.out.println("The Token is: " + token);
+
+        String htmlContent = templateEngine.process("forgot-password",context);
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+        helper.setTo(email);
+        helper.setText(htmlContent,true);
+
+        javaMailSender.send(message);
     }
 }

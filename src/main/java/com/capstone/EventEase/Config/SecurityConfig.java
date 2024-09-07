@@ -32,6 +32,8 @@ import java.util.List;
 public class SecurityConfig {
 
 
+
+
     private final UserService userService;
 
 
@@ -56,6 +58,10 @@ public class SecurityConfig {
     }
 
      */
+
+
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
@@ -64,7 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/v1/authenticated/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-                        .requestMatchers("/api/v1/auth/user").hasAnyAuthority(Role.STUDENT.name())
+                        .requestMatchers("/api/v1/auth/user").hasAnyRole(Role.STUDENT.name())
                         .requestMatchers("/api/v1/auth/admin").hasAnyRole(Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
@@ -73,6 +79,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
 
 
 

@@ -6,9 +6,12 @@ import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.ENUMS.Gender;
 import com.capstone.EventEase.ENUMS.Role;
+import com.capstone.EventEase.Entity.PasswordResetToken;
 import com.capstone.EventEase.Entity.User;
+import com.capstone.EventEase.Repository.PasswordResetTokenRepository;
 import com.capstone.EventEase.Repository.UserRepository;
 import com.capstone.EventEase.UTIL.ImageUtils;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -127,11 +132,46 @@ public class AuthenticationService {
 
 
 
+    private final EmailService emailService;
+
+
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
 
 
+    public String sendForgotPasswordToken(String email) throws MessagingException {
+        User user = userRepository.findByUsername(email);
+        if(user == null){
+            throw new EntityNotFoundException("User with that email not Found!");
+        }
 
+        String token = UUID.randomUUID().toString().replaceAll("[^0-9]","");
+        String randomToken = token.substring(0,6);
+
+        PasswordResetToken passwordResetToken = new PasswordResetToken(randomToken,user);
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        emailService.forgotPasswordEmail(email,randomToken);
+        return "Email has been send!";
+    }
+
+
+    public void  newPassword(String token, String newPassword){
+            PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+            if(passwordResetToken == null){
+                throw new EntityNotFoundException("Invalid Token");
+            }
+            if(passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())){
+                throw new IllegalArgumentException("Token has expired!");
+            }
+            User user =  passwordResetToken.getUser();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            passwordResetTokenRepository.delete(passwordResetToken);
+
+    }
 
 
 
