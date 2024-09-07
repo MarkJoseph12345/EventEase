@@ -35,20 +35,11 @@ public class Attendance {
     @JoinColumn(name = "userevent_id")
     private UserEvent userevent;
 
-
-
-    @ElementCollection
-    @CollectionTable(name = "Attend_Date",joinColumns = @JoinColumn(name = "attendance_id"))
     @Column(name = "AttendedTime")
-    @Cascade(CascadeType.ALL)
-    @Builder.Default
     private List<OffsetDateTime> attendedTime = new ArrayList<>();
 
 
-    @ElementCollection
-    @CollectionTable(name = "Timeout_Date", joinColumns = @JoinColumn(name = "attendance_id"))
+
     @Column(name = "TimeOut")
-    @Cascade(CascadeType.ALL)
-    @Builder.Default
     private List<OffsetDateTime> timeOut = new ArrayList<>();
 }
