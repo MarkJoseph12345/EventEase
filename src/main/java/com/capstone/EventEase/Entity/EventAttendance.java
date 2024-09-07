@@ -17,4 +17,7 @@ public class EventAttendance {
 
     private long attendanceCount;
 
+
+
+
 }

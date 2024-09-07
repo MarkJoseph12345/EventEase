@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.List;
 public class Attendance {
 
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "attendance_id")
@@ -34,13 +37,18 @@ public class Attendance {
 
 
 
+    @ElementCollection
+    @CollectionTable(name = "Attend_Date",joinColumns = @JoinColumn(name = "attendance_id"))
     @Column(name = "AttendedTime")
+    @Cascade(CascadeType.ALL)
+    @Builder.Default
     private List<OffsetDateTime> attendedTime = new ArrayList<>();
 
 
-
-
+    @ElementCollection
+    @CollectionTable(name = "Timeout_Date", joinColumns = @JoinColumn(name = "attendance_id"))
     @Column(name = "TimeOut")
+    @Cascade(CascadeType.ALL)
+    @Builder.Default
     private List<OffsetDateTime> timeOut = new ArrayList<>();
-
 }
