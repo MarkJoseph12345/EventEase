@@ -23,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/user")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Tag(name = "USER CONTROLLER", description = "THIS IS WHERE THE USER CONTROLLERS ARE")
 public class UserController {

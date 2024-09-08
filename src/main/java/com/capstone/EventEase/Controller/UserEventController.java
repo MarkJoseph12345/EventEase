@@ -20,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth/userevent")
+@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "USER EVENT CONTROLLER",description = "THIS IS WHERE THE USER EVENT CONTROLLERS ARE")
 public class UserEventController {
 
@@ -35,15 +36,8 @@ public class UserEventController {
         public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId){
                 try{
                     return new ResponseEntity<>(userEventService.joinEvent(userId,eventId),HttpStatus.OK);
-                }catch (UserBlockedException e){
-                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
-                }catch (EventFullException e){
-                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
-                }catch (DoubleJoinException e){
-                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
-                }catch (GenderNotAllowedException e){
-                    return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
-                }catch (EntityNotFoundException e){
+                }catch (UserBlockedException | EventFullException | DoubleJoinException | GenderNotAllowedException |
+                        EntityNotFoundException e){
                     return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
                 }
         }

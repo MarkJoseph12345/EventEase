@@ -8,6 +8,7 @@ import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Service.AuthenticationService;
+import com.capstone.EventEase.Service.PasswordResetTokenService;
 import com.capstone.EventEase.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,13 +26,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Tag(name = "AUTHENTICATION CONTROLLER", description = "THIS IS THE AUTHENTICATION CONTROLLER")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-
+    private final PasswordResetTokenService passwordResetTokenService;
 
 
     @PostMapping("/forgot-password")
@@ -54,6 +56,22 @@ public class AuthenticationController {
         authenticationService.newPassword(token, newPasswordRequest.getNewPassword());
         return ResponseEntity.ok("Password has been reset");
     }
+
+
+
+
+    @PostMapping("/verifyToken")
+    public ResponseEntity<Boolean> verifyToken(@RequestParam("token") String token){
+        return ResponseEntity.ok(passwordResetTokenService.verifyToken(token));
+    }
+
+
+    @PostMapping("/verifyPassword/{userId}/{password}")
+    public ResponseEntity<Boolean> verifyPassword(@PathVariable Long userId, @PathVariable  String password){
+            return ResponseEntity.ok(authenticationService.verifyPassword(userId,password));
+    }
+
+
 
     @GetMapping("/hello")
     @Operation(summary = "Say Hello", description = "This will say hello")

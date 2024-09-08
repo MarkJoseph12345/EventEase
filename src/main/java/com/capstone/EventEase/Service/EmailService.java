@@ -64,8 +64,6 @@ public class EmailService {
     }
 
 
-
-
     public void forgotPasswordEmail(String email, String token) throws MessagingException {
 
         Context context = new Context();
@@ -80,6 +78,7 @@ public class EmailService {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,true);
         helper.setTo(email);
+        helper.setSubject("Forgot Password Token");
         helper.setText(htmlContent,true);
 
         javaMailSender.send(message);

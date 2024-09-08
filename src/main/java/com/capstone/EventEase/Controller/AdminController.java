@@ -24,6 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/admin")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Tag(name = "ADMIN CONTROLLER", description = "THIS IS THE ADMIN CONTROLLER")
 public class AdminController {
