@@ -75,7 +75,7 @@ public class AuthenticationService {
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
                .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
-                .profilePictureName("profile.png")
+                .profilePictureName("XyloGraph1.png")
                 .profilePictureType("image/png")
                 .build();
 

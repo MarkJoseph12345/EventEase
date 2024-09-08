@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -40,11 +41,12 @@ public class JwtService {
     }
 
     private String generateToken(Map<String,Object> extraClaims, UserDetails userDetails){
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()  * 24 * 60 * 60 * 1000))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+        return Jwts.builder().subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() +  60 * 60 * 1000))
+                .signWith(getSigningKey()).compact();
     }
+
 
 
 
@@ -69,13 +71,13 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token){
-        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
     }
 
 
 
 
-    private Key getSigningKey(){
+    private SecretKey getSigningKey(){
         byte[] keyBytes = Base64.getDecoder().decode(jwtSigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }

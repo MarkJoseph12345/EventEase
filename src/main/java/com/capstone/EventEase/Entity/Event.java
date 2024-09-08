@@ -28,6 +28,8 @@ public class Event {
 
     private String eventName;
 
+
+    @Column(length = 100000)
     private String eventDescription;
 
 

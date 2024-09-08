@@ -24,6 +24,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+
+
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -89,6 +92,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return getUserByUsername(username);
     }
-}
 
+
+}
 
