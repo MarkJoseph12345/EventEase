@@ -20,6 +20,11 @@ export async function middleware(request: NextRequest) {
       return res;
     } else {
       userData = await response.json();
+      if (userData.profilePictureName === "XyloGraph1.png") {
+        if (request.nextUrl.pathname !== "/Profile") {
+          return NextResponse.redirect(new URL("/Profile", request.url));
+        }
+      }
       if (userData.blocked) {
         return NextResponse.redirect(new URL("/Blocked", request.url));
       }

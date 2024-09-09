@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import { Event, EventDetailModal, User } from '@/utils/interfaces';
-import { getAllUsersJoinedToEvent, getAllUsersAfterAttendance } from '@/utils/apiCalls';
+import { getAllUsersJoinedToEvent, getAllUsersAfterAttendance, me } from '@/utils/apiCalls';
 import Loading from '../Loader/Loading';
 
 const ViewJoined = ({ event, onClose }: EventDetailModal) => {
@@ -13,9 +13,10 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
             setLoading(true);
             try {
                 const usersData = await getAllUsersJoinedToEvent(event.id!);
-                
-                const attendedUserIds = await getAllUsersAfterAttendance(event.id!);
-                
+                const attendedUsers = await getAllUsersAfterAttendance(event.id!);
+    
+                const attendedUserIds = attendedUsers.map((user: { id: any; }) => user.id);
+    
                 const updatedUsers = usersData.map(user => ({
                     ...user,
                     hasAttended: attendedUserIds.includes(user.id)
@@ -28,9 +29,11 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                 setLoading(false);
             }
         };
-
+    
         fetchUsersAndAttendance();
     }, [event.id]);
+    
+    
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">

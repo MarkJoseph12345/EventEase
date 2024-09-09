@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { loginAccount } from "@/utils/apiCalls"
+import ForgotPasswordPopup from "../Modals/ForgotPassword"
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
@@ -10,6 +11,7 @@ const Login = () => {
         password: "",
     })
     const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | undefined>()
+    const [showPopup, setShowPopup] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value } = e.target;
@@ -39,7 +41,7 @@ const Login = () => {
             <div className="sticky top-5 bg-white">
                 <img src="/logo.png" className="h-10 w-40 object-cover bg-customYellow " onClick={() => window.location.href = "/"} />
             </div>
-            <p className="text-center text-4xl  font-poppins font-bold mt-10">Log In</p>
+            <p className="text-center text-4xl font-poppins font-bold mt-10">Log In</p>
             <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">
                 <h1 className="text-center text-xl font-bold">Enter your Credentials</h1>
                 <form onSubmit={handleLogin} className="mt-2 flex flex-col gap-3">
@@ -65,12 +67,12 @@ const Login = () => {
                     </div>
                     <button type="submit" className="mt-4 bg-customYellow font-bold py-2 px-4 rounded" disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
                     <div className="flex justify-between">
-                        <span className="text-blue-500 text-xs font-semibold">Forgot Password?</span>
+                        <button type="button" onClick={() => setShowPopup(true)} className="text-blue-500 text-xs font-semibold">Forgot Password?</button>
                         <span className="text-end text-xs">Don&#39;t have an account? <Link href="/SignUp" replace className="font-semibold text-blue-500 underline decoration-2">SIGN UP</Link></span>
                     </div>
                 </form>
             </div>
-            
+            {showPopup && <ForgotPasswordPopup onClose={() => setShowPopup(false)} />}
         </div>
     )
 }

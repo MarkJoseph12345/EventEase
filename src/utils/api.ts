@@ -31,4 +31,5 @@ export const API_ENDPOINTS = {
   EVENT_NOW: `${BASE_URL}/api/v1/auth/event/getEventNow`,
   LIKE_EVENT: `${BASE_URL}/api/v1/auth/event/likeEvent/`,
   DISLIKE_EVENT: `${BASE_URL}/api/v1/auth/event/dislikeEvent/`,
+  FORGOT_PASSWORD: `${BASE_URL}/api/v1/auth/forgot-password`,
 };

@@ -594,3 +594,25 @@ export const getEventById = async (eventId: number): Promise<Event | null> => {
         return null;
     }
 };
+
+
+export const sendPasswordResetEmail = async (email: string) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.FORGOT_PASSWORD}/${email}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        return { success: false, message: 'Failed to send password reset email.' };
+    }
+};

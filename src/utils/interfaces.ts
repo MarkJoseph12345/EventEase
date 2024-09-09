@@ -11,6 +11,7 @@ export interface User {
     gender?: string;
     blocked? : boolean;
     hasAttended?: boolean;
+    profilePictureName?: string;
 }
 
 export interface Event {
