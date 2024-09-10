@@ -1,216 +1,167 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { Bar, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-} from 'chart.js';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { getAttendees } from '@/utils/apiCalls';
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-);
+import { getAllUsersAfterAttendance, getAllUsersJoinedToEvent, getEvents } from '@/utils/apiCalls';
+import { Event } from '@/utils/interfaces';
+import ViewJoined from '../Modals/ViewJoined';
 
 const ReportsAndAnalysis: React.FC = () => {
-    const [attendeesData, setAttendeesData] = useState<any[]>([]);
-    const attendees: number[] = attendeesData.map(attendee => attendee.attendanceCount);
-    const eventNames = attendeesData.map(attendee => attendee.event.eventName);
-
-    const attendeeInfo = attendeesData.map(attendee => {
-        const eventDate = new Date(attendee.event.eventStarts);
-        const day = eventDate.getDate();
-
-        return {
-            name: attendee.event.eventName,
-            date: day,
-            count: attendee.attendanceCount,
-        };
-    });
-    const sortedAttendees = [...attendeeInfo].sort((a, b) => b.count - a.count);
-    const top3Threshold: number = sortedAttendees[2]?.count;
-    const barColors: string[] = attendees.map(attendee =>
-        attendee >= top3Threshold ? '#000000' : '#FDCC01'
-    );
-
-
-    const barData = {
-        labels: eventNames,
-        datasets: [
-            {
-                data: attendees,
-                backgroundColor: barColors,
-            },
-        ],
-    };
-
-    const barOptions = {
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: 'gray',
-                },
-                ticks: {
-                    callback: function (value: any) {
-                        return Number.isInteger(value) ? value : '';
-                    },
-                }
-            },
-            x: {
-                grid: {
-                    color: 'gray',
-                },
-            },
-        },
-        plugins: {
-            title: {
-                display: false,
-            },
-            legend: {
-                display: false
-            },
-        },
-    };
-
-    const likes = attendeesData.reduce((acc, attendee) => acc + attendee.event.likes, 0);
-    const dislikes = attendeesData.reduce((acc, attendee) => acc + attendee.event.dislikes, 0);
-
-    const doughnutData = {
-        labels: ['Likes', 'Dislikes'],
-        datasets: [{
-            data: [likes, dislikes],
-            backgroundColor: ['#FDCC01', '#000000'],
-        }],
-    };
-
     const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<any[]>([]);
+    const [filteredData, setFilteredData] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
     useEffect(() => {
-        const fetchAttendees = async () => {
-            const data = await getAttendees();
-            setAttendeesData(data);
-            setLoading(false);
+        const fetchUsersAndAttendance = async () => {
+            setLoading(true);
+            try {
+                const fetchedEvents = await getEvents();
+
+                const eventsWithUserCounts = await Promise.all(fetchedEvents.map(async (event) => {
+                    const eventId = event.id;
+
+                    const usersData = await getAllUsersJoinedToEvent(eventId!);
+                    const attendedUsers = await getAllUsersAfterAttendance(eventId!);
+
+                    const registeredCount = usersData.length;
+                    const attendedCount = attendedUsers.length;
+
+                    return {
+                        ...event,
+                        registeredCount,
+                        attendedCount,
+                    };
+                }));
+                setData(eventsWithUserCounts);
+                setFilteredData(eventsWithUserCounts);
+            } catch (error) {
+                console.error('Error fetching users or attendance:', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        fetchAttendees();
+        fetchUsersAndAttendance();
     }, []);
 
+    const handleViewParticipants = (event: Event) => {
+        setSelectedEvent(event);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedEvent(null);
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        const filtered = data.filter(event =>
+            event.eventName.toLowerCase().includes(query)
+        );
+        setFilteredData(filtered);
+    };
 
     if (loading) {
         return <Loading />;
     }
 
-
     return (
         <div>
             <Sidebar />
             <div className="mt-5 mx-2 flex flex-col items-center">
-                <h2 className="text-2xl font-semibold font-bevietnam mb-5">Reports and Analysis</h2>
-                <div className="laptop:flex laptop:flex-wrap laptop:gap-5 laptop:items-center">
-                    <div className="border-2 border-black w-full max-w-[24rem] mx-auto">
-                        <h3 className='border-b-2 border-black bg-customYellow font-bold text-xl text-center'>TOP 3 NUMBER OF ATTENDEES</h3>
-                        <div className="flex flex-col items-center justify-center my-2 gap-2">
-                            {sortedAttendees[0] && (
-                                <div className="flex justify-center items-center gap-1 w-full px-5">
-                                    <p className="min-w-12 text-center text-4xl text-customYellow font-bebas" style={{ textShadow: '3px 0px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>1st</p>
-                                    <p className="flex items-center justify-center rounded-full border border-black bg-customYellow box-border min-h-9 min-w-9 text-2xl font-bebas">{sortedAttendees[0].date}</p>
-                                    <div className="flex bg-customYellow w-full border border-black rounded items-center px-2 justify-between">
-                                        <p className="text-lg font-bold">{sortedAttendees[0].name}</p>
-                                        <div className="flex items-center">
-                                            <p className="font-bold text-lg">{sortedAttendees[0].count}</p>
-                                            <img src="/groupicon.png" className="w-8 h-8" alt="Group Icon" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            {sortedAttendees[1] && (
-                                <div className="flex justify-center items-center gap-1 w-full px-5">
-                                    <p className="min-w-12 text-center text-3xl font-bebas">2nd</p>
-                                    <p className="flex items-center justify-center rounded-full border border-black bg-customYellow box-border min-h-9 min-w-9 text-2xl font-bebas">{sortedAttendees[1].date}</p>
-                                    <div className="flex w-full border border-black rounded items-center px-2 justify-between">
-                                        <p className="text-lg font-bold">{sortedAttendees[1].name}</p>
-                                        <div className="flex items-center">
-                                            <p className="font-bold text-lg">{sortedAttendees[1].count}</p>
-                                            <img src="/groupicon.png" className="w-8 h-8" alt="Group Icon" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            {sortedAttendees[2] && (
-                                <div className="flex justify-center items-center gap-1 w-full px-5">
-                                    <p className="min-w-12 text-center text-2xl font-bebas">3rd</p>
-                                    <p className="flex items-center justify-center box-border rounded-full border border-black bg-customYellow box-border min-h-9 min-w-9 text-2xl font-bebas">{sortedAttendees[2].date}</p>
-                                    <div className="flex w-full border border-black rounded items-center px-2 justify-between">
-                                        <p className="text-lg font-bold">{sortedAttendees[2].name}</p>
-                                        <div className="flex items-center">
-                                            <p className="font-bold text-lg">{sortedAttendees[2].count}</p>
-                                            <img src="/groupicon.png" className="w-8 h-8" alt="Group Icon" />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    <div className="mt-5 w-full max-w-[24rem] mx-auto laptop:order-first">
-                        <h3 className="text-xl font-bold">Monthly Events Attendance Data</h3>
-                        <div className="mb-8 border-2 border-black rounded-xl px-4">
-                            <h3 className="text-2xl font-medium mb-2 text-end underline font-bebas">{new Date().toLocaleString('default', { month: 'long' }).toUpperCase()}</h3>
-                            <div className="flex items-center justify-center w-full">
-                                <p className="[writing-mode:vertical-lr] rotate-180 mb-4  font-bebas">Number of Attendees</p>
-                                <div className="inline">
-                                    <Bar data={barData} options={barOptions} />
-                                </div>
+                <h2 className="text-2xl font-semibold font-bevietnam">Reports and Analysis</h2>
+                <div className="mt-5 w-full max-w-[80rem] flex flex-col items-center">
+                    <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] relative laptop:max-w-[50rem]">
+                        <div className="relative">
+                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
                             </div>
-                            <p className="text-center font-bebas">Events of the Month</p>
-                        </div>
-                    </div>
-                    <div className="border-2 border-black mb-5 w-full max-w-[24rem] mx-auto">
-                        <h3 className="text-xl font-bold text-customYellow bg-black">FEEDBACKS</h3>
-                        <div className=" py-10">
-                            <Doughnut
-                                data={doughnutData}
-                                options={{
-                                    plugins: {
-                                        legend: {
-                                            position: 'right',
-                                            title: {
-                                                display: true,
-                                                text: 'Legend',
-                                                color: '#000',
-                                                font: {
-                                                    size: 20
-                                                }
-                                            },
-                                            labels: {
-                                                color: '#000',
-                                                font: {
-                                                    size: 16
-                                                }
-                                            }
-                                        },
-                                    },
-                                    aspectRatio: 2,
-                                }}
+                            <input
+                                type="text"
+                                placeholder="Search by event name..."
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                                className="block w-full p-2 ps-10 border rounded-md rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300 w-full mb-4"
                             />
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <div className="relative max-h-[80vh]">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50 sticky top-0 ">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                                Event Name
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                                Registered
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                                Attended
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                                Likes/Dislikes
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                                Participants
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {filteredData.length > 0 ? (
+                                            filteredData.map(event => (
+                                                <tr key={event.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        {event.eventName}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        {event.registeredCount}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        {event.attendedCount}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <span className="text-green-500">{event.likes || 0}</span>/
+                                                        <span className="text-red-500">{event.dislikes || 0}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <button
+                                                            onClick={() => handleViewParticipants(event)}
+                                                            className="bg-customYellow px-4 py-2 rounded"
+                                                        >
+                                                            View Participants
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                                                    No events match the search criteria.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
+            {isModalOpen && selectedEvent && (
+                <ViewJoined
+                    event={selectedEvent}
+                    onClose={handleCloseModal}
+                />
+            )}
         </div>
     );
 };

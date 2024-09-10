@@ -6,6 +6,7 @@ import { Event } from "@/utils/interfaces";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
 import { createEvent, updateEventPicture } from "@/utils/apiCalls";
+import PopUps from "../Modals/PopUps";
 
 const departments = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
 
@@ -105,11 +106,6 @@ const CreateEvent = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const closeAlert = () => {
-    setMessage(undefined);
-  };
-
   const handleCreateEvent = async () => {
     setIsCreating(true);
     const {
@@ -117,15 +113,13 @@ const CreateEvent = () => {
       eventDescription,
       eventStarts,
       eventEnds,
-      eventType,
       department,
     } = event;
-    // if (!eventName || !eventDescription || !eventStarts || !eventEnds || type.length === 0 || department.length === 0) {
-    //     setMessage({ text: "Please fill all fields.", type: "error" });
-    //     setIsCreating(false);
-    //     setTimeout(() => setMessage(undefined), 3000);
-    //     return;
-    // }
+    if (!eventName || !eventDescription || !eventStarts || !eventEnds || department.length === 0) {
+        setMessage({ text: "Please fill in all fields.", type: "error" });
+        setIsCreating(false);
+        return;
+    }
 
     //alert(JSON.stringify(event, null, 2));
 
@@ -134,7 +128,6 @@ const CreateEvent = () => {
 
     if (result.success) {
       setMessage({ text: result.message, type: "success" });
-      setTimeout(() => setMessage(undefined), 3000);
       if (newPicture instanceof File) {
         await updateEventPicture(result.id, newPicture);
       }
@@ -142,7 +135,6 @@ const CreateEvent = () => {
       window.location.reload();
     } else {
       setMessage({ text: result.message, type: "error" });
-      setTimeout(() => setMessage(undefined), 3000);
     }
   };
 
@@ -235,13 +227,13 @@ const CreateEvent = () => {
           </div>
           <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
             <input
-              placeholder="Preregistered Users (comma-separated)"
+              placeholder="Pre-registered Users (comma-separated)"
               name="preRegisteredUsers"
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
             <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Preregistered Users
+              Pre-registered Users
             </label>
           </div>
 
@@ -419,23 +411,7 @@ const CreateEvent = () => {
           </div>
         </div>
       </div>
-      {/* Diri mo add sa ubos*/}
-      {message && (
-        <div
-          className={`z-20 fixed top-1 right-1 block pl-1 pr-5 text-base leading-5 text-white opacity-95 font-regular border-2 ${message.type === "success"
-            ? "bg-green-500 border-green-900"
-            : "bg-red-500 border-red-900"
-            }`}
-        >
-          <span>{message.text}</span>
-          <span
-            className="absolute right-1 cursor-pointer"
-            onClick={closeAlert}
-          >
-            ✖
-          </span>
-        </div>
-      )}
+      {message && <PopUps message={message} onClose={()=>setMessage(undefined)}/>}
     </div>
   );
 };

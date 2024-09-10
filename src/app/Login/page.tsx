@@ -3,6 +3,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { loginAccount } from "@/utils/apiCalls"
 import ForgotPasswordPopup from "../Modals/ForgotPassword"
+import PopUps from "../Modals/PopUps"
 
 const Login = () => {
     const [loading, setLoading] = useState(false)
@@ -29,9 +30,11 @@ const Login = () => {
 
         const result = await loginAccount(username, password);
         if (result.success) { 
+            setMessage({ text: "Login Success", type: "success" });
             window.location.href = "/Dashboard";
         }
         else {
+            setMessage({ text: "Login Failed", type: "error" });
             setLoading(false);
         }
     };
@@ -73,6 +76,7 @@ const Login = () => {
                 </form>
             </div>
             {showPopup && <ForgotPasswordPopup onClose={() => setShowPopup(false)} />}
+            {message && <PopUps message={message} onClose={()=>setMessage(undefined)}/>}
         </div>
     )
 }

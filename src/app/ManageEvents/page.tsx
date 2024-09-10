@@ -12,7 +12,7 @@ const ManageEvents = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [events, setEvents] = useState<Event[]>([]);
     const [error, setError] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[], classification: string[] }>({ types: [], departments: [], classification: [] });
+    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[]}>({ types: [], departments: []});
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
 
@@ -25,7 +25,7 @@ const ManageEvents = () => {
     };
 
 
-    const handleFilterChange = (filterCategory: 'types' | 'departments' | 'classification', filterValue: string) => {
+    const handleFilterChange = (filterCategory: 'types' | 'departments' , filterValue: string) => {
         const updatedFilters = selectedFilters[filterCategory].includes(filterValue)
             ? selectedFilters[filterCategory].filter(filter => filter !== filterValue)
             : [...selectedFilters[filterCategory], filterValue];
@@ -92,10 +92,9 @@ const ManageEvents = () => {
         const type = event.eventType.toString().split(', ')
         const matchesSearch = event.eventName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = selectedFilters.types.length === 0 || selectedFilters.types.includes(type[0]);
-        const matchesClassification = selectedFilters.classification.length === 0 || selectedFilters.classification.includes(type[1]);
         const matchesDepartment = selectedFilters.departments.length === 0 || selectedFilters.departments.some(department => event.department.includes(department));
 
-        return matchesSearch && matchesType && matchesClassification && matchesDepartment;
+        return matchesSearch && matchesType && matchesDepartment;
     });
 
     const [loading, setLoading] = useState(true);
@@ -118,7 +117,7 @@ const ManageEvents = () => {
                             {showFilters && (
                                 <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
                                     <div className="flex items-center justify-between mb-2 flex-col">
-                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: [], classification: [] })}>Clear Filters</button>
+                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: []})}>Clear Filters</button>
                                     </div>
                                     <div className="mb-2">
                                         <p className="font-semibold">Type</p>
@@ -127,16 +126,6 @@ const ManageEvents = () => {
                                                 <label className="flex items-center cursor-pointer">
                                                     <input type="checkbox" checked={selectedFilters.types.includes(type)} onChange={() => handleFilterChange('types', type)} className="mr-2 cursor-pointer accent-customYellow" />
                                                     {type}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="mb-2">
-                                        <p className="font-semibold">Classification</p>
-                                        {classifications.map((classification, index) => (
-                                            <div key={index} className="flex items-center">
-                                                <label className="flex items-center cursor-pointer">
-                                                    <input type="checkbox" checked={selectedFilters.classification.includes(classification)} onChange={() => handleFilterChange('classification', classification)} className="mr-2 cursor-pointer accent-customYellow" />
-                                                    {classification}</label>
                                             </div>
                                         ))}
                                     </div>
@@ -159,7 +148,7 @@ const ManageEvents = () => {
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div>
-                            <input type="search" className="block w-full p-2 ps-10 border rounded-md" placeholder="Search events..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300" placeholder="Search events..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">

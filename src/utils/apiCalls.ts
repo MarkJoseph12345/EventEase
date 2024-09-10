@@ -595,10 +595,26 @@ export const getEventById = async (eventId: number): Promise<Event | null> => {
     }
 };
 
-
 export const sendPasswordResetEmail = async (email: string) => {
     try {
-        const response = await fetch(`${API_ENDPOINTS.FORGOT_PASSWORD}/${email}`, {
+        const response = await fetch(`${API_ENDPOINTS.FORGOT_PASSWORD}?email=${encodeURIComponent(email)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.text();
+        return data;
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        return 'Failed to send password reset email.';
+    }
+};
+
+
+export const verifyToken = async (token: string) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.VERIFY_TOKEN}?token=${encodeURIComponent(token)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -612,7 +628,51 @@ export const sendPasswordResetEmail = async (email: string) => {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error sending password reset email:', error);
-        return { success: false, message: 'Failed to send password reset email.' };
+        console.error('Error verifying token:', error);
+        return { success: false, message: 'Failed to verify token.' };
+    }
+};
+
+export const resetPassword = async (token: string, newPassword: string) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.NEW_PASSWORD}?token=${encodeURIComponent(token)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ newPassword }),
+        });
+        console.log(response.status)
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.text();
+        return data;
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        return { success: false, message: 'Failed to reset password.' };
+    }
+};
+
+export const verifyPassword = async (userId: number, password: string) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.VERIFY_PASSWORD}${userId}/${encodeURIComponent(password)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error verifying password:', error);
+        return { success: false, message: 'Failed to verify password.' };
     }
 };

@@ -162,7 +162,7 @@ const ManageUsers = () => {
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div>
-                            <input type="search" className="block w-full p-2 ps-10 border rounded-md" placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300"  placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     {filteredUsers.length > 0 ? (

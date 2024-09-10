@@ -32,4 +32,7 @@ export const API_ENDPOINTS = {
   LIKE_EVENT: `${BASE_URL}/api/v1/auth/event/likeEvent/`,
   DISLIKE_EVENT: `${BASE_URL}/api/v1/auth/event/dislikeEvent/`,
   FORGOT_PASSWORD: `${BASE_URL}/api/v1/auth/forgot-password`,
+  VERIFY_TOKEN: `${BASE_URL}/api/v1/auth/verifyToken`,
+  NEW_PASSWORD: `${BASE_URL}/api/v1/auth/new-password`,
+  VERIFY_PASSWORD: `${BASE_URL}/api/v1/auth/verifyPassword/`,
 };
