@@ -20,7 +20,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth/userevent")
-@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "USER EVENT CONTROLLER",description = "THIS IS WHERE THE USER EVENT CONTROLLERS ARE")
 public class UserEventController {
 

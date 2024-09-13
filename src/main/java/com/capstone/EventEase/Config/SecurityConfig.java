@@ -87,6 +87,30 @@ public class SecurityConfig {
 
 
 
+/*
+
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    return http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(requests -> requests
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/api/v1/authenticated/**").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                    .requestMatchers("/user/**").hasAuthority(Role.STUDENT.name())
+                    .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
+                    .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+}
+
+
+ */
+
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -27,10 +27,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
+
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth/event")
-@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "EVENT CONTROLLER", description = "THIS IS THE EVENT CONTROLLER")
 public class EventController {
 

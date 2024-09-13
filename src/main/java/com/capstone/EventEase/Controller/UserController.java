@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+
+
 @RestController
 @RequestMapping("/api/v1/auth/user")
-@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Tag(name = "USER CONTROLLER", description = "THIS IS WHERE THE USER CONTROLLERS ARE")
 public class UserController {
@@ -38,7 +39,7 @@ public class UserController {
     @Operation(summary = "Greet The User")
     @GetMapping("/hello")
     public ResponseEntity<String> greet(){
-        return new ResponseEntity<>("Hello World",HttpStatus.OK);
+        return new ResponseEntity<>("Hello World User",HttpStatus.OK);
     }
 
 

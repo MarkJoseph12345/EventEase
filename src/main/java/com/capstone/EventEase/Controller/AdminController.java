@@ -24,7 +24,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/admin")
-@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 @Tag(name = "ADMIN CONTROLLER", description = "THIS IS THE ADMIN CONTROLLER")
 public class AdminController {
@@ -186,6 +185,14 @@ public class AdminController {
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
+    }
+
+
+
+
+    @GetMapping("/hello")
+    public ResponseEntity<String> greetAdmin(){
+        return ResponseEntity.ok("Hello Admin!");
     }
 }
 

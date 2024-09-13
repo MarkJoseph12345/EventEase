@@ -7,9 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @OpenAPIDefinition
-@ComponentScan(basePackages = {"com.capstone.EventEase"})
 public class EventEaseApplication {
-
 
 
 	public static void main(String[] args) {

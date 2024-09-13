@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/authenticated")
-@CrossOrigin(origins = "http://localhost:3000")
 @Tag(name = "Authenticated Controller", description = "THIS IS THE AUTHENTICATED CONTROLLER")
 public class AuthenticatedController {
 

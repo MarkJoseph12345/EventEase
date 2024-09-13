@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAttendance {
 
+
+
     private User user;
     private long attendanceCount;
 
