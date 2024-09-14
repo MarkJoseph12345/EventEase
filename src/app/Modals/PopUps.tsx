@@ -70,7 +70,7 @@ const PopUps: React.FC<PopUpsProps> = ({ message, onClose }) => {
         <div
             className={`fixed bottom-0 right-0 m-4 flex items-center justify-end z-50 transform transition-transform duration-300 ${show ? 'translate-x-0' : 'translate-x-full'} ${!visible ? 'opacity-0' : 'opacity-100'}`}
         >
-            <div className={`w-80 p-4 rounded-lg shadow-lg ${getColor()} flex items-center`}>
+            <div className={` p-4 rounded-lg shadow-lg ${getColor()} flex items-center`}>
                 <div className="flex-shrink-0 mr-3">
                     {getIcon()}
                 </div>

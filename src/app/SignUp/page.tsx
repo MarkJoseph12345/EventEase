@@ -4,8 +4,10 @@ import { User } from "@/utils/interfaces"
 import Link from "next/link"
 import { useState } from "react"
 import Loading from "../Loader/Loading"
-import { API_ENDPOINTS } from "@/utils/api"
 import { loginAccount, registerAccount } from "@/utils/apiCalls"
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PopUps from "../Modals/PopUps"
 
 const SignUp = () => {
     const [loading, setLoading] = useState(false)
@@ -19,8 +21,10 @@ const SignUp = () => {
         gender: "MALE",
     })
     const [confirmPass, setConfirmPass] = useState("");
-    const [message, setMessage] = useState<{ text: JSX.Element, type: "success" | "error" } | undefined>();
+    const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | undefined>()
     const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
         const { name, value } = e.target;
@@ -48,14 +52,14 @@ const SignUp = () => {
         e.preventDefault();
         setLoading(true)
         if (!userForm.firstName || !userForm.lastName || !userForm.username || !userForm.password || !userForm.gender || !userForm.idNumber) {
-            setMessage({ text: <p className="text-red-500">Please fill out all required fields!</p>, type: "error" });
+            setMessage({ text: "Please fill out all required fields!", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
         }
 
         if (userForm.password !== confirmPass) {
-            setMessage({ text: <p className="text-red-500">Passwords do not match</p>, type: "error" });
+            setMessage({ text: "Passwords do not match!", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false)
             return;
@@ -63,7 +67,7 @@ const SignUp = () => {
 
 
         if (passwordError) {
-            setMessage({ text: <p className="text-red-500">{passwordError}</p>, type: "error" });
+            setMessage({ text: `${passwordError}`, type: "error" });
             setLoading(false);
             return;
         }
@@ -72,21 +76,12 @@ const SignUp = () => {
         setLoading(false)
 
         if (result.success) {
-            setMessage({
-                text: (
-                    <>
-                        <p className="text-black-500 font-bold">Congratulations!</p>
-                        <p className="text-black-500">Your account has been successfully created.</p>
-                    </>
-                ),
-                type: "success"
-            });
+            setMessage({ text: "Your account has been successfully created.", type: "success" });
         } else {
-            setMessage({ text: <p className="text-red-500">{result.message}</p>, type: "error" });
-            setTimeout(() => setMessage(undefined), 3000);
+            setMessage({ text: `${result.message}`, type: "error" });   
         }
     };
-    
+
     if (loading) {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <Loading />
@@ -152,43 +147,41 @@ const SignUp = () => {
                         </label>
                     </div>
                     <div className="relative h-11 w-full mb-2 ">
-                        <input placeholder="Password" type="password" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={userForm.password} onChange={handleInputChange} name="password" />
+                        <input
+                            placeholder="Password"
+                            type={showPassword ? "text" : "password"}
+                            className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
+                            value={userForm.password}
+                            onChange={handleInputChange} name="password" />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </button>
                         <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             Password <span className="text-customRed">*</span>
                         </label>
                         {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
                     </div>
                     <div className="relative h-11 w-full ">
-                        <input placeholder="Confirm Password" type="password" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} name="confirmPassword" />
+                        <input
+                            placeholder="Confirm Password"
+                            type={showConfirmPassword ? "text" : "password"}
+                            className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
+                            value={confirmPass}
+                            onChange={(e) => setConfirmPass(e.target.value)}
+                            name="confirmPassword" />
+                        <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                            {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </button>
                         <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             Confirm Password <span className="text-customRed">*</span>
                         </label>
                     </div>
-                    <button type="submit" className="rounded text-center text-sm bg-customYellow p-2 px-4 font-bold hover:scale-95 transition-all  mt-4">Sign Up</button>
+                    <button type="submit" className="rounded text-center text-sm bg-customYellow p-2 px-4 font-bold hover:scale-95 transition-all mt-4">Sign Up</button>
                     <span className="text-end text-xs">Already have an account? <Link href="/Login" replace className="font-semibold text-blue-500 underline decoration-2">LOGIN</Link></span>
 
                 </form>
             </div>
-            {message && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-8 rounded-lg shadow-lg text-center border-2 border-customBlack">
-                        {message.text}
-                        {message.type === "success" && (
-                            <button
-                                className="mt-4 px-4 py-2 bg-customYellow text-black font-semibold rounded"
-                                onClick={async () => {
-                                    const loginResult = await loginAccount(String(userForm.username), String(userForm.password));
-                                    if (loginResult.success) {
-                                        window.location.href = "/Profile";
-                                    }
-                                }}
-                            >
-                                Continue
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div>
     )
 }

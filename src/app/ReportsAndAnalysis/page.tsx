@@ -92,9 +92,8 @@ const ReportsAndAnalysis: React.FC = () => {
                                 className="block w-full p-2 ps-10 border rounded-md rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300 w-full mb-4"
                             />
                         </div>
-
                         <div className="overflow-x-auto">
-                            <div className="relative max-h-[80vh]">
+                            <div className="relative max-h-[75vh]">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50 sticky top-0 ">
                                         <tr>

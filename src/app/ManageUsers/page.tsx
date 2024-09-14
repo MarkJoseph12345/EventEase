@@ -87,13 +87,16 @@ const ManageUsers = () => {
         setUserImages(imagesMap);
     };
 
-    const handleDeleteUser = async () => {
-        if (selectedUser && selectedUser.id) {
+    const handleDeleteUser = async (userId?: number) => {
+        const id = userId || selectedUser?.id;
+        if (id) {
             try {
-                const isDeleted = await deleteUser(selectedUser.id);
+                const isDeleted = await deleteUser(id);
                 if (isDeleted) {
-                    setUsers(users.filter(user => user.id !== selectedUser.id));
-                    handleClosePopup();
+                    setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
+                    if (selectedUser && !userId) {
+                        handleClosePopup();
+                    }
                 } else {
                     console.error("Failed to delete user");
                 }
@@ -103,21 +106,27 @@ const ManageUsers = () => {
         }
     };
 
-    const handleBlockUnblockUser = async () => {
-        if (selectedUser && selectedUser.id) {
+    const handleBlockUnblockUser = async (userId?: number) => {
+        const id = userId || selectedUser?.id;
+        if (id) {
             try {
-                const isBlocked = selectedUser.blocked;
-                const action = isBlocked ? unblockUser : blockUser;
-                const response = await action(selectedUser.id);
-                if (response) {
-                    setUsers(prevUsers =>
-                        prevUsers.map(user =>
-                            user.id === selectedUser.id ? { ...user, blocked: !isBlocked } : user
-                        )
-                    );
-                    setSelectedUser(prevUser => prevUser ? { ...prevUser, blocked: !isBlocked } : null);
-                } else {
-                    console.error(`Failed to ${isBlocked ? 'unblock' : 'block'} user`);
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    const isBlocked = user.blocked;
+                    const action = isBlocked ? unblockUser : blockUser;
+                    const response = await action(id);
+                    if (response) {
+                        setUsers(prevUsers =>
+                            prevUsers.map(u =>
+                                u.id === id ? { ...u, blocked: !isBlocked } : u
+                            )
+                        );
+                        if (!userId) {
+                            setSelectedUser(prevUser => prevUser ? { ...prevUser, blocked: !isBlocked } : null);
+                        }
+                    } else {
+                        console.error(`Failed to ${isBlocked ? 'unblock' : 'block'} user`);
+                    }
                 }
             } catch (error) {
                 console.error(`Failed to toggle user block status:`, error);
@@ -162,7 +171,7 @@ const ManageUsers = () => {
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div>
-                            <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300"  placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300" placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
                     </div>
                     {filteredUsers.length > 0 ? (
@@ -172,6 +181,26 @@ const ManageUsers = () => {
                                 <div>
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
                                     <p className="text-gray-600 font-poppins">{user.department}</p>
+                                </div>
+                                <div className="ml-auto flex flex-col items-end">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleBlockUnblockUser(user.id);
+
+                                        }}
+                                        className={`mt-2 px-4 py-2 ${user.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium`}
+                                    >
+                                        {user.blocked ? 'Unblock User' : 'Block User'}
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDeleteUser(user.id);
+                                        }}
+                                        className="mt-2 px-4 py-2 bg-customRed text-customYellow rounded-md font-poppins font-medium">
+                                        Delete User
+                                    </button>
                                 </div>
                             </div>
                         ))
@@ -198,14 +227,14 @@ const ManageUsers = () => {
                             <p className='font-poppins mt-2'><strong>Gender:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.gender}</p>
                             <button
-                                onClick={handleBlockUnblockUser}
-                                className={`mt-6 px-4 py-2 ${selectedUser.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium`}
+                                onClick={() => handleBlockUnblockUser(selectedUser.id)}
+                                className={`mt-6 px-4 py-2 ${selectedUser.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium tablet:hidden`}
                             >
                                 {selectedUser.blocked ? 'Unblock User' : 'Block User'}
                             </button>
                             <button
-                                onClick={handleDeleteUser}
-                                className="mt-6 px-4 py-2 mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium">
+                                onClick={() => handleDeleteUser(selectedUser.id)}
+                                className="mt-6 px-4 py-2 mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium tablet:hidden">
                                 Delete User
                             </button>
                         </div>

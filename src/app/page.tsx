@@ -57,14 +57,13 @@ const Home = () => {
     centerMode: true,
     centerPadding: '0',
     autoplay: true,
-    autoplaySpeed: 2000,
-    infinite: true,
-    slidesToShow: 3,
+    autoplaySpeed: 1500,
+    infinite: eventsThisWeek.length > 1,
+    slidesToShow: Math.min(eventsThisWeek.length, 3),
     speed: 500,
-    arrows:false,
+    arrows: false,
     beforeChange: (oldIndex: number, newIndex: number) => setCurrentSlide(newIndex),
   };
-
 
   return (
     <div>
@@ -89,14 +88,13 @@ const Home = () => {
       ) : null}
       <div className="mt-10">
         <p className="mx-4 mb-2 font-poppins text-lg font-medium laptop:text-center">Happening this week!</p>
-        {eventsThisWeek.length > 0 ? (
+        {eventsThisWeek.length ? (
           <div className="mx-auto max-w-5xl">
             <Slider {...sliderSettings}>
               {eventsThisWeek.map((event, index) => (
                 <div
                   key={event.id}
-                  className={` outline-none transition-transform duration-500 ease-in-out ${index === (currentSlide % eventsThisWeek.length) || (currentSlide % eventsThisWeek.length) === (index + 1) % eventsThisWeek.length ? 'scale-75' : 'scale-110'
-                    }`}
+                  className={`relative transition-transform duration-500 ease-in-out ${index === currentSlide ? 'scale-110' : 'scale-75'}`}
                 >
                   <img
                     src={event.eventPicture}

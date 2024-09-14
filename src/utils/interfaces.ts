@@ -12,6 +12,7 @@ export interface User {
     blocked? : boolean;
     hasAttended?: boolean;
     profilePictureName?: string;
+    uuid?: string;
 }
 
 export interface Event {
