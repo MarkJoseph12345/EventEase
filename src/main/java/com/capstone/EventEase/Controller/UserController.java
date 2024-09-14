@@ -116,6 +116,19 @@ public class UserController {
 
 
 
+    @Operation(summary = "Check if uuid")
+    @GetMapping("/getByUUID/{uuid}")
+    public ResponseEntity<?> checkUuid(@PathVariable String uuid){
+            return ResponseEntity.ok(userService.getByUuid(uuid));
+    }
+
+
+
+
+
+
+
+
 
 
 

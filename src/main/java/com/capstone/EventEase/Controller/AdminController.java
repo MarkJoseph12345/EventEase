@@ -34,11 +34,11 @@ public class AdminController {
 
     private final AdminService adminService;
     @Operation(summary = "Check The Attendance of the User")
-    @PostMapping("/attend/{eventId}/{username}/")
-    public ResponseEntity<?> attendUsers(@PathVariable Long eventId, @PathVariable String username,@RequestParam("attendanceDate") @DateTimeFormat(
+    @PostMapping("/attend/{eventId}/{uuid}/")
+    public ResponseEntity<?> attendUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("attendanceDate") @DateTimeFormat(
             iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime attendanceDate){
         try{
-            return new ResponseEntity<>(attendanceService.checkAttendance(eventId,username,attendanceDate),HttpStatus.OK);
+            return new ResponseEntity<>(attendanceService.checkAttendance(eventId,uuid,attendanceDate),HttpStatus.OK);
         }catch (EntityNotFoundException e){ 
             return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
         }catch (Exception e){
@@ -49,17 +49,19 @@ public class AdminController {
 
 
     @Operation(summary = "Timeout User")
-    @PostMapping("/timeout/{eventId}/{username}/")
-    public ResponseEntity<?> timeoutUsers(@PathVariable Long eventId, @PathVariable String username,@RequestParam("timeoutDate") @DateTimeFormat(
+    @PostMapping("/timeout/{eventId}/{uuid}/")
+    public ResponseEntity<?> timeoutUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("timeoutDate") @DateTimeFormat(
             iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime timeoutDate){
         try{
-            return new ResponseEntity<>(attendanceService.checkTimeout(eventId,username,timeoutDate),HttpStatus.OK);
+            return new ResponseEntity<>(attendanceService.checkTimeout(eventId,uuid,timeoutDate),HttpStatus.OK);
         }catch (EntityNotFoundException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
     @Operation(summary = "Check if The User Attended the Event")
@@ -132,18 +134,18 @@ public class AdminController {
 
 
     @Operation(summary = "Get The User if it fits all the criterias")
-    @GetMapping("/getUserByUsername/{eventId}/{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String username){
+    @GetMapping("/getUserByUuid/{eventId}/{uuid}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String uuid){
             try{
-                return new ResponseEntity<>(attendanceService.verifyUser(eventId,username),HttpStatus.OK);
-            }catch (UserNotJoinedToAnEventException e){
+                return new ResponseEntity<>(attendanceService.verifyUser(eventId,uuid),HttpStatus.OK);
+            }catch (UserNotJoinedToAnEventException | AttendanceCheckedException e){
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
-            }catch (AttendanceCheckedException e){
-                return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
-            }catch (Exception e){
+            } catch (Exception e){
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
             }
     }
+
+
 
 
     @Operation(summary = "Get How Many Days an Event is Going")

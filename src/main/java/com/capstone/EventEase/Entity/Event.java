@@ -22,6 +22,8 @@ import java.util.Set;
 public class Event {
 
 
+    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -56,6 +58,8 @@ public class Event {
 
 
     private Set<String> preRegisteredUsers = new HashSet<>();
+
+
 
 
     private OffsetDateTime eventEnds;

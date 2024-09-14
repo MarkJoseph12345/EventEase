@@ -23,8 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,13 +48,43 @@ public class EventService {
 
     private final EmailService emailService;
 
-    public Event craeteEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
+  //  private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
+    private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
+
+
+    public Event createEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
             EntityNotFoundException{
         Set<String> usernames = event.getPreRegisteredUsers();
-        Event newEvent = eventRepository.save(event);
+
         List<User> users = new ArrayList<>();
         List<EmailSendRequestDTO> emails = new ArrayList<>();
 
+        ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
+        ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
+
+
+
+
+        if(eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)){
+            throw new DateTimeException("Event cannot start or end before the current date.");
+        }
+
+
+
+
+        List<Event> events = eventRepository.findAll();
+        for(Event e:events){
+            ZonedDateTime eStart = e.getEventStarts().atZoneSameInstant(UTC_8);
+            ZonedDateTime eEnd = e.getEventEnds().atZoneSameInstant(UTC_8);
+            if(eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)){
+                throw new DateTimeException("Event cannot start or end before the current date.");
+            }
+
+        }
+
+
+        Event newEvent = eventRepository.save(event);
 
         for(String username: usernames){
                 User user = userRepository.findByUsername(username);
@@ -92,17 +121,9 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
         List<UserEvent> userEvents = userEventRepository.findByEventId(eventId);
-        //UserEvent userEvent =
-      // List<Attendance> attendance = attendanceRepository.findAllByUserevent(userEvents);
+
 
         List<Attendance> attendanceList = attendanceRepository.findAll();
-
-        /*
-        for(Attendance attend:attendanceList){
-            Attendance attendance = attendanceRepository.findByUserevent()
-        }
-
-         */
 
         for (UserEvent userEvent : userEvents) {
             Optional<Attendance> attend = attendanceRepository.findByUserevent(userEvent);
@@ -132,6 +153,17 @@ public class EventService {
     public Event updateEvent(Long eventId, Event event) {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+
+        ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
+        ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
+
+        if(eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)){
+
+            throw new DateTimeException("Event cannot start or end before the current date.");
+        }
+
+
 
         if (event.getEventName() != null && !event.getEventName().isEmpty()) {
             oldEvent.setEventName(event.getEventName());

@@ -97,5 +97,12 @@ public class UserService implements UserDetailsService {
 
 
 
+    public User getByUuid(String uuid){
+        return userRepository.findByUuid(uuid);
+    }
+
+
+
+
 }
 

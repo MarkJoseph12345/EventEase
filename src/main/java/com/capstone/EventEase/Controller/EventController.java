@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
@@ -41,16 +42,30 @@ public class EventController {
     private final ImageService imageService;
 
 
+
     @Operation(summary = "CREATE AN EVENT")
     @PostMapping("createEvent")
     public ResponseEntity<?> createEvent(@RequestBody Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException
-    ,EntityNotFoundException{
+    ,EntityNotFoundException, DateTimeException {
         try{
-            return new ResponseEntity<>(eventService.craeteEvent(event),HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.createEvent(event),HttpStatus.CREATED);
+        } catch (GenderNotAllowedException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }catch (EventFullException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }catch (DoubleJoinException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }catch (UserBlockedException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }catch (DateTimeException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         } catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 

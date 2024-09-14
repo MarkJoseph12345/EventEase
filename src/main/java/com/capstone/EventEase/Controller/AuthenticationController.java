@@ -50,13 +50,18 @@ public class AuthenticationController {
 
 
 
+
+
     @PostMapping("/new-password")
     public ResponseEntity<?> newPassword(@RequestParam("token") String token, @RequestBody NewPasswordRequest newPasswordRequest){
-        authenticationService.newPassword(token, newPasswordRequest.getNewPassword());
-        return ResponseEntity.ok("Password has been reset");
+      try{
+          return ResponseEntity.ok(authenticationService.newPassword(token, newPasswordRequest.getNewPassword()));
+      }catch (IllegalArgumentException e){
+          return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.NOT_FOUND);
+      }catch (Exception e){
+          return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+      }
     }
-
-
 
 
     @PostMapping("/verifyToken")

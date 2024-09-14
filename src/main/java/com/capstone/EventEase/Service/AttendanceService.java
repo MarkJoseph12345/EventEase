@@ -153,8 +153,8 @@ return null;
      */
 
 
-    public Attendance checkAttendance(Long eventId, String username, OffsetDateTime attendanceDate) {
-        User user = userRepository.findByUsername(username);
+    public Attendance checkAttendance(Long eventId, String uuid, OffsetDateTime attendanceDate) {
+        User user = userRepository.findByUuid(uuid);
         if (user == null) {
             throw new EntityNotFoundException("User not Found!");
         }
@@ -209,8 +209,8 @@ return null;
         }
     }
 
-    public Attendance checkTimeout(Long eventId, String username, OffsetDateTime timeoutDate) {
-        User user = userRepository.findByUsername(username);
+    public Attendance checkTimeout(Long eventId, String uuid, OffsetDateTime timeoutDate) {
+        User user = userRepository.findByUuid(uuid);
         if (user == null) {
             throw new EntityNotFoundException("User not Found!");
         }
@@ -482,9 +482,10 @@ return null;
     }
 
 
-    public User verifyUser(Long eventId,String username) throws UserNotJoinedToAnEventException,
+
+    public User verifyUser(Long eventId,String uuid) throws UserNotJoinedToAnEventException,
             AttendanceCheckedException {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUuid(uuid);
         if(user == null){
             throw new EntityNotFoundException("User not Found!");
         }

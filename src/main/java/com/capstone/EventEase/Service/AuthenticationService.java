@@ -72,6 +72,7 @@ public class AuthenticationService {
         User newUser = User.builder().username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.STUDENT)
+                .uuid(UUID.randomUUID().toString())
                 .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
@@ -158,12 +159,13 @@ public class AuthenticationService {
     }
 
 
-    public void  newPassword(String token, String newPassword){
+    public String newPassword(String token, String newPassword){
             PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
             if(passwordResetToken == null){
                 throw new EntityNotFoundException("Invalid Token");
             }
             if(passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())){
+                passwordResetTokenRepository.delete(passwordResetToken);
                 throw new IllegalArgumentException("Token has expired!");
             }
             User user =  passwordResetToken.getUser();
@@ -171,7 +173,7 @@ public class AuthenticationService {
             userRepository.save(user);
 
             passwordResetTokenRepository.delete(passwordResetToken);
-
+            return "New Password Updated";
     }
 
 
