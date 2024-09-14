@@ -15,13 +15,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class EventAnalytics {
+public class EventAnalyticsService {
 
 
 
     private final EventRepository repository;
-
-
 
     public EventPopularityMetrics calculateEventPopularity(Long eventId){
         Event event = repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
@@ -34,22 +32,27 @@ public class EventAnalytics {
     }
 
 
-    public double calculateAttendanceRate(Long eventId){
+
+    public double calculateJoinRate(Long eventId){
         Event event = repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
        return (event.getEventLimit() == 0) ? 0:(double) event.getUsersJoined() / event.getEventLimit();
     }
 
-    public  Map<String, Long> analyzeEventTypeDistribution(List<Event> events) {
+    public  Map<String, Long> analyzeEventTypeDistribution() {
+
+        List<Event> events = repository.findAll();
         return events.stream()
                 .collect(Collectors.groupingBy(Event::getEventType, Collectors.counting()));
     }
 
-    public  Map<OffsetDateTime, Long> analyzeEventSchedulingTrends(List<Event> events) {
+    public  Map<OffsetDateTime, Long> analyzeEventSchedulingTrends() {
+        List<Event> events = repository.findAll();
         return events.stream()
                 .collect(Collectors.groupingBy(Event::getEventStarts, Collectors.counting()));
     }
 
-    public double calculateAverageEventDuration(List<Event> events) {
+    public double calculateAverageEventDuration() {
+        List<Event> events = repository.findAll();
         return events.stream()
                 .mapToLong(event ->
                         event.getEventEnds().toEpochSecond() - event.getEventStarts().toEpochSecond())
@@ -57,11 +60,12 @@ public class EventAnalytics {
                 .orElse(0);
     }
 
-    public  Map<String, Double> analyzeDepartmentEngagement(List<Event> events) {
+
+    public  Map<String, Double> analyzeDepartmentEngagement() {
+        List<Event> events = repository.findAll();
         Map<String, Long> departmentCounts = events.stream()
                 .flatMap(event -> event.getDepartment().stream())
                 .collect(Collectors.groupingBy(dept -> dept, Collectors.counting()));
-
         long totalEvents = events.size();
         return departmentCounts.entrySet().stream()
                 .collect(Collectors.toMap(
@@ -69,5 +73,7 @@ public class EventAnalytics {
                         entry -> (double) entry.getValue() / totalEvents
                 ));
     }
+
+
 }
 

@@ -18,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,9 +71,17 @@ public class AuthenticationController {
     }
 
 
+
     @PostMapping("/verifyPassword/{userId}/{password}")
-    public ResponseEntity<Boolean> verifyPassword(@PathVariable Long userId, @PathVariable  String password){
-            return ResponseEntity.ok(authenticationService.verifyPassword(userId,password));
+    public ResponseEntity<?> verifyPassword(@PathVariable Long userId, @PathVariable String password) {
+        try {
+            boolean result = authenticationService.verifyPassword(userId, password);
+            return ResponseEntity.ok(result);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
 

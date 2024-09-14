@@ -33,13 +33,15 @@ public class StartUp{
 
         try{
 
-            Path path = Paths.get(new ClassPathResource("static/images/profile.png").getURI());
+            Path path = Paths.get(new ClassPathResource("static/images/lyza.jpg").getURI());
             return Files.readAllBytes(path);
         }catch (IOException e){
             System.out.println("Error: " + e.getMessage());
             return new byte[0];
         }
     }
+
+
 
     @PostConstruct
     public void init(){
@@ -53,11 +55,18 @@ public class StartUp{
                     .IdNumber("21-9999-999").department("ADMIN")
                     .isBlocked(false)
                     .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
-                    .profilePictureName("XyloGraph1.png")
+                    .profilePictureName("admin.png")
                     .profilePictureType("image/png")
                     .build();
+
+
+
+
+
             userRepository.save(newUser);
         }
+
+
 
 
     }

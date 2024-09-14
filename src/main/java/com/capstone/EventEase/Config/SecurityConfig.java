@@ -74,6 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api/v1/authenticated/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                        .requestMatchers("/api/v1/auth/analytics/**").permitAll()
                         .requestMatchers("/api/v1/auth/user").hasAnyRole(Role.STUDENT.name())
                         .requestMatchers("/api/v1/auth/admin").hasAnyRole(Role.ADMIN.name())
                         .anyRequest().authenticated()
