@@ -140,18 +140,24 @@ public class AuthenticationService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
-
-
     public String sendForgotPasswordToken(String email) throws MessagingException {
         User user = userRepository.findByUsername(email);
         if(user == null){
             throw new EntityNotFoundException("User with that email not Found!");
         }
 
+        PasswordResetToken existingUser = passwordResetTokenRepository.findByUser(user);
+
+        if(existingUser != null){
+            throw new EntityExistsException("Token Already Sent");
+        }
+
         String token = UUID.randomUUID().toString().replaceAll("[^0-9]","");
         String randomToken = token.substring(0,6);
 
         PasswordResetToken passwordResetToken = new PasswordResetToken(randomToken,user);
+
+
         passwordResetTokenRepository.save(passwordResetToken);
 
         emailService.forgotPasswordEmail(email,randomToken);

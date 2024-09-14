@@ -36,15 +36,18 @@ public class AuthenticationController {
     private final PasswordResetTokenService passwordResetTokenService;
 
 
+
+
+
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email){
         try{
             return new ResponseEntity<>(authenticationService.sendForgotPasswordToken(email),
             HttpStatus.OK);
-        }catch (MessagingException e){
+        } catch (EntityExistsException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        } catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.NOT_FOUND);
-        }catch (Exception e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 
