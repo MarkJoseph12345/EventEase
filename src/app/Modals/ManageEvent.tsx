@@ -120,15 +120,11 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
 
     const handleDeleteEvent = async () => {
         if (event.id === undefined) {
-            alert("Event ID is not defined.");
             return;
         }
         const success = await deleteEvent(event.id);
         if (success) {
-            alert("Event deleted successfully.");
             window.location.reload();
-        } else {
-            alert("Failed to delete event.");
         }
     };
 
@@ -243,7 +239,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                             ))}
                         </nav>
                     </div>
-                    
+
                     <div className="flex flex-col items-center justify-center gap-10 mx-auto tablet:flex-row w-full">
                         <div>
                             <p>Start Date</p>

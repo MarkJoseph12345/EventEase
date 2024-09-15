@@ -5,8 +5,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Event } from "@/utils/interfaces";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
-import { createEvent, updateEventPicture } from "@/utils/apiCalls";
+import { createEvent, fetchEventPicture, updateEventPicture } from "@/utils/apiCalls";
 import PopUps from "../Modals/PopUps";
+import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 
 const departments = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
 
@@ -21,16 +22,32 @@ const CreateEvent = () => {
     eventEnds: null,
     eventType: [],
     department: [],
-    eventLimit: 0,
+    eventLimit: 50,
     allowedGender: "ALL",
     preRegisteredUsers: []
   });
   const [isCreating, setIsCreating] = useState(false);
-  const [message, setMessage] = useState<
-    { text: string; type: "success" | "error" } | undefined
-  >();
-
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
+  const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showModal == false) {
+      setEvent({
+        eventName: "",
+        eventPicture: "",
+        eventDescription: "",
+        eventStarts: null,
+        eventEnds: null,
+        eventType: [],
+        department: [],
+        eventLimit: 50,
+        allowedGender: "ALL",
+        preRegisteredUsers: []
+      });
+      setNewPicture(null);
+    }
+  }, [showModal]);
 
   const handleCheckboxChange = (department: string) => {
     setEvent((prevEvent) => {
@@ -116,13 +133,10 @@ const CreateEvent = () => {
       department,
     } = event;
     if (!eventName || !eventDescription || !eventStarts || !eventEnds || department.length === 0) {
-        setMessage({ text: "Please fill in all fields.", type: "error" });
-        setIsCreating(false);
-        return;
+      setMessage({ text: "Please fill in all fields.", type: "error" });
+      setIsCreating(false);
+      return;
     }
-
-    //alert(JSON.stringify(event, null, 2));
-
     const result = await createEvent(event);
     setIsCreating(false);
 
@@ -130,9 +144,11 @@ const CreateEvent = () => {
       setMessage({ text: result.message, type: "success" });
       if (newPicture instanceof File) {
         await updateEventPicture(result.id, newPicture);
-      }
 
-      window.location.reload();
+      }
+      event.eventPicture = await fetchEventPicture(result.id!);
+      setShowModal(true);
+      //window.location.reload();
     } else {
       setMessage({ text: result.message, type: "error" });
     }
@@ -185,6 +201,7 @@ const CreateEvent = () => {
             <input
               placeholder="Event Name"
               name="eventName"
+              value={event.eventName}
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
@@ -196,6 +213,7 @@ const CreateEvent = () => {
             <input
               placeholder="Event Type"
               name="eventType"
+              value={event.eventType}
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
@@ -207,6 +225,7 @@ const CreateEvent = () => {
             <textarea
               placeholder="Event Description"
               name="eventDescription"
+              value={event.eventDescription}
               onChange={handleInputChange}
               className="peer h-32 w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
@@ -218,6 +237,7 @@ const CreateEvent = () => {
             <input
               placeholder="Event Limit"
               name="eventLimit"
+              value={event.eventLimit}
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
@@ -229,6 +249,7 @@ const CreateEvent = () => {
             <input
               placeholder="Pre-registered Users (comma-separated)"
               name="preRegisteredUsers"
+              value={event.preRegisteredUsers}
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
@@ -306,62 +327,6 @@ const CreateEvent = () => {
               ))}
             </nav>
           </div>
-          {/* <div className="relative flex w-full max-w-[24rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md self-center tablet:max-w-[90%]">
-                        <p className="m-2">Event Classification</p>
-                        <nav className="flex w-full font-sans text-base font-normal text-blue-gray-700">
-                            <div role="button"
-                                className="flex items-center  w-full p-0 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
-                                <label htmlFor="horizontal-list-react" className="flex justify-center items-center w-full py-2 cursor-pointer">
-                                    <div className="grid mr-3 place-items-center">
-                                        <div className="inline-flex items-center">
-                                            <label className="relative flex items-center p-0 rounded-full cursor-pointer"
-                                                htmlFor="horizontal-list-react">
-                                                <input name="classification"
-                                                    value="One-Time"
-                                                    onChange={handleInputChange}
-                                                    id="horizontal-list-react" type="radio"
-                                                    className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-0" />
-                                                <span
-                                                    className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                                                        <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                                                    </svg>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <p className=" font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-400">
-                                        One-Time
-                                    </p>
-                                </label>
-                            </div>
-                            <div role="button"
-                                className="flex items-center w-full p-0 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900">
-                                <label htmlFor="horizontal-list-vue" className="flex justify-center items-center w-full px-3 py-2 cursor-pointer">
-                                    <div className="grid mr-3 place-items-center">
-                                        <div className="inline-flex items-center">
-                                            <label className="relative flex items-center p-0 rounded-full cursor-pointer" htmlFor="horizontal-list-vue">
-                                                <input name="classification"
-                                                    value="Series"
-                                                    onChange={handleInputChange}
-                                                    id="horizontal-list-vue" type="radio"
-                                                    className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-0" />
-                                                <span
-                                                    className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
-                                                        <circle data-name="ellipse" cx="8" cy="8" r="8"></circle>
-                                                    </svg>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <p className=" font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-400">
-                                        Series
-                                    </p>
-                                </label>
-                            </div>
-                        </nav>
-                    </div> */}
           <div className="flex flex-col items-center justify-center gap-2 mx-auto tablet:flex-row tablet:max-w-[90%]">
             <div>
               <p>Start Date</p>
@@ -411,7 +376,8 @@ const CreateEvent = () => {
           </div>
         </div>
       </div>
-      {message && <PopUps message={message} onClose={()=>setMessage(undefined)}/>}
+      {showModal && (<AdminEventDetailModal event={event} onClose={() => setShowModal(false)} />)}
+      {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
     </div>
   );
 };

@@ -21,15 +21,14 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({ onClose }) =>
 
     const result = await sendPasswordResetEmail(email);
     setLoading(false);
-    console.log(result)
     if (result.startsWith("Email has been send!")) {
       setMessage('Password reset email sent successfully. Please check your email for a 6-digit token.');
       setStep('verifyToken');
       setEmail('');
-    } else if (result.startsWith("User with that email not Found!")) {
-      setMessage(result);
-    } else if (result.startsWith(`{"messages":"could not execute statement`)) {
-      setMessage('Password reset email sent successfully. Please check your email for a 6-digit token.');
+    } else if (result.startsWith(`{"messages":"User with that email not Found!"}`)) {
+      setMessage("User with that email not Found!");
+    } else if (result.startsWith(`{"messages":"Token Already Sent`)) {
+      setMessage('Token Already Sent');
       setStep('verifyToken');
       setEmail('');
     }

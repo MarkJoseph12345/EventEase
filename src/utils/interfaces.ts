@@ -13,6 +13,7 @@ export interface User {
     hasAttended?: boolean;
     profilePictureName?: string;
     uuid?: string;
+    newPassword?: string;
 }
 
 export interface Event {

@@ -35,4 +35,10 @@ export const API_ENDPOINTS = {
   VERIFY_TOKEN: `${BASE_URL}/api/v1/auth/verifyToken`,
   NEW_PASSWORD: `${BASE_URL}/api/v1/auth/new-password`,
   VERIFY_PASSWORD: `${BASE_URL}/api/v1/auth/verifyPassword/`,
+  EVENT_POPULARITY: `${BASE_URL}/api/v1/auth/analytics/getEventPopularity/`,
+  JOIN_RATE: `${BASE_URL}/api/v1/auth/analytics/getJoinRate/`,
+  EVENT_DISTRIBUTION: `${BASE_URL}/api/v1/auth/analytics/getEventTypeDistribution`,
+  SCHEDULING_TRENDS: `${BASE_URL}/api/v1/auth/analytics/getEventSchedulingTrends`,
+  AVERAGE_EVENT_DURATION: `${BASE_URL}/api/v1/auth/analytics/getAverageEventDuration`,
+  DEPARTMENT_ENGAGEMENT: `${BASE_URL}/api/v1/auth/analytics/getDepartmentEngagement`,
 };

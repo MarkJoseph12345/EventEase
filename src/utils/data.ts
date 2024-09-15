@@ -67,13 +67,13 @@ export const fetchImageAsBase64 = async (imageUrl: string): Promise<string> => {
     return `data:image/jpeg;base64,${base64String}`;
 };
 
-export const formatDate = (dateString: Date | null) => {
+export const formatDate = (dateString: string | Date | null) => {
     const date = new Date(dateString!);
     return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
     });
-  };
+};

@@ -96,6 +96,7 @@ export const createEvent = async (eventData: any) => {
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
+        console.log(formattedEventData)
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT, {
             method: 'POST',
             headers: {
@@ -674,5 +675,132 @@ export const verifyPassword = async (userId: number, password: string) => {
     } catch (error) {
         console.error('Error verifying password:', error);
         return { success: false, message: 'Failed to verify password.' };
+    }
+};
+
+export const getEventPopularity = async (eventId: any) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.EVENT_POPULARITY}?eventId=${eventId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching event popularity:', error);
+        return { success: false, message: 'Failed to fetch event popularity.' };
+    }
+};
+
+export const getJoinRate = async (eventId: any) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.JOIN_RATE}?eventId=${eventId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching join rate:', error);
+        return { success: false, message: 'Failed to fetch join rate.' };
+    }
+};
+
+export const getEventTypeDistribution = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.EVENT_DISTRIBUTION, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching event type distribution:', error);
+        return { success: false, message: 'Failed to fetch event type distribution.' };
+    }
+};
+
+export const getEventSchedulingTrends = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.SCHEDULING_TRENDS, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching event scheduling trends:', error);
+        return { success: false, message: 'Failed to fetch event scheduling trends.' };
+    }
+};
+
+export const getAverageEventDuration = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.AVERAGE_EVENT_DURATION, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data)
+        return data;
+    } catch (error) {
+        console.error('Error fetching average event duration:', error);
+        return { success: false, message: 'Failed to fetch average event duration.' };
+    }
+};
+
+export const getDepartmentEngagement = async () => {
+    try {
+        const response = await fetch(API_ENDPOINTS.DEPARTMENT_ENGAGEMENT, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching department engagement:', error);
+        return { success: false, message: 'Failed to fetch department engagement.' };
     }
 };

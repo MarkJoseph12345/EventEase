@@ -66,7 +66,7 @@ const Login = () => {
                             value={userForm.password}
                             onChange={handleInputChange}
                             name="password" />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                        <button tabIndex={-1} type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
                             {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </button>
                         <label

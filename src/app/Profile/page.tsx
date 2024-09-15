@@ -123,7 +123,10 @@ const Profile = () => {
     const [confirmPass, setConfirmPass] = useState("");
     const [clickedProfilePic, setClickedProfilePic] = useState("");
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>({
+        newPassword: "",
+    }
+    );
     const [imageUrl, setImageUrl] = useState("");
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showProfilePicturePrompt, setShowProfilePicturePrompt] = useState(false);
@@ -213,8 +216,8 @@ const Profile = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-        if (!currentPassword && user!.password!) {
-            setMessage({ text: "Enter current password first!", type: "error" });
+        if (currentPassword == "" && user!.newPassword! != undefined) {
+            setMessage({ text: "Enter current password", type: "error" });
             return;
         }
         if (currentPassword) {
@@ -224,19 +227,19 @@ const Profile = () => {
                 return;
             }
         }
-        if (user && user.password && user.password !== confirmPass) {
-            setMessage({ text: "Passwords do not match!", type: "error" });
-            setTimeout(() => setMessage(undefined), 3000);
-            setLoading(false)
-            return;
-        }
-        if (!passwordRegex.test(user!.password!)) {
+        if (user && user.newPassword && !passwordRegex.test(user!.newPassword!)) {
             setMessage({ text: "Password must be at least 8 characters long, include 1 uppercase letter, 1 lowercase letter, and 1 number.", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             setLoading(false);
             return;
         }
 
+        if (currentPassword != "" && user && user.newPassword != confirmPass) {
+            setMessage({ text: "Passwords do not match!", type: "error" });
+            setTimeout(() => setMessage(undefined), 3000);
+            setLoading(false)
+            return;
+        }
         setShowConfirmation(true);
     };
 
@@ -302,7 +305,11 @@ const Profile = () => {
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             defaultValue={""}
                             name="currentpassword" />
-                        <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                        <button 
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
                             {showCurrentPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </button>
                         <label className="after:content[''] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
@@ -316,8 +323,12 @@ const Profile = () => {
                             className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
                             onChange={handleInputChange}
                             defaultValue={""}
-                            name="password" />
-                        <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                            name="newPassword" />
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
                             {showNewPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </button>
                         <label
@@ -332,7 +343,11 @@ const Profile = () => {
                             className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
                             defaultValue={""}
                             onChange={(e) => setConfirmPass(e.target.value)} name="confirmPassword" />
-                        <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-2">
                             {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                         </button>
                         <label className="after:content[''] pointer-events-none absolute left-0  -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
