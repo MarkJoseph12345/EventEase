@@ -94,14 +94,13 @@ const Home = () => {
               {eventsThisWeek.map((event, index) => (
                 <div
                   key={event.id}
-                  className={`relative transition-transform duration-500 ease-in-out ${index === currentSlide ? 'scale-110' : 'scale-75'}`}
-                >
+                  className={` relative transition-transform duration-500 ease-in-out ${eventsThisWeek.length === 1 ? 'scale-100' : index === currentSlide ? 'scale-110' : 'scale-75'}`}>
                   <img
                     src={event.eventPicture}
-                    className="w-full h-64 object-cover rounded-lg shadow-lg"
+                    className="w-full h-64 object-contain rounded-lg shadow-lg"
                     alt={event.eventName}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 text-white">
+                  <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 text-white">
                     <p className="text-lg font-bold truncate">{event.eventName}</p>
                     <p className="text-sm mt-1">{event.eventType}</p>
                   </div>
