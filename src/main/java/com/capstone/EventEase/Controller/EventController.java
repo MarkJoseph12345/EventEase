@@ -73,7 +73,13 @@ public class EventController {
     @Operation(summary = "Update Event By Passing Event Id With New Event Credentials")
     @PutMapping("updateEvent/{eventId}")
     public ResponseEntity<?> updateEvent(@PathVariable Long eventId,@RequestBody Event event){
-        return new ResponseEntity<>(eventService.updateEvent(eventId,event),HttpStatus.OK);
+       try{
+           return new ResponseEntity<>(eventService.updateEvent(eventId,event),HttpStatus.OK);
+       }catch (DateTimeException | EntityNotFoundException e){
+           return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.NOT_FOUND);
+       } catch (Exception e){
+           return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.BAD_REQUEST);
+       }
     }
 
 

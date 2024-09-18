@@ -55,7 +55,7 @@ public class User implements UserDetails {
     private String profilePictureType;
     private String profilePictureName;
 
-
+    private boolean isVerified;
 
     private boolean isBlocked;
 
@@ -75,8 +75,6 @@ public class User implements UserDetails {
     public boolean isAccountNonExpired() {
         return true;
     }
-
-
 
 
 

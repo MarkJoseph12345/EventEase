@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 import java.util.UUID;
 
 @Component
@@ -44,9 +45,8 @@ public class StartUp{
 
 
     @PostConstruct
-    public void init(){
-
-        if(userRepository.findByUsername("admin") == null){
+    public void init() {
+        if (userRepository.findByUsername("admin") == null) {
             User newUser = User.builder().username("admin")
                     .password(passwordEncoder.encode("admin"))
                     .role(Role.ADMIN)
@@ -54,20 +54,45 @@ public class StartUp{
                     .firstName("ADMIN").lastName("ADMIN")
                     .IdNumber("21-9999-999").department("ADMIN")
                     .isBlocked(false)
+                    .isVerified(true)
                     .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
                     .profilePictureName("admin.png")
                     .profilePictureType("image/png")
                     .build();
-
-
-
-
-
             userRepository.save(newUser);
         }
+/*
+        String[] departments = {"CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"};
+        String[] firstNames = {"Alice", "Bob", "Charlie", "Diana", "Emma", "Frank", "Grace", "Henry", "Isla", "Jack"};
+        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"};
 
+        Random random = new Random();
 
+        for (int i = 0; i < 100; i++) {
+            String firstName = firstNames[random.nextInt(firstNames.length)];
+            String lastName = lastNames[random.nextInt(lastNames.length)];
+            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + random.nextInt(1000);
+            String gender = random.nextBoolean() ? "MALE" : "FEMALE";
+            String idNumber = String.format("%02d-%04d-%03d",
+                    random.nextInt(100), random.nextInt(10000), random.nextInt(1000));
+            String department = departments[random.nextInt(departments.length)];
 
+            User user = User.builder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .username(email)
+                    .uuid(UUID.randomUUID().toString())
+                    .IdNumber(idNumber)
+                    .password(passwordEncoder.encode("password"))
+                    .department(department)
+                    .gender(Gender.valueOf(gender))
+                    .isBlocked(false)
+                    .isVerified(true)
+                    .role(Role.STUDENT)
+                    .build();
+            userRepository.save(user);
+        }
 
+ */
     }
 }

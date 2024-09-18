@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -41,8 +39,7 @@ public class UserService implements UserDetailsService {
 
     private final ImageService imageService;
 
-
-
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
 
@@ -53,8 +50,9 @@ public class UserService implements UserDetailsService {
 
 
     public List<User> getAllUsers(){
-        return userRepository.findAll();
+        return userRepository.findAll().stream().filter(User::isVerified).collect(Collectors.toList());
     }
+
 
 
     public User getUserByUsername(String username){
@@ -69,6 +67,8 @@ public class UserService implements UserDetailsService {
 
 
 
+
+
     public User getUserById(Long id){
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User Does not Exists!"));
     }
@@ -77,6 +77,12 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
         List<UserEvent> userEvents = userEventRepository.findByUserId(userId);
         List<Attendance> attendanceList = attendanceRepository.findAll();
+
+
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByUser(user);
+        if(passwordResetToken != null){
+            passwordResetTokenRepository.delete(passwordResetToken);
+        }
 
         for (UserEvent userEvent : userEvents) {
             Optional<Attendance> attend = attendanceRepository.findByUserevent(userEvent);
@@ -92,6 +98,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return getUserByUsername(username);
     }
+
 
 
 

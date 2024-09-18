@@ -38,6 +38,8 @@ public class EventAnalyticsService {
        return (event.getEventLimit() == 0) ? 0:(double) event.getUsersJoined() / event.getEventLimit();
     }
 
+
+
     public  Map<String, Long> analyzeEventTypeDistribution() {
 
         List<Event> events = repository.findAll();

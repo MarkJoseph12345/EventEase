@@ -6,37 +6,39 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_password")
-public class PasswordResetToken {
+@Table(name = "tbl_verification")
+public class VerificationToken {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "passtoken_id")
+    @Column(name = "verification_id")
     private Long id;
 
 
     private String token;
+
+
+
+
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
 
 
-    private LocalDateTime expiryDate;
 
 
 
-    public PasswordResetToken(String randomToken, User user) {
-        this.token = randomToken;
+    public VerificationToken(String token, User user){
+        this.token = token;
         this.user = user;
-        this.expiryDate = LocalDateTime.now().plusMinutes(2);
     }
 }
+
+

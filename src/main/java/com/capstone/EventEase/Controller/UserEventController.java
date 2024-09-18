@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DateTimeException;
 import java.util.Map;
 
 @RestController
@@ -30,16 +31,19 @@ public class UserEventController {
 
     //    @Tag(name = "POST")
 
+
+
         @Operation(summary = "User can join event by passing userid and event id respectively")
         @PostMapping("/joinEvent/{userId}/{eventId}")
         public ResponseEntity<?> joinEvent(@PathVariable Long userId, @PathVariable Long eventId){
                 try{
                     return new ResponseEntity<>(userEventService.joinEvent(userId,eventId),HttpStatus.OK);
                 }catch (UserBlockedException | EventFullException | DoubleJoinException | GenderNotAllowedException |
-                        EntityNotFoundException e){
+                        EntityNotFoundException | DateTimeException e){
                     return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
                 }
         }
+
 
 
 

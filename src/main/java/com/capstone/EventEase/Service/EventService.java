@@ -1,6 +1,9 @@
 package com.capstone.EventEase.Service;
 
+import com.capstone.EventEase.Classes.PasswordGenerator;
 import com.capstone.EventEase.DTO.Request.EmailSendRequestDTO;
+import com.capstone.EventEase.ENUMS.Gender;
+import com.capstone.EventEase.ENUMS.Role;
 import com.capstone.EventEase.Entity.Attendance;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
@@ -14,15 +17,22 @@ import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 
 import com.capstone.EventEase.Repository.UserRepository;
+import com.capstone.EventEase.UTIL.ImageUtils;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,8 +58,22 @@ public class EventService {
 
     private final EmailService emailService;
 
-  //  private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
+    private final PasswordEncoder passwordEncoder;
+
     private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
+
+
+    private byte[] getDefaultProfilePicture (){
+
+        try{
+            Path path = Paths.get(new ClassPathResource("static/images/lyza.jpg").getURI());
+            return Files.readAllBytes(path);
+        }catch (IOException e){
+            System.out.println("Error: " + e.getMessage());
+            return new byte[0];
+        }
+    }
+
 
 
     public Event createEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
@@ -87,16 +111,38 @@ public class EventService {
         Event newEvent = eventRepository.save(event);
 
         for(String username: usernames){
-                User user = userRepository.findByUsername(username);
-                if(user == null){
-                    throw new EntityNotFoundException("User Not Found");
-                }else{
-                    emails.add(EmailSendRequestDTO.builder().
-                            message("You have Been Invited To An Event From EventEase")
-                            .subject("EventEase Event Invite").receiver(username)
-                            .build());
-                    UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
-                }
+
+            User findUser = userRepository.findByUsername(username);
+            if(findUser != null){
+                throw new EntityExistsException("User Already Has Account!");
+            }
+
+            PasswordGenerator passwordGenerator = new PasswordGenerator();
+            User user = User.builder()
+                    .firstName("FirstName")
+                    .lastName("LastName")
+                    .username(username)
+                    .uuid(UUID.randomUUID().toString())
+                    .IdNumber("99-999-99")
+                    .password(passwordEncoder.encode(passwordGenerator.generatePassword(8)))
+                    .department("")
+                    .gender(Gender.valueOf("MALE"))
+                    .isBlocked(false)
+                    .isVerified(true)
+                    .role(Role.STUDENT)
+                    .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
+                    .profilePictureName("XyloGraph1.png")
+                    .profilePictureType("image/png")
+                    .build();
+            userRepository.save(user);
+
+
+
+        emails.add(EmailSendRequestDTO.builder().
+                message("You have Been Invited To An Event From EventEase")
+                .subject("EventEase Event Invite").receiver(username)
+                .build());
+        UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
         }
 
 
@@ -155,15 +201,17 @@ public class EventService {
                 .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
 
         ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
-        ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
-        ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventStart = oldEvent.getEventStarts().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventEnd = oldEvent.getEventEnds().atZoneSameInstant(UTC_8);
 
-        if(eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)){
 
-            throw new DateTimeException("Event cannot start or end before the current date.");
+
+        if(currentDate.isAfter(eventStart) && currentDate.isBefore(eventEnd)){
+            throw new DateTimeException("Event Can't Be Updated During Event Starts");
         }
-
-
+        if(currentDate.isAfter(eventEnd)){
+            throw new DateTimeException("Event Can't Be Updated After Event Ends");
+        }
 
         if (event.getEventName() != null && !event.getEventName().isEmpty()) {
             oldEvent.setEventName(event.getEventName());
@@ -197,13 +245,10 @@ public class EventService {
 
 
 
-
-
     public OffsetDateTime getEventStarts(Long eventId){
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
         return event.getEventStarts();
     }
-
 
     public Event likeEvent(Long eventId, Long userId){
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));

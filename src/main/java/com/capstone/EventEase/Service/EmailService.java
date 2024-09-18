@@ -83,4 +83,26 @@ public class EmailService {
 
         javaMailSender.send(message);
     }
+
+
+
+    public void sendConfirmationLink(String email, String token) throws MessagingException{
+
+        Context context = new Context();
+        context.setVariable("subject","Confirmation Link");
+        context.setVariable("token",token);
+
+        String htmlContent = templateEngine.process("confirm-template",context);
+
+
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+        helper.setTo(email);
+        helper.setSubject("Account Confirmation");
+        helper.setText(htmlContent,true);
+
+
+        javaMailSender.send(message);
+    }
 }

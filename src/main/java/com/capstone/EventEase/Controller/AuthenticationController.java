@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -91,12 +92,44 @@ public class AuthenticationController {
 
     @GetMapping("/hello")
     @Operation(summary = "Say Hello", description = "This will say hello")
-
-
-
     public ResponseEntity<String> greet(){
         return new ResponseEntity<>("Hello World",HttpStatus.OK);
     }
+
+
+    @Operation(summary = "Register A User with Send Link")
+    @PostMapping("/registerLink")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest){
+        try{
+            return new ResponseEntity<>(authenticationService.generateConfirmationToken(registerRequest),HttpStatus.OK);
+        }catch (EntityExistsException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
+
+    @Operation(summary = "Confirm Account Creation")
+    @GetMapping("/confirm/")
+    public ResponseEntity<?> confirmRegister(@RequestParam("token") String token, HttpServletResponse response){
+        try{
+            boolean isConfirmed = authenticationService.confirmAccount(token);
+            if(isConfirmed){
+                response.sendRedirect("http://localhost:3000/Login");
+            }
+            return new ResponseEntity<>(isConfirmed,HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @Operation(summary = "Register A User")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
@@ -143,17 +176,6 @@ public class AuthenticationController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

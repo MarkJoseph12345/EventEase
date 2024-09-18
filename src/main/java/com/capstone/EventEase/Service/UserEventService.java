@@ -17,6 +17,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,6 +39,10 @@ public class UserEventService {
 
 
 
+    private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
+
+
+
 
 
 
@@ -52,6 +59,20 @@ public class UserEventService {
         User user = userOptional.orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found"));
         Event event = eventOptional.orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
 
+
+
+        ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
+        ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
+
+        ZonedDateTime updatedStart = eventStart.plusMinutes(15);
+
+        if(!currentDate.isBefore(updatedStart)){
+            throw new DateTimeException("Can't Join While Event is Happening");
+        }
+        if(currentDate.isAfter(eventEnd)){
+            throw new DateTimeException("Can't Join Because Event Already Ended");
+        }
 
 
 

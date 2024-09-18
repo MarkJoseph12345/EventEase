@@ -8,8 +8,11 @@ import com.capstone.EventEase.ENUMS.Gender;
 import com.capstone.EventEase.ENUMS.Role;
 import com.capstone.EventEase.Entity.PasswordResetToken;
 import com.capstone.EventEase.Entity.User;
+import com.capstone.EventEase.Entity.VerificationToken;
+import com.capstone.EventEase.Exceptions.AccountNotEnabledException;
 import com.capstone.EventEase.Repository.PasswordResetTokenRepository;
 import com.capstone.EventEase.Repository.UserRepository;
+import com.capstone.EventEase.Repository.VerificationTokenRepository;
 import com.capstone.EventEase.UTIL.ImageUtils;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
@@ -49,6 +52,16 @@ public class AuthenticationService {
 
 
 
+    private final EmailService emailService;
+
+
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+
+
+    private final VerificationTokenRepository verificationTokenRepository;
+
+
+
     private byte[] getDefaultProfilePicture (){
 
         try{
@@ -76,6 +89,7 @@ public class AuthenticationService {
                 .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
                 .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
                 .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
+                .isVerified(false)
                .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
                 .profilePictureName("XyloGraph1.png")
                 .profilePictureType("image/png")
@@ -88,17 +102,65 @@ public class AuthenticationService {
     }
 
 
+    public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
+
+        if(userRepository.findByUsername(registerRequest.getUsername()) != null) {
+            throw new EntityExistsException("Username Already Exists!");
+        }
+
+
+
+        User newUser = User.builder().username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(Role.STUDENT)
+                .uuid(UUID.randomUUID().toString())
+                .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
+                .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
+                .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
+                .isVerified(false)
+                .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
+                .profilePictureName("XyloGraph1.png")
+                .profilePictureType("image/png")
+                .build();
+
+        User user = userRepository.save(newUser);
+
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(token,user);
+        verificationTokenRepository.save(verificationToken);
+        emailService.sendConfirmationLink(user.getUsername(),token);
+        return "Check your email for verification";
+    }
+
+
+
+    public boolean confirmAccount(String token){
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        if(token == null){
+            throw new EntityNotFoundException("Token Not Found!");
+        }
+        User user = verificationToken.getUser();
+        user.setVerified(true);
+        userRepository.save(user);
+       verificationTokenRepository.delete(verificationToken);
+        return true;
+    }
 
 
 
 
-    
-    public LoginResponse loginUser(LoginRequest loginRequest){
+
+
+    public LoginResponse loginUser(LoginRequest loginRequest) throws AccountNotEnabledException {
         User user = userRepository.findByUsername(loginRequest.getUsername());
 
         if(user == null){
             throw new EntityNotFoundException("User not Found!");
         }
+        if(!user.isVerified()){
+            throw new AccountNotEnabledException("Account Has Not Been Verified");
+        }
+
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),loginRequest.getPassword()
@@ -132,12 +194,6 @@ public class AuthenticationService {
     }
 
 
-
-
-    private final EmailService emailService;
-
-
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
     public String sendForgotPasswordToken(String email) throws MessagingException {
@@ -181,6 +237,8 @@ public class AuthenticationService {
             passwordResetTokenRepository.delete(passwordResetToken);
             return "New Password Updated";
     }
+
+
 
 
 
