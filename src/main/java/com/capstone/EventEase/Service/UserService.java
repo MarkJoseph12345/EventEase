@@ -74,26 +74,28 @@ public class UserService implements UserDetailsService {
     }
 
     public String deleteUserById(Long userId) throws IOException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
-        List<UserEvent> userEvents = userEventRepository.findByUserId(userId);
-        List<Attendance> attendanceList = attendanceRepository.findAll();
-
-
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByUser(user);
-        if(passwordResetToken != null){
-            passwordResetTokenRepository.delete(passwordResetToken);
-        }
-
-        for (UserEvent userEvent : userEvents) {
-            Optional<Attendance> attend = attendanceRepository.findByUserevent(userEvent);
-            attend.ifPresent(attendanceRepository::delete);
-        }
-        for(UserEvent userEvent: userEvents){
-            userEventRepository.delete(userEvent);
-        }
+        User user = getUserById(userId);
+        deletePasswordResetToken(user);
+        deleteUserEvents(user);
         userRepository.deleteById(userId);
         return "User has been Deleted";
     }
+
+
+    private void deletePasswordResetToken(User user){
+        Optional.ofNullable(passwordResetTokenRepository.findByUser(user)).ifPresent(passwordResetTokenRepository::delete);
+    }
+
+    private void deleteUserEvents(User user){
+        List<UserEvent> userEvents = userEventRepository.findByUserId(user.getId());
+        for (UserEvent userEvent : userEvents) {
+            attendanceRepository.findByUserevent(userEvent).ifPresent(attendanceRepository::delete);
+            userEventRepository.delete(userEvent);
+        }
+    }
+
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return getUserByUsername(username);

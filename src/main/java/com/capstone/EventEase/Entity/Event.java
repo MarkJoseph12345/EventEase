@@ -59,8 +59,7 @@ public class Event {
 
     private Set<String> preRegisteredUsers = new HashSet<>();
 
-
-
+    private String createdBy;
 
     private OffsetDateTime eventEnds;
 

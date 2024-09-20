@@ -18,8 +18,6 @@ public class ImageUtils {
 
     private static final Logger LOGGER = Logger.getLogger(ImageUtils.class.getName());
 
-
-
     public static byte[] compressImage(byte[] data){
 
         Deflater deflater = new Deflater();

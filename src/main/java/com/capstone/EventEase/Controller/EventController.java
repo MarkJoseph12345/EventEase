@@ -44,11 +44,11 @@ public class EventController {
 
 
     @Operation(summary = "CREATE AN EVENT")
-    @PostMapping("createEvent")
-    public ResponseEntity<?> createEvent(@RequestBody Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException
+    @PostMapping("/createEvent")
+    public ResponseEntity<?> createEvent(@RequestParam("creator") String username,@RequestBody Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException
     ,EntityNotFoundException, DateTimeException {
         try{
-            return new ResponseEntity<>(eventService.createEvent(event),HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.createEvent(username,event),HttpStatus.CREATED);
         } catch (GenderNotAllowedException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }catch (EventFullException e){
@@ -65,9 +65,6 @@ public class EventController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
-
-
 
 
     @Operation(summary = "Update Event By Passing Event Id With New Event Credentials")
@@ -109,12 +106,27 @@ public class EventController {
 
         String format = imageService.getEventPictureFormat(eventId);
         MediaType mediaType;
-        switch (format){
+
+        switch (format) {
             case "png":
                 mediaType = MediaType.IMAGE_PNG;
                 break;
             case "jpg":
+            case "jpeg":
+            case "jfif":
                 mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "gif":
+                mediaType = MediaType.IMAGE_GIF;
+                break;
+            case "bmp":
+                mediaType = MediaType.valueOf("image/bmp");
+                break;
+            case "tiff":
+                mediaType = MediaType.valueOf("image/tiff");
+                break;
+            case "webp":
+                mediaType = MediaType.valueOf("image/webp");
                 break;
             case "svg":
                 mediaType = MediaType.valueOf("image/svg+xml");
@@ -122,8 +134,14 @@ public class EventController {
             default:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
         }
+
         byte[] eventImage = imageService.downloadEventImage(eventId);
         return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(eventImage);
+
+
+
+
+
     }
 
 

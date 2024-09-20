@@ -21,12 +21,20 @@ public class EventAnalyticsService {
 
     private final EventRepository repository;
 
+
+
+
+    public Event getEventById(Long eventId) {
+        return repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
+     }
+
     public EventPopularityMetrics calculateEventPopularity(Long eventId){
-        Event event = repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
+        Event event = getEventById(eventId);
         EventPopularityMetrics metrics = new EventPopularityMetrics();
+        final int NO_DISLIKES = 0;
         metrics.totalLikes = event.getLikes();
         metrics.totalDislikes = event.getDislikes();
-        metrics.likesDislikesRatio = (event.getDislikes() == 0) ? event.getLikes():
+        metrics.likesDislikesRatio = (event.getDislikes() == NO_DISLIKES) ? event.getLikes():
                 (double) event.getLikes() / event.getDislikes();
         return metrics;
     }
@@ -34,28 +42,29 @@ public class EventAnalyticsService {
 
 
     public double calculateJoinRate(Long eventId){
-        Event event = repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
-       return (event.getEventLimit() == 0) ? 0:(double) event.getUsersJoined() / event.getEventLimit();
+        Event event = getEventById(eventId);
+        final int N0_LIMIT = 0;
+       return (event.getEventLimit() == N0_LIMIT) ? 0:(double) event.getUsersJoined() / event.getEventLimit();
     }
 
 
 
-    public  Map<String, Long> analyzeEventTypeDistribution() {
+    public List<Event> getAllEvents() {
+        return repository.findAll();
+    }
 
-        List<Event> events = repository.findAll();
-        return events.stream()
+    public  Map<String, Long> analyzeEventTypeDistribution() {
+        return getAllEvents().stream()
                 .collect(Collectors.groupingBy(Event::getEventType, Collectors.counting()));
     }
 
     public  Map<OffsetDateTime, Long> analyzeEventSchedulingTrends() {
-        List<Event> events = repository.findAll();
-        return events.stream()
+        return getAllEvents().stream()
                 .collect(Collectors.groupingBy(Event::getEventStarts, Collectors.counting()));
     }
 
     public double calculateAverageEventDuration() {
-        List<Event> events = repository.findAll();
-        return events.stream()
+        return getAllEvents().stream()
                 .mapToLong(event ->
                         event.getEventEnds().toEpochSecond() - event.getEventStarts().toEpochSecond())
                 .average()
@@ -64,7 +73,7 @@ public class EventAnalyticsService {
 
 
     public  Map<String, Double> analyzeDepartmentEngagement() {
-        List<Event> events = repository.findAll();
+        List<Event> events = getAllEvents();
         Map<String, Long> departmentCounts = events.stream()
                 .flatMap(event -> event.getDepartment().stream())
                 .collect(Collectors.groupingBy(dept -> dept, Collectors.counting()));

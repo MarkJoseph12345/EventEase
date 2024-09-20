@@ -16,21 +16,25 @@ public class PasswordResetTokenService {
     private final PasswordResetTokenRepository resetTokenRepository;
 
 
-    public boolean verifyToken(String token) {
 
-       PasswordResetToken resetToken = resetTokenRepository.findByToken(token);
+
+    public boolean verifyToken(String token) {
+        PasswordResetToken resetToken = resetTokenRepository.findByToken(token);
         if (resetToken == null) {
-            throw new EntityNotFoundException("Token not found or has expired");
+            throw new EntityNotFoundException("Token not found");
         }
 
-        boolean isTokenExpired = resetToken.getExpiryDate().isBefore(LocalDateTime.now());
-
-        if (isTokenExpired) {
+        if (isTokenExpired(resetToken)) {
             resetTokenRepository.delete(resetToken);
             throw new EntityNotFoundException("Token has expired");
         }
 
         return true;
+    }
+
+
+    private boolean isTokenExpired(PasswordResetToken resetToken) {
+        return resetToken.getExpiryDate().isBefore(LocalDateTime.now());
     }
 
 }

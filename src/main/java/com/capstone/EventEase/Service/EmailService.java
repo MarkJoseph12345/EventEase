@@ -28,29 +28,29 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
-    public String emailSend(List<EmailSendRequestDTO> emails, Event event) {
+    /*
+    public void emailSend(List<EmailSendRequestDTO> emails, List<String> pass, Event event) {
         int successCount = 0;
         int failureCount = 0;
 
-        for (EmailSendRequestDTO email : emails) {
+        for (int i = 0; i < emails.size(); i++) {
+            EmailSendRequestDTO email = emails.get(i);
+            String password = pass.get(i);
             try {
-
                 Context context = new Context();
-                context.setVariable("subject", "EventEase Invite");
-                context.setVariable("body", "You have been invited to an event");
+                context.setVariable("subject", "Event Registration Confirmation");
                 context.setVariable("actionUrl", ACTION_URL);
                 context.setVariable("eventName", event.getEventName());
                 context.setVariable("eventDescription", event.getEventDescription());
                 context.setVariable("allowedGender", event.getAllowedGender().toString());
-                context.setVariable("eventLimit", event.getEventLimit()); // Add event limit
-
+                context.setVariable("eventLimit", event.getEventLimit());
+                context.setVariable("password", password);
 
                 String htmlContent = templateEngine.process("email-template", context);
-
                 MimeMessage message = javaMailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setTo(email.getReceiver());
-                helper.setSubject(email.getSubject());
+                helper.setSubject("Event Registration Confirmation");
                 helper.setText(htmlContent, true);
 
                 javaMailSender.send(message);
@@ -60,8 +60,54 @@ public class EmailService {
                 failureCount++;
             }
         }
-        return String.format("Emails sent successfully: %d, failed: %d", successCount, failureCount);
+
     }
+
+     */
+    public void emailSend(List<EmailSendRequestDTO> emails, List<String> pass, Event event) {
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (int i = 0; i < emails.size(); i++) {
+            EmailSendRequestDTO email = emails.get(i);
+            String password = pass.get(i);
+            try {
+                sendEmail(email, password, event);
+                successCount++;
+            } catch (Exception e) {
+                logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
+                failureCount++;
+            }
+        }
+
+        logger.info("Emails sent successfully: {}", successCount);
+        logger.info("Emails failed to send: {}", failureCount);
+    }
+    private void sendEmail(EmailSendRequestDTO email, String password, Event event) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("subject", "Event Registration Confirmation");
+        context.setVariable("actionUrl", ACTION_URL);
+        context.setVariable("eventName", event.getEventName());
+        context.setVariable("eventDescription", event.getEventDescription());
+        context.setVariable("allowedGender", event.getAllowedGender().toString());
+        context.setVariable("eventLimit", event.getEventLimit());
+        context.setVariable("password", password);
+
+        String htmlContent = templateEngine.process("email-template", context);
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(email.getReceiver());
+        helper.setSubject("Event Registration Confirmation");
+        helper.setText(htmlContent, true);
+
+        javaMailSender.send(message);
+    }
+
+
+
+
+
+
 
 
     public void forgotPasswordEmail(String email, String token) throws MessagingException {
@@ -71,7 +117,7 @@ public class EmailService {
         context.setVariable("token",token);
 
 
-        System.out.println("The Token is: " + token);
+        logger.info("The Token is: {}", token);
 
         String htmlContent = templateEngine.process("forgot-password",context);
 

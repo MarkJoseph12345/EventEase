@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
@@ -62,6 +63,9 @@ public class EventService {
 
     private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
 
+    private static final Logger logger = Logger.getLogger(EventService.class.getName());
+
+
 
     private byte[] getDefaultProfilePicture (){
 
@@ -74,88 +78,97 @@ public class EventService {
         }
     }
 
+    public Event createEvent(String nameUser, Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
+            EntityNotFoundException {
 
+        User userCreator = userRepository.findByUsername(nameUser);
+        if (userCreator == null) {
+            throw new EntityNotFoundException("User Not Found!");
+        }
+        event.setCreatedBy(userCreator.getUsername());
+        validateEventDates(event);
 
-    public Event createEvent(Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
-            EntityNotFoundException{
-        Set<String> usernames = event.getPreRegisteredUsers();
-
-        List<User> users = new ArrayList<>();
+        Event newEvent = eventRepository.save(event);
+        List<String> passwords = new ArrayList<>();
         List<EmailSendRequestDTO> emails = new ArrayList<>();
 
+        for (String username : event.getPreRegisteredUsers()) {
+            User user = createUser(username, passwords);
+            emails.add(createEmailDTO(username));
+            userEventService.joinEvent(user.getId(), newEvent.getId());
+        }
+
+        emailService.emailSend(emails, passwords, newEvent);
+        logEventData(newEvent);
+        return newEvent;
+    }
+
+
+    
+
+    private void validateEventDates(Event event) {
         ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
         ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
         ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
 
-
-
-
-        if(eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)){
+        if (eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)) {
             throw new DateTimeException("Event cannot start or end before the current date.");
         }
 
-
-
-
         List<Event> events = eventRepository.findAll();
-        for(Event e:events){
+        for (Event e : events) {
             ZonedDateTime eStart = e.getEventStarts().atZoneSameInstant(UTC_8);
             ZonedDateTime eEnd = e.getEventEnds().atZoneSameInstant(UTC_8);
-            if(eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)){
+            if (eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)) {
                 throw new DateTimeException("Event cannot start or end before the current date.");
             }
-
         }
-
-
-        Event newEvent = eventRepository.save(event);
-
-        for(String username: usernames){
-
-            User findUser = userRepository.findByUsername(username);
-            if(findUser != null){
-                throw new EntityExistsException("User Already Has Account!");
-            }
-
-            PasswordGenerator passwordGenerator = new PasswordGenerator();
-            User user = User.builder()
-                    .firstName("FirstName")
-                    .lastName("LastName")
-                    .username(username)
-                    .uuid(UUID.randomUUID().toString())
-                    .IdNumber("99-999-99")
-                    .password(passwordEncoder.encode(passwordGenerator.generatePassword(8)))
-                    .department("")
-                    .gender(Gender.valueOf("MALE"))
-                    .isBlocked(false)
-                    .isVerified(true)
-                    .role(Role.STUDENT)
-                    .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
-                    .profilePictureName("XyloGraph1.png")
-                    .profilePictureType("image/png")
-                    .build();
-            userRepository.save(user);
-
-
-
-        emails.add(EmailSendRequestDTO.builder().
-                message("You have Been Invited To An Event From EventEase")
-                .subject("EventEase Event Invite").receiver(username)
-                .build());
-        UserEvent userEvent = userEventService.joinEvent(user.getId(),newEvent.getId());
-        }
-
-
-        emailService.emailSend(emails,eventRepository.save(newEvent));
-        eventData(eventRepository.save(newEvent));
-        return eventRepository.save(newEvent);
     }
 
-    public void eventData(Event event){
+    private User createUser(String username, List<String> passwords) {
+        User findUser = userRepository.findByUsername(username);
+        if (findUser != null) {
+            throw new EntityExistsException("User: " + findUser.getUsername() + " Already has an account");
+        }
 
-        System.out.println("Event Data Picture is: " + Arrays.toString(event.getEventPicture()));
-        System.out.println("Event Name is : " + event.getEventName());
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+        String userPass = passwordGenerator.generatePassword(8);
+        User user = User.builder()
+                .firstName("FirstName")
+                .lastName("LastName")
+                .username(username)
+                .uuid(UUID.randomUUID().toString())
+                .IdNumber("99-999-99")
+                .password(passwordEncoder.encode(userPass))
+                .department("")
+                .gender(Gender.valueOf("MALE"))
+                .isBlocked(false)
+                .isVerified(true)
+                .role(Role.STUDENT)
+                .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
+                .profilePictureName("XyloGraph1.png")
+                .profilePictureType("image/png")
+                .build();
+        userRepository.save(user);
+        passwords.add(userPass);
+        return user;
     }
+
+    private EmailSendRequestDTO createEmailDTO(String username) {
+        return EmailSendRequestDTO.builder()
+                .message("You have Been Invited To An Event From EventEase")
+                .subject("EventEase Event Invite")
+                .receiver(username)
+                .build();
+    }
+
+
+    public void logEventData(Event event) {
+        logger.info("Event Data Picture is: " + Arrays.toString(event.getEventPicture()));
+        logger.info("Event Name is: " + event.getEventName());
+    }
+
+
 
 
     public Event getEvent(Long eventId) {
@@ -164,24 +177,18 @@ public class EventService {
 
 
     public String deleteEvent(Long eventId) throws EntityNotFoundException {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event Dont Exists!"));
+        Event event = getEvent(eventId);
         List<UserEvent> userEvents = userEventRepository.findByEventId(eventId);
 
-
-        List<Attendance> attendanceList = attendanceRepository.findAll();
-
         for (UserEvent userEvent : userEvents) {
-            Optional<Attendance> attend = attendanceRepository.findByUserevent(userEvent);
-            attend.ifPresent(attendanceRepository::delete);
-        }
-
-        for (UserEvent userEvent : userEvents) {
+            attendanceRepository.findByUserevent(userEvent).ifPresent(attendanceRepository::delete);
             userEventRepository.delete(userEvent);
         }
         eventRepository.deleteById(eventId);
         return "Event Has been Deleted";
     }
+
+
 
     public Event getByEventStarts(OffsetDateTime date){
         Event event = eventRepository.findByEventStarts(date);
@@ -197,14 +204,11 @@ public class EventService {
     }
 
     public Event updateEvent(Long eventId, Event event) {
-        Event oldEvent = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        Event oldEvent = getEvent(eventId);
 
         ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
         ZonedDateTime eventStart = oldEvent.getEventStarts().atZoneSameInstant(UTC_8);
         ZonedDateTime eventEnd = oldEvent.getEventEnds().atZoneSameInstant(UTC_8);
-
-
 
         if(currentDate.isAfter(eventStart) && currentDate.isBefore(eventEnd)){
             throw new DateTimeException("Event Can't Be Updated During Event Starts");
@@ -246,49 +250,64 @@ public class EventService {
 
 
     public OffsetDateTime getEventStarts(Long eventId){
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        Event event = getEvent(eventId);
         return event.getEventStarts();
     }
 
-    public Event likeEvent(Long eventId, Long userId){
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found"));
 
-        if(event.getUsersLiked().contains(user.getUsername())){
-                throw new RuntimeException("User already Liked");
-        }else{
-            event.setLikes(event.getLikes()+1);
-            event.getUsersLiked().add(user.getUsername());
-            if(event.getUsersDisliked().contains(user.getUsername())){
-                event.setDislikes(event.getDislikes()-1);
-                event.getUsersDisliked().remove(user.getUsername());
-            }
 
-            eventRepository.save(event);
-        }
 
-       return event;
+    public User getUser(Long userId){
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User Not Found"));
     }
 
-    public Event dislikeEvent(Long eventId, Long userId){
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found"));
 
+    public Event likeEvent(Long eventId, Long userId) {
+        Event event = getEvent(eventId);
+        User user = getUser(userId);
 
-        if(event.getUsersDisliked().contains(user.getUsername())){
-            throw new RuntimeException("User already DisLiked");
-        }else{
-            event.setDislikes(event.getDislikes()+1);
-            event.getUsersDisliked().add(user.getUsername());
-
-            if(event.getUsersLiked().contains(user.getUsername())){
-                event.setLikes(event.getLikes()-1);
-                event.getUsersLiked().remove(user.getUsername());
-            }
-
-            eventRepository.save(event);
+        if (hasUserLikedEvent(event, user)) {
+            throw new IllegalStateException("User already liked the event");
         }
 
+        likeEventAndUpdate(event, user);
+
+        return event;
+    }
+
+    private boolean hasUserLikedEvent(Event event, User user) {
+        return event.getUsersLiked().contains(user.getUsername());
+    }
+
+    private void likeEventAndUpdate(Event event, User user) {
+        event.setLikes(event.getLikes() + 1);
+        event.getUsersLiked().add(user.getUsername());
+
+        if (event.getUsersDisliked().contains(user.getUsername())) {
+            event.setDislikes(event.getDislikes() - 1);
+            event.getUsersDisliked().remove(user.getUsername());
+        }
+
+        eventRepository.save(event);
+    }
+
+    public Event dislikeEvent(Long eventId, Long userId) {
+        Event event = getEvent(eventId);
+        User user = getUser(userId);
+
+        if (event.getUsersDisliked().contains(user.getUsername())) {
+            throw new IllegalStateException("User already disliked the event");
+        }
+
+        event.setDislikes(event.getDislikes() + 1);
+        event.getUsersDisliked().add(user.getUsername());
+
+        if (event.getUsersLiked().contains(user.getUsername())) {
+            event.setLikes(event.getLikes() - 1);
+            event.getUsersLiked().remove(user.getUsername());
+        }
+
+        eventRepository.save(event);
         return event;
     }
 

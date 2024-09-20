@@ -93,7 +93,7 @@ public class AdminController {
     @PostMapping("/unblock/{userId}")
     public ResponseEntity<?> unBlockUser(@PathVariable Long userId){
         try{
-            return new ResponseEntity<>(adminService.unBlockUser(userId),HttpStatus.OK);
+            return new ResponseEntity<>(adminService.unblockUser(userId),HttpStatus.OK);
         }catch (EntityNotFoundException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
         }catch (Exception e){
@@ -196,6 +196,33 @@ public class AdminController {
     public ResponseEntity<String> greetAdmin(){
         return ResponseEntity.ok("Hello Admin!");
     }
+
+
+    @Operation(summary = "Sets the user as an admin")
+    @PostMapping("/setAdmin/{userId}")
+    public ResponseEntity<?> setAdmin(@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(adminService.setAdmin(userId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary = "Sets the user as a student")
+    @PostMapping("/setStudent/{userId}")
+    public ResponseEntity<?> setStudent(@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(adminService.setStudent(userId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 }
 
 

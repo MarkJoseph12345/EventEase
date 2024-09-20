@@ -475,10 +475,7 @@ return null;
         UserEvent userEvent = repository.findByUserAndEvent(user,event);
         Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
 
-        if(!attendance.isPresent()){
-            return false;
-        }
-        return true;
+        return attendance.isPresent();
     }
 
 
@@ -531,13 +528,11 @@ return null;
         List <Attendance> attendances = attendanceRepository.findAll();
 
         List<Event> events = attendances.stream().map(attendance -> attendance.getUserevent()
-                .getEvent()).distinct().collect(Collectors.toList());
+                .getEvent()).distinct().toList();
 
-        List<EventAttendance> eventAttendances = events.stream().map(
+        return events.stream().map(
                 event -> new EventAttendance(event,getNumberOfAttendanceInEvent(event.getId(),attendances))).
                 collect(Collectors.toList());
-
-        return eventAttendances;
     }
 
 

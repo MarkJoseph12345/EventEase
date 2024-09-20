@@ -48,12 +48,9 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
 
-    private final ImageUtils imageUtils;
-
 
 
     private final EmailService emailService;
-
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
