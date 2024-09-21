@@ -178,6 +178,15 @@ public class AuthenticationController {
     }
 
 
+    @Operation(summary = "Calls Db")
+    @GetMapping("/callCron")
+    public ResponseEntity<?> callCron(){
+        try{
+            return new ResponseEntity<>(authenticationService.callCron(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 

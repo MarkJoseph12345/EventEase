@@ -251,6 +251,9 @@ public class AuthenticationService {
 
 
 
+    public int callCron() {
+       return userRepository.findAll().size();
+    }
 
 
 

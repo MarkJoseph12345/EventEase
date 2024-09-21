@@ -9,7 +9,6 @@ spring:
 
 
 
-
 #    url: jdbc:postgresql://localhost:5432/eventease
 #    username: postgres
 #    password: root
@@ -27,8 +26,6 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
-
-
 
 
     servlet:
