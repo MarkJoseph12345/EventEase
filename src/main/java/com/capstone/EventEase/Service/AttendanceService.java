@@ -45,6 +45,8 @@ public class AttendanceService {
     }
 
 
+    
+
 
     private Event getEventById(Long eventId){
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id: " + eventId + "Not Found!"));

@@ -104,12 +104,6 @@ public class EmailService {
     }
 
 
-
-
-
-
-
-
     public void forgotPasswordEmail(String email, String token) throws MessagingException {
 
         Context context = new Context();

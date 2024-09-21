@@ -1,13 +1,19 @@
 spring:
   datasource:
-    #url: jdbc:postgresql://dpg-cq7iv7tds78s73d7vngg-a.singapore-postgres.render.com/eventease_0gf5
-    #username: eventease_0gf5_user
-    #password: 8wbqQ6KvXzUZiJyCIsNZ8pgaaHc11vLI
-    #driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/eventease
-    username: postgres
-    password: root
+
+
+    url: ${db.url}
+    username:  ${db.username}
+    password:  ${db.password}
     driver-class-name: org.postgresql.Driver
+
+
+
+
+#    url: jdbc:postgresql://localhost:5432/eventease
+#    username: postgres
+#    password: root
+#    driver-class-name: org.postgresql.Driver
 
 
 

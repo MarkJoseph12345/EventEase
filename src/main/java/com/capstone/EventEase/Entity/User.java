@@ -29,39 +29,21 @@ public class User implements UserDetails {
 
 
     private String uuid;
-
-
-
-
     private String username;
-
     private String password;
-
-
     private String firstName;
     private String lastName;
-
-
     private String IdNumber;
-
     private String department;
-
-
-
     @Column(name = "profilePicture", columnDefinition = "BYTEA")
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilePicture;
-
     private String profilePictureType;
     private String profilePictureName;
-
     private boolean isVerified;
-
     private boolean isBlocked;
-
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
