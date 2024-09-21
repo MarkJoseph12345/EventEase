@@ -62,6 +62,7 @@ public class StartUp{
             userRepository.save(newUser);
         }
 
+        /*
         String[] departments = {"CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"};
         String[] firstNames = {"Alice", "Bob", "Charlie", "Diana", "Emma", "Frank", "Grace", "Henry", "Isla", "Jack"};
         String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"};
@@ -92,6 +93,8 @@ public class StartUp{
                     .build();
             userRepository.save(user);
         }
+
+         */
 
 
     }

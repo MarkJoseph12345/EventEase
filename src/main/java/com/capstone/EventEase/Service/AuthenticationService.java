@@ -18,6 +18,8 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,12 +60,15 @@ public class AuthenticationService {
     private final VerificationTokenRepository verificationTokenRepository;
 
 
+    private static final String DEFAULT_PROFILE_PICTURE_PATH = "static/images/profile.png";
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     private byte[] getDefaultProfilePicture (){
 
         try{
 
-            Path path = Paths.get(new ClassPathResource("static/images/profile.png").getURI());
+            Path path = Paths.get(new ClassPathResource(DEFAULT_PROFILE_PICTURE_PATH).getURI());
             return Files.readAllBytes(path);
         }catch (IOException e){
             System.out.println("Error: " + e.getMessage());
@@ -73,73 +78,65 @@ public class AuthenticationService {
 
 
 
-    public LoginResponse registerUser(RegisterRequest registerRequest){
-        if(userRepository.findByUsername(registerRequest.getUsername()) != null) {
+    private void checkIfUserExists(String username){
+        if(userRepository.findByUsername(username) != null){
             throw new EntityExistsException("Username Already Exists!");
         }
+    }
 
-
-        User newUser = User.builder().username(registerRequest.getUsername())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(Role.STUDENT)
-                .uuid(UUID.randomUUID().toString())
-                .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
-                .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
-                .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
-                .isVerified(false)
-               .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
-                .profilePictureName("XyloGraph1.png")
-                .profilePictureType("image/png")
-                .build();
-
-
+    public LoginResponse registerUser(RegisterRequest registerRequest) {
+        checkIfUserExists(registerRequest.getUsername());
+        User newUser = createUserFromRequest(registerRequest);
         User user = userRepository.save(newUser);
-
         return new LoginResponse(user, jwtService.generateToken(user));
     }
 
-
-    public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
-
-        if(userRepository.findByUsername(registerRequest.getUsername()) != null) {
-            throw new EntityExistsException("Username Already Exists!");
-        }
-
-
-
-        User newUser = User.builder().username(registerRequest.getUsername())
+    private User createUserFromRequest(RegisterRequest registerRequest) {
+        return User.builder()
+                .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.STUDENT)
                 .uuid(UUID.randomUUID().toString())
-                .firstName(registerRequest.getFirstName()).lastName(registerRequest.getLastName())
-                .IdNumber(registerRequest.getIdNumber()).department(registerRequest.getDepartment())
-                .isBlocked(false).gender(Gender.valueOf(registerRequest.getGender().toString()))
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
+                .IdNumber(registerRequest.getIdNumber())
+                .department(registerRequest.getDepartment())
+                .isBlocked(false)
+                .gender(Gender.valueOf(registerRequest.getGender().toString()))
                 .isVerified(false)
                 .profilePicture(ImageUtils.compressImage(getDefaultProfilePicture()))
                 .profilePictureName("XyloGraph1.png")
                 .profilePictureType("image/png")
                 .build();
+    }
 
+
+    public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
+        checkIfUserExists(registerRequest.getUsername());
+        User newUser = createUserFromRequest(registerRequest);
         User user = userRepository.save(newUser);
-
         String token = UUID.randomUUID().toString();
+        generateVerificationToken(token,user);
+        return "Check your email for verification";
+    }
+    public void generateVerificationToken(String token, User user) throws MessagingException {
         VerificationToken verificationToken = new VerificationToken(token,user);
         verificationTokenRepository.save(verificationToken);
         emailService.sendConfirmationLink(user.getUsername(),token);
-        return "Check your email for verification";
     }
 
 
 
-    public boolean confirmAccount(String token){
+
+    public boolean confirmAccount(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-        if(token == null){
+        if (verificationToken == null) {
             throw new EntityNotFoundException("Token Not Found!");
         }
         User user = verificationToken.getUser();
         user.setVerified(true);
         userRepository.save(user);
-       verificationTokenRepository.delete(verificationToken);
+        verificationTokenRepository.delete(verificationToken);
         return true;
     }
 
@@ -151,39 +148,40 @@ public class AuthenticationService {
     public LoginResponse loginUser(LoginRequest loginRequest) throws AccountNotEnabledException {
         User user = userRepository.findByUsername(loginRequest.getUsername());
 
-        if(user == null){
+        if (user == null) {
             throw new EntityNotFoundException("User not Found!");
         }
-        if(!user.isVerified()){
+        if (!user.isVerified()) {
             throw new AccountNotEnabledException("Account Has Not Been Verified");
         }
 
+        authenticateUser(loginRequest);
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(),loginRequest.getPassword()
-        ));
+        return new LoginResponse(user, jwtService.generateToken(user));
+    }
 
-        return new LoginResponse(user,jwtService.generateToken(user));
+    private void authenticateUser(LoginRequest loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(), loginRequest.getPassword()
+                )
+        );
     }
 
 
 
+    public LoginResponse updateUser(Long userId, User user) throws IOException {
+        User userPerson = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException("User with id: " + userId + " not found!")
+        );
 
-    public LoginResponse updateUser(Long userId, User user) throws IOException{
-        User userPerson = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
-                "User with id: " + userId + " not found!"
-        ));
-
-
-
-        if( user.getFirstName() != null &&  !user.getFirstName().isEmpty()){
+        if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
             userPerson.setFirstName(user.getFirstName());
         }
-        if( user.getLastName() != null &&  !user.getLastName().isEmpty()){
+        if (user.getLastName() != null && !user.getLastName().isEmpty()) {
             userPerson.setLastName(user.getLastName());
         }
-
-        if(user.getPassword() != null &&  !user.getPassword().isBlank()){
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
             userPerson.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
@@ -192,47 +190,52 @@ public class AuthenticationService {
 
 
 
-
     public String sendForgotPasswordToken(String email) throws MessagingException {
         User user = userRepository.findByUsername(email);
-        if(user == null){
-            throw new EntityNotFoundException("User with that email not Found!");
+        if (user == null) {
+            throw new EntityNotFoundException("User with that email not found!");
         }
 
         PasswordResetToken existingUser = passwordResetTokenRepository.findByUser(user);
-
-        if(existingUser != null){
-            throw new EntityExistsException("Token Already Sent");
+        if (existingUser != null) {
+            throw new EntityExistsException("Token already sent");
         }
 
-        String token = UUID.randomUUID().toString().replaceAll("[^0-9]","");
-        String randomToken = token.substring(0,6);
+        String token = UUID.randomUUID().toString().replaceAll("[^0-9]", "");
+        String randomToken = token.substring(0, 6);
 
-        PasswordResetToken passwordResetToken = new PasswordResetToken(randomToken,user);
-
-
+        PasswordResetToken passwordResetToken = new PasswordResetToken(randomToken, user);
         passwordResetTokenRepository.save(passwordResetToken);
 
-        emailService.forgotPasswordEmail(email,randomToken);
-        return "Email has been send!";
+        emailService.forgotPasswordEmail(email, randomToken);
+        return "Email has been sent!";
     }
 
 
-    public String newPassword(String token, String newPassword){
-            PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
-            if(passwordResetToken == null){
-                throw new EntityNotFoundException("Invalid Token");
-            }
-            if(passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())){
-                passwordResetTokenRepository.delete(passwordResetToken);
-                throw new IllegalArgumentException("Token has expired!");
-            }
-            User user =  passwordResetToken.getUser();
-            user.setPassword(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
+    public String newPassword(String token, String newPassword) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+        validatePasswordResetToken(passwordResetToken);
 
+        User user = passwordResetToken.getUser();
+        updateUserPassword(user, newPassword);
+
+        passwordResetTokenRepository.delete(passwordResetToken);
+        return "New Password Updated";
+    }
+
+    private void validatePasswordResetToken(PasswordResetToken passwordResetToken) {
+        if (passwordResetToken == null) {
+            throw new EntityNotFoundException("Invalid Token");
+        }
+        if (passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             passwordResetTokenRepository.delete(passwordResetToken);
-            return "New Password Updated";
+            throw new IllegalArgumentException("Token has expired!");
+        }
+    }
+
+    private void updateUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 

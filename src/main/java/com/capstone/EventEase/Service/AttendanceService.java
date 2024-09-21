@@ -36,134 +36,33 @@ public class AttendanceService {
 
 
 
-
-
-    /*
-
-    public Attendance checkAttendance(Long eventId, String username, OffsetDateTime attendanceDate){
-
-        User user = userRepository.findByUsername(username);
+    private User getUserByUuid(String uuid){
+        User user = userRepository.findByUuid(uuid);
         if(user == null){
             throw new EntityNotFoundException("User not Found!");
         }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
-        UserEvent userEvent = repository.findByUserAndEvent(user,event);
-        if(userEvent == null){
-            throw new EntityNotFoundException("User Is Not Joined To an Event!");
-        }
-
-
-
-        System.out.println("User: " + user.getUsername());
-        System.out.println("Event: " + event.getId());
-        System.out.println("UserEvent: " + userEvent.getId());
-
-       Optional<Attendance> attendanceCheck = attendanceRepository.findByUserevent(userEvent);
-      //  List<Attendance> attendances = attendanceRepository.findAllByUserevent(userEvent);
-       // System.out.println("Attendances size is :" + attendances.size());
-
-
-
-
-        if(attendanceCheck.isPresent()){
-            long days = counterAttendance(event.getId());
-            List<OffsetDateTime> attend = attendanceCheck.get().getAttendedTime();
-            if(attend.size() < days){
-                int len = attend.size()-1;
-
-
-                LocalDateTime previousAttendedDate = attend.get(len).atZoneSameInstant(UTC_8).toLocalDateTime();
-                LocalDateTime start = event.getEventStarts().atZoneSameInstant(UTC_8).toLocalDateTime();
-                LocalDateTime end = event.getEventEnds().atZoneSameInstant(UTC_8).toLocalDateTime();
-
-
-                LocalTime attendanceTime = attendanceDate.atZoneSameInstant(UTC_8).toLocalTime();
-                boolean startsAfterTime = attendanceTime.isAfter(start.toLocalTime());
-                boolean endsBeforeDeadline = attendanceTime.isBefore(end.toLocalTime());
-
-                LocalTime noonTime = LocalTime.of(12,0);
-
-
-
-
-
-                if(startsAfterTime && endsBeforeDeadline){
-
-
-                }
-
-
-
-
-
-
-
-
-
-
-                System.out.println("Attendance Size is : " + attend.size() + " While Days Size is: " + days);
-                    attend.add(attendanceDate);
-                    attendanceCheck.get().setAttendedTime(attend);
-                    return attendanceRepository.save(attendanceCheck.get());
-
-
-
-            }else{
-                throw new EntityExistsException("Attendance Already Checked");
-            }
-
-        }else{
-            System.out.println("No attendance found for UserEvent: " + userEvent.getId());
-
-            LocalDateTime start = event.getEventStarts().atZoneSameInstant(UTC_8).toLocalDateTime();
-            LocalDateTime end = event.getEventEnds().atZoneSameInstant(UTC_8).toLocalDateTime();
-
-
-
-
-            LocalTime attendanceTime = attendanceDate.atZoneSameInstant(UTC_8).toLocalTime();
-            boolean startsAfterTime = attendanceTime.isAfter(start.toLocalTime());
-            boolean endsBeforeDeadline = attendanceTime.isBefore(end.toLocalTime());
-
-
-           if(startsAfterTime && endsBeforeDeadline){
-               List<OffsetDateTime> attend = new ArrayList<>();
-               attend.add(attendanceDate);
-               Attendance attendance = new Attendance();
-               attendance.setUserevent(userEvent);
-               attendance.setAttendedTime(attend);
-               return attendanceRepository.save(attendance);
-           }else{
-               System.out.println("Sayup ka boi");
-               System.out.println("Attendance After Time: " + startsAfterTime);
-               System.out.println("Attendance Before Time: " + endsBeforeDeadline);
-
-
-               System.out.println("Attendance Time is: " + attendanceTime);
-               System.out.println("Start Time is: " + start);
-               System.out.println("End Time is: " + end);
-           }
-
-
-        }
-return null;
+        return user;
     }
 
-     */
+
+
+    private Event getEventById(Long eventId){
+        return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id: " + eventId + "Not Found!"));
+    }
+
+    private UserEvent getByUserAndEvent(User user, Event event){
+        UserEvent userEvent = repository.findByUserAndEvent(user,event);
+        if(userEvent == null){
+            throw new EntityNotFoundException("User is not joined to the event");
+        }
+        return userEvent;
+    }
 
 
     public Attendance checkAttendance(Long eventId, String uuid, OffsetDateTime attendanceDate) {
-        User user = userRepository.findByUuid(uuid);
-        if (user == null) {
-            throw new EntityNotFoundException("User not Found!");
-        }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
-        UserEvent userEvent = repository.findByUserAndEvent(user, event);
-        if (userEvent == null) {
-            throw new EntityNotFoundException("User Is Not Joined To an Event!");
-        }
+        User user = getUserByUuid(uuid);
+        Event event = getEventById(eventId);
+        UserEvent userEvent = getByUserAndEvent(user, event);
 
         ZonedDateTime zonedAttendanceDate = attendanceDate.atZoneSameInstant(UTC_8);
         ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
@@ -345,66 +244,6 @@ return null;
         return 0;
     }
 
-    /*
-    public long counterAttendance(Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
-
-        // Convert OffsetDateTime to LocalDateTime in UTC-8
-        LocalDateTime start = event.getEventStarts().atZoneSameInstant(UTC_8).toLocalDateTime();
-        LocalDateTime end = event.getEventEnds().atZoneSameInstant(UTC_8).toLocalDateTime();
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        System.out.println("Event Start (UTC-8): " + start.format(formatter));
-        System.out.println("Event End (UTC-8): " + end.format(formatter));
-
-        LocalTime noonTime = LocalTime.of(12, 0); // 12:00 PM
-
-        long days = ChronoUnit.DAYS.between(start.toLocalDate(), end.toLocalDate());
-        System.out.println("Days between: " + days);
-
-        if (days == 0) {
-            // Same day event
-            boolean startsBeforeNoon = start.toLocalTime().isBefore(noonTime);
-            boolean endsAfterNoon = end.toLocalTime().isAfter(noonTime);
-            System.out.println("Same day event");
-            System.out.println("Starts before noon: " + startsBeforeNoon);
-            System.out.println("Ends after noon: " + endsAfterNoon);
-            long result = (startsBeforeNoon && endsAfterNoon) ? 2 : 1;
-            System.out.println("Returning: " + result);
-            return result;
-        } else {
-            System.out.println("Multi-day event");
-            // Multi-day event
-            long count = 0;
-
-            // First day
-           // count += start.toLocalTime().isBefore(noonTime) ? 2 : 1;
-          //  System.out.println("After first day: " + count);
-
-            // Full days in between
-
-
-
-            count += days * 2;
-            System.out.println("After full days: " + count);
-
-            // Last day
-            count += end.toLocalTime().isAfter(noonTime) ? 2 : 1;
-            System.out.println("After last day: " + count);
-
-            // Subtract 1 from the count if the last day ends exactly at noon
-            if (end.toLocalTime().equals(noonTime)) {
-                count -= 1;
-                System.out.println("Subtracted 1 for noon end: " + count);
-            }
-
-            System.out.println("Returning: " + count);
-            return count;
-        }
-    }
-
-     */
 
     public long counterAttendance(Long eventId) {
         Event event = eventRepository.findById(eventId)
@@ -492,14 +331,6 @@ return null;
         if(userEvent == null){
             throw new UserNotJoinedToAnEventException("User is not Joined to the Event");
         }
-        /*
-        boolean didAttend = checkIfAttendedEvent(eventId,user.getId());
-
-        if(didAttend){
-           throw new AttendanceCheckedException("User already Checked for Attendance");
-        }
-
-         */
 
 
         return user;

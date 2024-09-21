@@ -59,24 +59,38 @@ public class UserController {
     @GetMapping("/getProfilePicture/{userId}")
     public ResponseEntity<?> getProfilePicture(@PathVariable Long userId) throws IOException{
 
-        MediaType mediaType;
-        String format = imageService.getUserPictureFormat(userId);
+        String format = imageService.getPictureFormat(userId,false);
 
-        switch (format){
+        MediaType mediaType;
+
+        switch (format) {
             case "png":
                 mediaType = MediaType.IMAGE_PNG;
                 break;
             case "jpg":
+            case "jpeg":
+            case "jfif":
                 mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "gif":
+                mediaType = MediaType.IMAGE_GIF;
+                break;
+            case "bmp":
+                mediaType = MediaType.valueOf("image/bmp");
+                break;
+            case "tiff":
+                mediaType = MediaType.valueOf("image/tiff");
+                break;
+            case "webp":
+                mediaType = MediaType.valueOf("image/webp");
                 break;
             case "svg":
                 mediaType = MediaType.valueOf("image/svg+xml");
                 break;
             default:
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported format" + format);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
         }
-        byte[] profilePicture = imageService.downloadUserImage(userId);
-
+        byte[] profilePicture = imageService.downloadImage(userId,false);
         return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(profilePicture);
 
     }
@@ -97,7 +111,7 @@ public class UserController {
     @PutMapping("/updateProfilePicture/{userId}")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @RequestParam("image")
     MultipartFile file) throws Exception {
-        return new ResponseEntity<>(imageService.uploadUserImage(userId,file),HttpStatus.OK);
+        return new ResponseEntity<>(imageService.uploadImage(userId,file,false),HttpStatus.OK);
     }
 
 

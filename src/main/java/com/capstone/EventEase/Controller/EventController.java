@@ -1,7 +1,7 @@
 package com.capstone.EventEase.Controller;
 
 
-import com.capstone.EventEase.ENUMS.Gender;
+
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Exceptions.DoubleJoinException;
 import com.capstone.EventEase.Exceptions.EventFullException;
@@ -11,7 +11,6 @@ import com.capstone.EventEase.Service.EventService;
 import com.capstone.EventEase.Service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,18 +47,6 @@ public class EventController {
     ,EntityNotFoundException, DateTimeException {
         try{
             return new ResponseEntity<>(eventService.createEvent(username,event),HttpStatus.CREATED);
-        } catch (GenderNotAllowedException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }catch (EventFullException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }catch (DoubleJoinException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }catch (UserBlockedException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }catch (DateTimeException e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         } catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
@@ -84,7 +70,7 @@ public class EventController {
     @Operation(summary = "Update Event Picture by Passing EventId and New Event Picture")
     @PutMapping("/updateEventPicture/{eventId}")
     public ResponseEntity<?> uploadEventPicture(@PathVariable Long eventId,@RequestParam("eventImage") MultipartFile file) throws IOException{
-        return new ResponseEntity<>(imageService.uploadEventImage(eventId,file),HttpStatus.OK);
+        return new ResponseEntity<>(imageService.uploadImage(eventId,file,true),HttpStatus.OK);
     }
 
 
@@ -99,12 +85,14 @@ public class EventController {
 
 
 
+
+
     @Operation(summary = "Get Event Picture by Passing Event Id")
 
     @GetMapping("/getEventPicture/{eventId}")
     public ResponseEntity<?> getEventPicture(@PathVariable Long eventId) throws IOException{
 
-        String format = imageService.getEventPictureFormat(eventId);
+        String format = imageService.getPictureFormat(eventId,true);
         MediaType mediaType;
 
         switch (format) {
@@ -135,11 +123,8 @@ public class EventController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
         }
 
-        byte[] eventImage = imageService.downloadEventImage(eventId);
+        byte[] eventImage = imageService.downloadImage(eventId,true);
         return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(eventImage);
-
-
-
 
 
     }
