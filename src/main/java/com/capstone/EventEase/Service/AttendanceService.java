@@ -2,7 +2,6 @@ package com.capstone.EventEase.Service;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.time.ZonedDateTime;
 import com.capstone.EventEase.Entity.*;
 import com.capstone.EventEase.Exceptions.AttendanceCheckedException;
@@ -34,27 +33,27 @@ public class AttendanceService {
     private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
 
 
-
-
-    private User getUserByUuid(String uuid){
+    private User getUserByUuid(String uuid) {
         User user = userRepository.findByUuid(uuid);
-        if(user == null){
+        if (user == null) {
             throw new EntityNotFoundException("User not Found!");
         }
         return user;
     }
 
 
-    
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User with id: " + userId + "Not Found!"));
+    }
 
 
-    private Event getEventById(Long eventId){
+    private Event getEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event with id: " + eventId + "Not Found!"));
     }
 
-    private UserEvent getByUserAndEvent(User user, Event event){
-        UserEvent userEvent = repository.findByUserAndEvent(user,event);
-        if(userEvent == null){
+    private UserEvent getByUserAndEvent(User user, Event event) {
+        UserEvent userEvent = repository.findByUserAndEvent(user, event);
+        if (userEvent == null) {
             throw new EntityNotFoundException("User is not joined to the event");
         }
         return userEvent;
@@ -111,16 +110,9 @@ public class AttendanceService {
     }
 
     public Attendance checkTimeout(Long eventId, String uuid, OffsetDateTime timeoutDate) {
-        User user = userRepository.findByUuid(uuid);
-        if (user == null) {
-            throw new EntityNotFoundException("User not Found!");
-        }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
-        UserEvent userEvent = repository.findByUserAndEvent(user, event);
-        if (userEvent == null) {
-            throw new EntityNotFoundException("User Is Not Joined To an Event!");
-        }
+        User user = getUserByUuid(uuid);
+        Event event = getEventById(eventId);
+        UserEvent userEvent = getByUserAndEvent(user, event);
 
         ZonedDateTime zonedTimeoutDate = timeoutDate.atZoneSameInstant(UTC_8);
         ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
@@ -188,7 +180,6 @@ public class AttendanceService {
 // The isAlreadyAttended method remains the same as in your original code
 
 
-
     private boolean isAlreadyAttended(List<OffsetDateTime> attendedTimes, ZonedDateTime attendanceDate,
                                       ZonedDateTime eventStart, ZonedDateTime eventEnd) {
         LocalDate attendanceDay = attendanceDate.toLocalDate();
@@ -220,17 +211,18 @@ public class AttendanceService {
                 });
     }
 
-    public long countDays(Long eventId){
+    public long countDays(Long eventId) {
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found"));
+        Event event = getEventById(eventId);
         OffsetDateTime eventStarts = event.getEventStarts();
         OffsetDateTime eventEnds = event.getEventEnds();
-        Duration duration = Duration.between(eventStarts,eventEnds);
-        return  duration.toDays();
+        Duration duration = Duration.between(eventStarts, eventEnds);
+        return duration.toDays();
     }
 
+
     public long countAttendance(long countDays, Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        Event event = getEventById(eventId);
         OffsetDateTime start = event.getEventStarts();
         OffsetDateTime end = event.getEventEnds();
 
@@ -248,8 +240,7 @@ public class AttendanceService {
 
 
     public long counterAttendance(Long eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event not Found!"));
+        Event event = getEventById(eventId);
 
         // Convert OffsetDateTime to LocalDateTime in UTC-8
         LocalDateTime start = event.getEventStarts().atZoneSameInstant(UTC_8).toLocalDateTime();
@@ -305,42 +296,22 @@ public class AttendanceService {
     }
 
 
-
-    public boolean checkIfAttendedEvent(Long eventId, Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not Found!"));
-        if(user == null){
-            throw new EntityNotFoundException("User not Found!");
-        }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
-        UserEvent userEvent = repository.findByUserAndEvent(user,event);
+    public boolean checkIfAttendedEvent(Long eventId, Long userId) {
+        User user = getUserById(userId);
+        Event event = getEventById(eventId);
+        UserEvent userEvent = getByUserAndEvent(user, event);
         Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
-
         return attendance.isPresent();
     }
 
 
-
-    public User verifyUser(Long eventId,String uuid) throws UserNotJoinedToAnEventException,
+    public User verifyUser(Long eventId, String uuid) throws UserNotJoinedToAnEventException,
             AttendanceCheckedException {
         User user = userRepository.findByUuid(uuid);
-        if(user == null){
-            throw new EntityNotFoundException("User not Found!");
-        }
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id " + eventId + " not found"));
-        UserEvent userEvent = repository.findByUserAndEvent(user,event);
-        if(userEvent == null){
-            throw new UserNotJoinedToAnEventException("User is not Joined to the Event");
-        }
-
-
+        Event event = getEventById(eventId);
+        UserEvent userEvent = getByUserAndEvent(user, event);
         return user;
     }
-
-
-
-
 
 
     private long getNumberofAttendance(Long userId, List<Attendance> allAttendances) {
@@ -349,28 +320,25 @@ public class AttendanceService {
                 .count();
     }
 
-    private long getNumberOfAttendanceInEvent(Long eventId, List<Attendance> attendances){
+    private long getNumberOfAttendanceInEvent(Long eventId, List<Attendance> attendances) {
         return attendances.stream().filter(attendance -> attendance.getUserevent().getEvent().getId().equals(eventId))
                 .count();
     }
 
 
-
-
-    public List<EventAttendance> getAttendanceOfUsersInAllEvents(){
-        List <Attendance> attendances = attendanceRepository.findAll();
+    public List<EventAttendance> getAttendanceOfUsersInAllEvents() {
+        List<Attendance> attendances = attendanceRepository.findAll();
 
         List<Event> events = attendances.stream().map(attendance -> attendance.getUserevent()
                 .getEvent()).distinct().toList();
 
         return events.stream().map(
-                event -> new EventAttendance(event,getNumberOfAttendanceInEvent(event.getId(),attendances))).
+                        event -> new EventAttendance(event, getNumberOfAttendanceInEvent(event.getId(), attendances))).
                 collect(Collectors.toList());
     }
 
 
-
-    public List<UserAttendance> getTopThreeUsersByAttendance(){
+    public List<UserAttendance> getTopThreeUsersByAttendance() {
 
         List<Attendance> allAttendances = attendanceRepository.findAll();
 
@@ -378,26 +346,26 @@ public class AttendanceService {
                 .distinct().toList();
 
         List<UserAttendance> userAttendances = users.stream().map(user ->
-                new UserAttendance(user,getNumberofAttendance(user.getId(),allAttendances))).toList();;
+                new UserAttendance(user, getNumberofAttendance(user.getId(), allAttendances))).toList();
+        ;
 
 
-        return userAttendances.stream().sorted((user1,user2) -> Long.compare(user2.getAttendanceCount(),user1.getAttendanceCount()))
+        return userAttendances.stream().sorted((user1, user2) -> Long.compare(user2.getAttendanceCount(), user1.getAttendanceCount()))
                 .limit(3).collect(Collectors.toList());
     }
 
 
-
-    public List<Event> getAllEventsJoinedByUserAfterAttendance(Long userId){
+    public List<Event> getAllEventsJoinedByUserAfterAttendance(Long userId) {
         return attendanceRepository.findAll().stream().filter(attendance -> attendance.getUserevent()
-                .getUser().getId().equals(userId))
-                 .map(attendance -> attendance.getUserevent().getEvent())
+                        .getUser().getId().equals(userId))
+                .map(attendance -> attendance.getUserevent().getEvent())
                 .collect(Collectors.toList());
     }
 
-    public List<User> getAllUsersJoinedToEventAfterAttendance(Long eventId){
+    public List<User> getAllUsersJoinedToEventAfterAttendance(Long eventId) {
         return attendanceRepository.findAll().stream().filter(
-                attendance -> attendance.getUserevent().getEvent().getId().equals(eventId)
-        ).map(attendance -> attendance.getUserevent().getUser())
+                        attendance -> attendance.getUserevent().getEvent().getId().equals(eventId)
+                ).map(attendance -> attendance.getUserevent().getUser())
                 .collect(Collectors.toList());
     }
 

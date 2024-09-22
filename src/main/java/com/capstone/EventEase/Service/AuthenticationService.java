@@ -251,8 +251,12 @@ public class AuthenticationService {
 
 
 
-    public int callCron() {
-       return userRepository.findAll().size();
+    public String callCron() {
+       User user = userRepository.findByUsername("admin");
+       if (user == null) {
+           throw new EntityNotFoundException("User with that email not found!");
+       }
+      return "Cron Job Called";
     }
 
 

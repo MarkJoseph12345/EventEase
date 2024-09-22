@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 
-
+#
 #    url: jdbc:postgresql://localhost:5432/eventease
 #    username: postgres
 #    password: root
@@ -44,14 +44,6 @@ security:
 
 
 
-
-
-
-
-
-
   devtools:
     livereload:
       enabled: true
-
-
