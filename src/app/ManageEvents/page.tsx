@@ -12,7 +12,7 @@ const ManageEvents = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [events, setEvents] = useState<Event[]>([]);
     const [error, setError] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[]}>({ types: [], departments: []});
+    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[] }>({ types: [], departments: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
 
@@ -25,15 +25,15 @@ const ManageEvents = () => {
     };
 
 
-    const handleFilterChange = (filterCategory: 'types' | 'departments' , filterValue: string) => {
+    const handleFilterChange = (filterCategory: 'types' | 'departments', filterValue: string) => {
         const updatedFilters = selectedFilters[filterCategory].includes(filterValue)
             ? selectedFilters[filterCategory].filter(filter => filter !== filterValue)
             : [...selectedFilters[filterCategory], filterValue];
         setSelectedFilters({ ...selectedFilters, [filterCategory]: updatedFilters });
     };
-    
+
     const dropdownRef = useRef<HTMLDivElement>(null);
-    
+
     useEffect(() => {
         const loadEvents = async () => {
             try {
@@ -106,76 +106,76 @@ const ManageEvents = () => {
     return (
         <div>
             <Sidebar />
-            <div className="mt-[6rem] mx-2 mb-5 ml-[2rem]">
+            <div className="mt-[6rem] mb-5 mx-[2rem]">
                 <p className="text-xl font-semibold font-bevietnam mb-2 tablet:text-3xl">Manage Events</p>
-                <div>
-                    <div className="flex items-center mb-5">
-                        <div className="relative mr-3">
-                            <div onClick={toggleFilters} className="cursor-pointer">
-                                <img src="/filter.png" className="h-6 w-6" />
-                            </div>
-                            {showFilters && (
-                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
-                                    <div className="flex items-center justify-between mb-2 flex-col">
-                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: []})}>Clear Filters</button>
-                                    </div>
-                                    <div className="mb-2">
-                                        <p className="font-semibold">Type</p>
-                                        {types.map((type, index) => (
-                                            <div key={index} className="flex items-center">
-                                                <label className="flex items-center cursor-pointer">
-                                                    <input type="checkbox" checked={selectedFilters.types.includes(type)} onChange={() => handleFilterChange('types', type)} className="mr-2 cursor-pointer accent-customYellow" />
-                                                    {type}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold">Departments</p>
-                                        {departments.map((department, index) => (
-                                            <div key={index} className="flex items-center">
-                                                <label className="flex items-center cursor-pointer">
-                                                    <input type="checkbox" checked={selectedFilters.departments.includes(department)} onChange={() => handleFilterChange('departments', department)} className="mr-2 cursor-pointer accent-customYellow" />
-                                                    {department}</label>
-                                            </div>
-                                        ))}
-                                    </div>
+                <div className="mx-[10rem] flex flex-col items-center">
+                        <div className="flex items-center mb-5 w-full min-w-96">
+                            <div className="relative mr-3">
+                                <div onClick={toggleFilters} className="cursor-pointer">
+                                    <img src="/filter.png" className="h-6 w-6" />
                                 </div>
-                            )}
-                        </div>
-                        <div className="relative w-full">
-                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300" placeholder="Search events..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                        </div>
-                    </div>
-                    <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
-                        {error ? (
-                            <div className="flex flex-col items-center gap pt-2">
-                                <img src="no-event-image.png" alt="No events today" className="mb-4 w-32 h-32" />
-                                <p className="font-poppins text-center text-gray-700 mx-4">Oops! Looks like there are no events found.</p>
-                            </div>
-                        ) : (
-                            filteredEvents.length > 0 ? (
-                                filteredEvents.map(event => (
-                                    <div key={event.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center" onClick={() => handleEventClick(event)}>
-                                        <img src={event.eventPicture} alt={event.eventName} className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill" />
+                                {showFilters && (
+                                    <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
+                                        <div className="flex items-center justify-between mb-2 flex-col">
+                                            <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: [] })}>Clear Filters</button>
+                                        </div>
+                                        <div className="mb-2">
+                                            <p className="font-semibold">Type</p>
+                                            {types.map((type, index) => (
+                                                <div key={index} className="flex items-center">
+                                                    <label className="flex items-center cursor-pointer">
+                                                        <input type="checkbox" checked={selectedFilters.types.includes(type)} onChange={() => handleFilterChange('types', type)} className="mr-2 cursor-pointer accent-customYellow" />
+                                                        {type}</label>
+                                                </div>
+                                            ))}
+                                        </div>
                                         <div>
-                                            <p className="font-semibold">{event.eventName}</p>
-                                            <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                                            <p className="font-semibold">Departments</p>
+                                            {departments.map((department, index) => (
+                                                <div key={index} className="flex items-center">
+                                                    <label className="flex items-center cursor-pointer">
+                                                        <input type="checkbox" checked={selectedFilters.departments.includes(department)} onChange={() => handleFilterChange('departments', department)} className="mr-2 cursor-pointer accent-customYellow" />
+                                                        {department}</label>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="flex flex-col items-center justify-center">
-                                    <img src="no-event-image.png" className="mb-4 w-44 h-44" />
-                                    <p className="text-center">No event found. Please adjust your filters or try a different search term.</p>
+                                )}
+                            </div>
+                            <div className="relative w-full">
+                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
                                 </div>
-                            )
-                        )}
-                    </div>
+                                <input type="search" className="block w-full p-2 ps-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300" placeholder="Search events..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="tablet:flex  tablet:gap-5 tablet:flex-wrap">
+                            {error ? (
+                                <div className="flex flex-col items-center gap pt-2">
+                                    <img src="no-event-image.png" alt="No events today" className="mb-4 w-44 h-44" />
+                                    <p className="font-poppins text-center text-gray-700 mx-4">Oops! Looks like there are no events found.</p>
+                                </div>
+                            ) : (
+                                filteredEvents.length > 0 ? (
+                                    filteredEvents.map(event => (
+                                        <div key={event.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center" onClick={() => handleEventClick(event)}>
+                                            <img src={event.eventPicture} alt={event.eventName} className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill" />
+                                            <div>
+                                                <p className="font-semibold">{event.eventName}</p>
+                                                <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center">
+                                        <img src="no-event-image.png" className="mb-4 w-44 h-44" />
+                                        <p className="text-center">No event found. Please adjust your filters or try a different search term.</p>
+                                    </div>
+                                )
+                            )}
+                        </div>
                 </div>
             </div>
             {selectedEvent && <AdminEventDetailModal event={selectedEvent} onClose={handleClosePopup} />}

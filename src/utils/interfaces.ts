@@ -28,10 +28,11 @@ export interface Event {
     usersDisliked?: string[];
     eventPicture?: string;
     department: string[]; 
-    eventType: string[];
+    eventType: string;
     allowedGender?: string;
     eventLimit?: number;
     preRegisteredUsers?: string[];
+    createdBy?: string;
 }
 
 export interface EventDetailModal {

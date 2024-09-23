@@ -37,7 +37,7 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
-            <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem]">
+            <div className="bg-white  shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem]">
                 <div className="flex bg-black p-2">
                     <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
                     <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={onClose}>✖</p>

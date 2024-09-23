@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = " https://eventease-q2yh.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
@@ -41,4 +41,7 @@ export const API_ENDPOINTS = {
   SCHEDULING_TRENDS: `${BASE_URL}/api/v1/auth/analytics/getEventSchedulingTrends`,
   AVERAGE_EVENT_DURATION: `${BASE_URL}/api/v1/auth/analytics/getAverageEventDuration`,
   DEPARTMENT_ENGAGEMENT: `${BASE_URL}/api/v1/auth/analytics/getDepartmentEngagement`,
+  SET_ADMIN: `${BASE_URL}/api/v1/auth/admin/setAdmin/`,
+  SET_STUDENT: `${BASE_URL}/api/v1/auth/admin/setStudent/`,
+
 };

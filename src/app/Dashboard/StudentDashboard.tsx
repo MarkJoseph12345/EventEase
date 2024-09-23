@@ -31,15 +31,12 @@ const StudentDashboard = () => {
       if (!user?.id) return;
 
       try {
-        // Fetch all events
         const fetchedEvents = await getEvents();
 
         if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
           setError(true);
           return;
         }
-
-        // Fetch attended events
         const attendedEvents = await getAllEventsAfterAttendance(user.id);
         const attendedEventIds = new Set(attendedEvents.map((event: Event) => event.id));
 
@@ -55,8 +52,6 @@ const StudentDashboard = () => {
             return event;
           })
         );
-
-        // Filter out attended events
         const upcomingEvents = processedEvents.filter(
           (event) =>
             new Date(event.eventEnds!).getTime() > currentTime.getTime() &&

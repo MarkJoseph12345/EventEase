@@ -45,7 +45,7 @@ const Login = () => {
     return (
         <div className="p-5 relative">
             <div className="sticky top-5 bg-white">
-                <img src="/logo.png" className="h-10 w-40 object-cover bg-customYellow " onClick={() => window.location.href = "/"} />
+                <img src="/logo.png" className="h-10 w-40 object-cover bg-customYellow cursor-pointer" onClick={() => window.location.href = "/"} />
             </div>
             <p className="text-center text-4xl font-poppins font-bold mt-10">Log In</p>
             <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">

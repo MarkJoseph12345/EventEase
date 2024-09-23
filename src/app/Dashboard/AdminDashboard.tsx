@@ -5,7 +5,6 @@ import { Event } from "../../utils/interfaces";
 import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
 import { fetchEventPicture, getEvents } from "@/utils/apiCalls";
-import Loading from "../Loader/Loading";
 import { formatDate } from "@/utils/data";
 
 const AdminDashboard = () => {
@@ -68,7 +67,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <Sidebar />
-      <div className="mt-[6rem] mx-2 mb-4 ml-[2rem]">
+      <div className="mt-[6rem] mb-4 mx-[2rem]">
         <p className="text-xl font-semibold tablet:text-3xl font-bevietnam">Hello, admin</p>
         <p className="tablet:text-xl text-[10px] font-poppins">Manage your events!</p>
         <div className="w-full border-t my-4" />

@@ -9,6 +9,19 @@ import { formatDate } from "@/utils/data";
 
 const EventDetail = ({ event, onClose }: EventDetailModal) => {
     const type = event.eventType.toString().split(', ');
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+
+    const hasLongDescription = (description: string) => {
+        return description.split(' ').length > 50;
+    };
+
+    const truncateDescription = (description: string) => {
+        const words = description.split(' ');
+        return words.slice(0, 50).join(' ') + '...';
+    };
+    
+    const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
@@ -24,22 +37,30 @@ const EventDetail = ({ event, onClose }: EventDetailModal) => {
                         </div>
                     </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
-                    <div className="flex overflow-hidden">
-                        <div className="grid grid-cols-6 gap-5">
-                            <p className="col-span-2"><strong>Event Description:</strong></p>
-                            <p className="col-span-4 text-pretty">{event.eventDescription}</p>
-                            <p className="col-span-2"><strong>Event Type:</strong></p>
-                            <p className="col-span-4">{type[0]}</p>
-                            <p className="col-span-2"><strong>Department(s):</strong></p>
-                            <p className="col-span-4">{event.department.join(', ')}</p>
-                            <p className="col-span-2"><strong>Gender:</strong></p>
-                            <p className="col-span-4">{event.allowedGender}</p>
-                            <p className="col-span-2"><strong>Slots:</strong></p>
-                            <p className="col-span-4">{event.eventLimit}</p>
-                            <p className="col-span-2"><strong>Start Date:</strong></p>
-                            <p className="col-span-4">{formatDate(event.eventStarts)}</p>
-                            <p className="col-span-2"><strong>End Date:</strong></p>
-                            <p className="col-span-4">{formatDate(event.eventEnds)}</p>
+                     <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
+                        <div className=" w-full">
+                            <div className="grid grid-cols-2 gap-2 mb-2 ">
+                                <p className=""><strong>Event Type:</strong> {type[0]}</p>
+                                <p className=""><strong>Created By:</strong> {event.createdBy}</p>
+                                <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
+                                <p className=""><strong>Slots:</strong> {event.eventLimit}</p>
+                                <p className="col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
+                                <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
+                                <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
+                            </div>
+                            <p className="col-span-4 text-pretty">
+                                {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
+                            </p>
+                            {hasLongDescription(event.eventDescription) && (
+                                <button
+                                    className="font-bold"
+                                    onClick={() => setIsExpanded(!isExpanded)}
+                                >
+                                    {isExpanded ? 'See less' : 'See more'}
+                                </button>
+                            )}
+
+
                         </div>
                     </div>
                 </div>

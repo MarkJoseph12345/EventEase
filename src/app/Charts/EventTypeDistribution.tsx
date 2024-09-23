@@ -17,7 +17,7 @@ const EventTypeDistributionChart = ({ eventTypeDistribution }: { eventTypeDistri
         labels: labels,
         datasets: [
             {
-                label: 'Event Type Distribution',
+                label: 'Event Type Count',
                 data: dataValues,
                 backgroundColor: '#FDCC01',
                 borderColor: 'black',
@@ -62,9 +62,9 @@ const EventTypeDistributionChart = ({ eventTypeDistribution }: { eventTypeDistri
     };
 
     return (
-        <div className="w-full max-w-96 tablet:w-96">
-            <h2>Event Type Distribution</h2>
-            <Bar data={data} options={options} />
+        <div className="w-full max-w-96 tablet:w-96 bg-gray-100 h-64">
+            <h2 className="px-3 py-3 text-xs font-medium text-customYellow uppercase tracking-wider bg-black">Event Type Distribution</h2>
+            <Bar className="px-3" data={data} options={options} />
         </div>
     );
 };

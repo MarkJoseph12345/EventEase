@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Link from "next/link";
 import { deleteCookie } from '@/utils/cookies';
-import { fetchProfilePicture, me } from '@/utils/apiCalls';
+import { deleteUser, fetchProfilePicture, me } from '@/utils/apiCalls';
 import Loading from '../Loader/Loading';
 import { User } from '@/utils/interfaces';
 
@@ -32,31 +32,31 @@ const Sidebar = () => {
 
     useEffect(() => {
         const fetchUser = async () => {
-          try {
-            const userData = await me();
-            setUser(userData);
-          } catch (error) {
-            console.error('Failed to fetch user:', error);
-          }
-        };
-    
-        fetchUser();
-      }, []);
-
-      useEffect(() => {
-        const fetchImage = async () => {
-          if (user && user.id) {
             try {
-              const url = await fetchProfilePicture(user.id);
-              setImageUrl(url);
+                const userData = await me();
+                setUser(userData);
             } catch (error) {
-              console.error('Failed to fetch profile picture:', error);
+                console.error('Failed to fetch user:', error);
             }
-          }
         };
-    
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            if (user && user.id) {
+                try {
+                    const url = await fetchProfilePicture(user.id);
+                    setImageUrl(url);
+                } catch (error) {
+                    console.error('Failed to fetch profile picture:', error);
+                }
+            }
+        };
+
         fetchImage();
-      }, [user]);
+    }, [user]);
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
         setOpenProfile(false);
@@ -114,6 +114,7 @@ const Sidebar = () => {
     const handleConfirmDelete = () => {
         setShowDeleteConfirmation(false);
         setShowSuccessMessage(true);
+        deleteUser(user!.id!)
 
         setTimeout(() => {
             setShowSuccessMessage(false);
@@ -175,7 +176,7 @@ const Sidebar = () => {
                             </div>
                             <div className="flex flex-col tablet:text-xl" onClick={() => setOpenProfile(false)}>
                                 <Link href="Profile" className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => handleClick("/Profile")}>Profile</Link>
-                                <p className="text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1" onClick={handleDeleteClick}>Delete Account</p>
+                                <p className={`text-start cursor-pointer hover:bg-black hover:text-customYellow indent-3 py-1 ${user.role === "ADMIN" ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={user.role === "ADMIN" ? undefined : handleDeleteClick}>Delete Account</p>
                                 <p className="text-start cursor-pointer hover:rounded-b-2xl hover:bg-black hover:text-customYellow indent-3 py-1" onClick={() => { deleteCookie("token"); window.location.href = "/" }}>Sign Out</p>
                             </div>
                         </div>
@@ -184,16 +185,16 @@ const Sidebar = () => {
             </div>
             {showDeleteConfirmation && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <div className="bg-white p-6 rounded-lg shadow-lg border-customYellow border-2">
                         <p className="mb-4">Are you sure you want to delete the account?</p>
                         <div className="flex justify-center space-x-2">
-                            <button 
+                            <button
                                 className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
                                 onClick={handleConfirmDelete}
                             >
                                 Yes
                             </button>
-                            <button 
+                            <button
                                 className="px-4 py-2 bg-gray-300 text-yellow rounded hover:bg-black-400"
                                 onClick={handleCancelDelete}
                             >

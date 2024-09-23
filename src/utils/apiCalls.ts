@@ -33,7 +33,7 @@ export const loginAccount = async (username: string, password: string) => {
         });
         const data = await response.json();
         if (response.ok) {
-            setCookie("token", JSON.stringify(data.token), 1);
+            setCookie("token", JSON.stringify(data.token), 24);
             return { success: true };
         } else {
             return { success: false, message: data.message || "Invalid username or password" };
@@ -82,7 +82,7 @@ export const getEvents = async (): Promise<Event[]> => {
     }
 };
 
-export const createEvent = async (eventData: any) => {
+export const createEvent = async (username: string, eventData: any) => {
     try {
         const formattedEventData = {
             eventName: eventData.eventName,
@@ -97,7 +97,7 @@ export const createEvent = async (eventData: any) => {
             preRegisteredUsers: eventData.preRegisteredUsers
         };
         console.log(formattedEventData)
-        const response = await fetch(API_ENDPOINTS.CREATE_EVENT, {
+        const response = await fetch(API_ENDPOINTS.CREATE_EVENT + `?creator=${encodeURIComponent(username)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -802,5 +802,47 @@ export const getDepartmentEngagement = async () => {
     } catch (error) {
         console.error('Error fetching department engagement:', error);
         return { success: false, message: 'Failed to fetch department engagement.' };
+    }
+};
+
+export const setUserAsAdmin = async (userId: any) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.SET_ADMIN}${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error setting user as admin:', error);
+        return { success: false, message: 'Failed to set user as admin.' };
+    }
+};
+
+export const setUserAsStudent = async (userId: any) => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.SET_STUDENT}${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error setting user as student:', error);
+        return { success: false, message: 'Failed to set user as student.' };
     }
 };

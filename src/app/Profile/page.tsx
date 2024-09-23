@@ -264,7 +264,7 @@ const Profile = () => {
         <div className="bg-white-200 h-screen text-center pb-4 smartphone:h-fit tablet:h-screen">
             <Sidebar />
             <div>
-                <img src={imageUrl || "/defaultpic.png"} alt="Profile Pic" className="my-4 w-32 mt-10 h-32 rounded-full object-cover object-center mx-auto" onClick={(e) => { handleProfilePicClick(imageUrl || "/defaultpic.png") }} />
+                <img src={imageUrl || "/defaultpic.png"} alt="Profile Pic" className="my-4 w-32 mt-10 h-32 rounded-full object-cover object-center mx-auto hover:cursor-pointer hover:border-8 hover:border-customRed transition-all duration-300 ease-in-out" onClick={(e) => { handleProfilePicClick(imageUrl || "/defaultpic.png") }} />
             </div>
             <h2 className="text-2xl font-semibold font-poppins">{user.firstName} {user.lastName}</h2>
             <p className="text-gray-700 underline">{user.username}</p>
@@ -305,7 +305,7 @@ const Profile = () => {
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             defaultValue={""}
                             name="currentpassword" />
-                        <button 
+                        <button
                             type="button"
                             tabIndex={-1}
                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}

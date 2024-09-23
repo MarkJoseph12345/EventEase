@@ -1,6 +1,6 @@
 "use client";
 
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "./Comps/NavBar";
 import Link from "next/link";
 import Footer from "./Comps/Footer";
@@ -91,22 +91,33 @@ const Home = () => {
         {eventsThisWeek.length ? (
           <div className="mx-auto max-w-5xl">
             <Slider {...sliderSettings}>
-              {eventsThisWeek.map((event, index) => (
-                <div
-                  key={event.id}
-                  className={` relative transition-transform duration-500 ease-in-out ${eventsThisWeek.length === 1 ? 'scale-100' : index === currentSlide ? 'scale-110' : 'scale-75'}`}>
-                  <img
-                    src={event.eventPicture}
-                    className="w-full h-64 object-contain rounded-lg shadow-lg"
-                    alt={event.eventName}
-                  />
-                  <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 text-white">
-                    <p className="text-lg font-bold truncate">{event.eventName}</p>
-                    <p className="text-sm mt-1">{event.eventType}</p>
+              {eventsThisWeek.map((event, index) => {
+                const isNextSlide = index === (currentSlide + 1) % eventsThisWeek.length;
+                const isFirstSlide = index === 0 && currentSlide + 1 >= eventsThisWeek.length;
+
+                const scaleClass =
+                  eventsThisWeek.length === 1 ? 'scale-100' :
+                    eventsThisWeek.length === 2 ? 'scale-90' :
+                      isNextSlide || isFirstSlide ? 'scale-110' : 'scale-75';
+                return (
+                  <div
+                    key={event.id}
+                    className={`relative transition-transform duration-500 ease-in-out ${scaleClass}`}
+                  >
+                    <img
+                      src={event.eventPicture}
+                      className="w-full h-64 object-contain rounded-lg shadow-lg"
+                      alt={event.eventName}
+                    />
+                    <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 text-white">
+                      <p className="text-lg font-bold truncate">{event.eventName}</p>
+                      <p className="text-sm mt-1">{event.eventType}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
+
           </div>
         ) : (
           <div className="items-center flex flex-col">

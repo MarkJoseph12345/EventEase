@@ -90,7 +90,7 @@ const SignUp = () => {
 
     return (
         <div className="p-5 relative">
-            <img src="/logo.png" className="h-10 w-40 object-cover bg-customYellow" onClick={() => window.location.href = "/"} />
+            <img src="/logo.png" className="h-10 w-40 object-cover bg-customYellow cursor-pointer" onClick={() => window.location.href = "/"} />
             <p className="text-center text-4xl  font-poppins font-bold mt-10">Sign Up</p>
             <p className="text-center text-sm mt-2 text-gray-500">By signing up, you agree to our <a href="/PrivacyPolicy" className=" underline decoration-2 text-blue-500 font-bold">Privacy Policy</a>.</p>
             <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">

@@ -32,6 +32,9 @@ const config: Config = {
         bebas: ['Bebas Neue', 'cursive'],
         bevietnam: ['Be Vietnam', 'sans-serif']
       },
+      maxWidth: {
+        'maximum': '3000px',
+      },
     },
   },
   plugins: [],

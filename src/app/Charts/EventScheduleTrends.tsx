@@ -7,26 +7,23 @@ import { formatDate } from '@/utils/data';
 
 ChartJS.register(Tooltip, ArcElement);
 
-const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-};
+const predefinedColors = [
+    '#FDCC01', '#AE0404', '#000000', '#FFFFFF', '#F6F6F6',
+    '#FF9F40', '#FF5733', '#C70039', '#900C3F', '#581845'
+];
+
+
 
 const EventScheduleTrends = ({ eventSchedulingTrends }: { eventSchedulingTrends: Record<string, number> }) => {
     const labels = Object.keys(eventSchedulingTrends).map(date => formatDate(date));
     const values = Object.values(eventSchedulingTrends);
 
-    const backgroundColors = values.map(() => getRandomColor());
+    const backgroundColors = values.map((_, index) => predefinedColors[index % predefinedColors.length]);
 
     const chartData = {
         labels: labels,
         datasets: [
             {
-                label: 'Event Scheduling Trends',
                 data: values,
                 backgroundColor: backgroundColors,
                 borderColor: 'black',
@@ -52,9 +49,11 @@ const EventScheduleTrends = ({ eventSchedulingTrends }: { eventSchedulingTrends:
     };
 
     return (
-        <div className="w-full max-w-96 tablet:w-48">
-            <h2>Event Scheduling Trends</h2>
-            <Pie data={chartData} options={options} />
+        <div className="w-full max-w-96 tablet:w-96 h-64 bg-gray-100">
+            <h2 className="px-3 py-3 text-xs font-medium text-customYellow uppercase tracking-wider bg-black">Event Scheduling Trends</h2>
+            <div className="max-w-48 mx-auto py-2">
+                <Pie data={chartData} options={options} />
+            </div>
         </div>
     );
 };

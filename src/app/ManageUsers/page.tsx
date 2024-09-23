@@ -3,20 +3,53 @@ import { useEffect, useRef, useState } from 'react';
 import { User } from '@/utils/interfaces';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { blockUser, deleteUser, fetchProfilePicture, getAllUsers, unblockUser } from '@/utils/apiCalls';
+import { blockUser, deleteUser, fetchProfilePicture, getAllUsers, me, setUserAsAdmin, setUserAsStudent, unblockUser } from '@/utils/apiCalls';
+import Confirmation from '../Modals/Confirmation';
+type SelectedFilters = {
+    departments: string[];
+    blocked: boolean;
+    roles: string[];
+};
 
 const ManageUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
     const [showDepartments, setShowDepartments] = useState<boolean>(false);
     const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
     const departments = Array.from(new Set(users.map(user => user.department || '')));
+    const roles = ["Admin", "Student"];
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+    const [confirmationAction, setConfirmationAction] = useState<'delete' | 'block' | 'role' | null>(null);
+    const [selectedUserConfirm, setSelectedUserConfirm] = useState<User | null>(null);
+
+    const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
+        departments: [],
+        blocked: false,
+        roles: [],
+    });
+
+    const handleFilterChange = (filterCategory: 'departments' | 'blocked' | 'roles', filterValue?: string) => {
+        if (filterCategory === 'departments' && filterValue) {
+            const updatedDepartments = selectedFilters.departments.includes(filterValue)
+                ? selectedFilters.departments.filter(dep => dep !== filterValue)
+                : [...selectedFilters.departments, filterValue];
+            setSelectedFilters({ ...selectedFilters, departments: updatedDepartments });
+        } else if (filterCategory === 'blocked') {
+            setSelectedFilters(prev => ({ ...prev, blocked: !prev.blocked }));
+        } else if (filterCategory === 'roles' && filterValue) {
+            const updatedRoles = selectedFilters.roles.includes(filterValue)
+                ? selectedFilters.roles.filter(role => role !== filterValue)
+                : [...selectedFilters.roles, filterValue];
+            setSelectedFilters({ ...selectedFilters, roles: updatedRoles });
+        }
+    };
 
     const filteredUsers = users.filter(user =>
-        (selectedDepartments.length === 0 || selectedDepartments.includes(user.department || '')) &&
-        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+        (selectedFilters.departments.length === 0 || selectedFilters.departments.includes(user.department || '')) &&
+        (selectedFilters.blocked ? user.blocked : !user.blocked) &&
+        (selectedFilters.roles.length === 0 || selectedFilters.roles.includes(user.role!)) &&
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     const handleUserClick = (user: User) => {
@@ -31,12 +64,6 @@ const ManageUsers = () => {
         setShowDepartments(!showDepartments);
     };
 
-    const handleDepartmentChange = (department: string) => {
-        const updatedDepartments = selectedDepartments.includes(department)
-            ? selectedDepartments.filter(dep => dep !== department)
-            : [...selectedDepartments, department];
-        setSelectedDepartments(updatedDepartments);
-    };
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +87,8 @@ const ManageUsers = () => {
         const fetchUsers = async () => {
             try {
                 const fetchedUsers = await getAllUsers();
-                const filteredUsers = fetchedUsers.filter(user => user.role !== 'ADMIN');
+                const userData = await me();
+                const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id);
                 setUsers(filteredUsers);
                 fetchUserImages(filteredUsers);
             } catch (error) {
@@ -134,14 +162,65 @@ const ManageUsers = () => {
         }
     };
 
+    const makeAdminStudent = async (userId?: number) => {
+        const id = userId || selectedUser?.id;
+        if (id) {
+            try {
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    const isAdmin = user.role === "ADMIN";
+                    const action = isAdmin ? setUserAsStudent : setUserAsAdmin;
+                    const response = await action(id);
+                    if (response) {
+                        setUsers(prevUsers =>
+                            prevUsers.map(u =>
+                                u.id === id ? { ...u, role: "STUDENT" } : u
+                            )
+                        );
+                        if (!userId) {
+                            setSelectedUser(prevUser => prevUser ? { ...prevUser, role: "STUDENT" } : null);
+                        }
+                    } else {
+                        console.error(`Failed to make ${isAdmin ? 'student into admin' : 'admin into student'}!`);
+                    }
+                }
+            } catch (error) {
+                console.error(`Failed to toggle user status:`, error);
+            }
+        }
+    };
+
+    const handleConfirmation = (action: 'delete' | 'block' | 'role', user: User) => {
+        setConfirmationAction(action);
+        setIsConfirmationOpen(true);
+        setSelectedUserConfirm(user);
+    };
+
+    const confirmAction = (id: number) => {
+        if (confirmationAction === 'delete') {
+            handleDeleteUser(id);
+        } else if (confirmationAction === 'block') {
+            handleBlockUnblockUser(id);
+        } else if (confirmationAction === 'role') {
+            makeAdminStudent(id);
+        }
+        setConfirmationAction(null);
+        setIsConfirmationOpen(false);
+    };
+
+    const cancelAction = () => {
+        setIsConfirmationOpen(false);
+        setConfirmationAction(null);
+    };
+
     if (loading) {
         return <Loading />;
     }
 
     return (
-        <div className="flex flex-col">
+        <div>
             <Sidebar />
-            <div className="mt-[6rem] ml-[2rem] mx-2 mb-5">
+            <div className="mt-[6rem] mx-[2rem] mb-5">
                 <p className="text-xl font-semibold font-bevietnam mb-2 tablet:text-3xl">Users</p>
                 <div>
                     <div className="flex items-center mb-5">
@@ -150,16 +229,36 @@ const ManageUsers = () => {
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>
                             {showDepartments && (
-                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
+                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-48">
                                     <div className="flex items-center justify-between mb-2 flex-col">
-                                        <button className="text-sm text-customYellow" onClick={() => setSelectedDepartments([])}>Clear Filter</button>
+                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ departments: [], blocked: false, roles: [] })}>Clear Filter</button>
                                     </div>
                                     <p className="font-semibold">Departments</p>
                                     {departments.map((department, index) => (
                                         <div key={index} className="flex items-center">
                                             <label className="flex items-center cursor-pointer">
-                                                <input type="checkbox" checked={selectedDepartments.includes(department)} onChange={() => handleDepartmentChange(department)} className="mr-2 cursor-pointer accent-customYellow" />
+                                                <input type="checkbox" checked={selectedFilters.departments.includes(department)} onChange={() => handleFilterChange('departments', department)} className="mr-2 cursor-pointer accent-customYellow" />
                                                 {department}</label>
+                                        </div>
+                                    ))}
+                                    <p className="font-semibold">Blocked</p>
+                                    <div className="flex items-center">
+                                        <label className="flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedFilters.blocked}
+                                                onChange={() => handleFilterChange('blocked')}
+                                                className="mr-2 cursor-pointer accent-customYellow"
+                                            />
+                                            Blocked Users
+                                        </label>
+                                    </div>
+                                    <p className="font-semibold">Roles</p>
+                                    {roles.map((role, index) => (
+                                        <div key={index} className="flex items-center">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input type="checkbox" checked={selectedFilters.roles.includes(role.toUpperCase())} onChange={() => handleFilterChange('roles', role.toUpperCase())} className="mr-2 cursor-pointer accent-customYellow" />
+                                                {role}</label>
                                         </div>
                                     ))}
                                 </div>
@@ -176,31 +275,46 @@ const ManageUsers = () => {
                     </div>
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
-                            <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2" onClick={() => handleUserClick(user)}>
+                            <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 cursor-pointer hover:bg-customYellow hover:border-customYellow hover:bg-opacity-20" onClick={() => handleUserClick(user)}>
                                 <img src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
                                 <div>
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
                                     <p className="text-gray-600 font-poppins">{user.department}</p>
                                 </div>
-                                <div className="ml-auto flex flex-col items-end">
+                                <div className="ml-auto flex flex-row gap-2">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleBlockUnblockUser(user.id);
-
+                                            handleConfirmation('role', user);
                                         }}
-                                        className={`mt-2 px-4 py-2 ${user.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium`}
+                                        className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        disabled={user.username === "admin"}
                                     >
-                                        {user.blocked ? 'Unblock User' : 'Block User'}
+                                        {user.role === "STUDENT" ? 'Set as Admin' : 'Set as Student'}
                                     </button>
+
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleDeleteUser(user.id);
+                                            handleConfirmation('block', user);
                                         }}
-                                        className="mt-2 px-4 py-2 bg-customRed text-customYellow rounded-md font-poppins font-medium">
-                                        Delete User
+                                        className={`w-24 py-1 ${user.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        disabled={user.username === "admin"}
+                                    >
+                                        {user.blocked ? 'Unblock' : 'Block'}
                                     </button>
+
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleConfirmation('delete', user);
+                                        }}
+                                        className={`w-24 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        disabled={user.username === "admin"}
+                                    >
+                                        Delete
+                                    </button>
+
                                 </div>
                             </div>
                         ))
@@ -227,13 +341,13 @@ const ManageUsers = () => {
                             <p className='font-poppins mt-2'><strong>Gender:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.gender}</p>
                             <button
-                                onClick={() => handleBlockUnblockUser(selectedUser.id)}
+                                onClick={() => handleConfirmation('block', selectedUser)}
                                 className={`mt-6 px-4 py-2 ${selectedUser.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium tablet:hidden`}
                             >
                                 {selectedUser.blocked ? 'Unblock User' : 'Block User'}
                             </button>
                             <button
-                                onClick={() => handleDeleteUser(selectedUser.id)}
+                                onClick={() => handleConfirmation('delete', selectedUser)}
                                 className="mt-6 px-4 py-2 mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium tablet:hidden">
                                 Delete User
                             </button>
@@ -241,6 +355,26 @@ const ManageUsers = () => {
                     </div>
                 </div>
             )}
+            <Confirmation
+                isOpen={isConfirmationOpen}
+                message={
+                    confirmationAction === "role"
+                        ? `Are you sure you want ${selectedUserConfirm?.firstName} ${selectedUserConfirm?.lastName} to be ${selectedUserConfirm?.role === "STUDENT" ? 'Admin' : 'Student'}?`
+                        : `Are you sure you want to ${confirmationAction === "delete" ? "delete" : selectedUserConfirm?.blocked ? "unblock" : "block"} ${selectedUserConfirm?.firstName} ${selectedUserConfirm?.lastName}?`
+                }
+                actionType={
+                    confirmationAction === 'role'
+                        ? "NEUTRAL"
+                        : confirmationAction === 'delete'
+                            ? "NEGATIVE"
+                            : selectedUserConfirm?.blocked
+                                ? "POSITIVE"
+                                : "NEGATIVE"
+                }
+                onConfirm={() => confirmAction(selectedUserConfirm!.id!)}
+                onCancel={cancelAction}
+            />
+
         </div>
     );
 }
