@@ -49,6 +49,7 @@ public class UserService implements UserDetailsService {
 
 
 
+
     public List<User> getAllUsers(){
         return userRepository.findAll().stream().filter(User::isVerified).collect(Collectors.toList());
     }

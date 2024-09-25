@@ -29,7 +29,6 @@ public class UserEventController {
         private  final UserEventService userEventService;
 
 
-    //    @Tag(name = "POST")
 
 
 
@@ -69,7 +68,6 @@ public class UserEventController {
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
             }
         }
-
 
 
      //   @Tag(name = "GET")
