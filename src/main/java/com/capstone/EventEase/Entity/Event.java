@@ -19,16 +19,20 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_event")
+
+
+
+
+
 public class Event {
 
-
-    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String eventName;
+
 
 
     @Column(length = 100000)
@@ -55,7 +59,6 @@ public class Event {
     private Set<String> usersLiked = new HashSet<>();
 
     private Set<String> usersDisliked = new HashSet<>();
-
 
     private Set<String> preRegisteredUsers = new HashSet<>();
 

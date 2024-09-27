@@ -11,13 +11,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.slf4j.Logger;
+    import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 
 
 public class EmailService {
@@ -125,7 +126,6 @@ public class EmailService {
     }
 
 
-
     public void sendConfirmationLink(String email, String token) throws MessagingException{
 
         Context context = new Context();
@@ -133,7 +133,6 @@ public class EmailService {
         context.setVariable("token",token);
 
         String htmlContent = templateEngine.process("confirm-template",context);
-
 
 
         MimeMessage message = javaMailSender.createMimeMessage();

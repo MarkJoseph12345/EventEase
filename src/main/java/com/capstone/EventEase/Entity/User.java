@@ -34,9 +34,13 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String IdNumber;
+
     private String department;
+
+
     @Column(name = "profilePicture", columnDefinition = "BYTEA")
     @Basic(fetch = FetchType.LAZY)
+
     private byte[] profilePicture;
     private String profilePictureType;
     private String profilePictureName;

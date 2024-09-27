@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+
 public class WebConfig implements WebMvcConfigurer{
 
 

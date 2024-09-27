@@ -16,8 +16,6 @@ public class PasswordResetTokenService {
     private final PasswordResetTokenRepository resetTokenRepository;
 
 
-
-
     public boolean verifyToken(String token) {
         PasswordResetToken resetToken = resetTokenRepository.findByToken(token);
         if (resetToken == null) {
