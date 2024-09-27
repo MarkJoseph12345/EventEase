@@ -16,6 +16,7 @@
     "@mui/material": "^5.15.17",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
+    "eventease": "file:",
     "next": "^14.2.13",
     "next-navigation": "^1.0.6",
     "postcss-cli": "^11.0.0",

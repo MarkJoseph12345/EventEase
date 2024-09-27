@@ -104,7 +104,7 @@ const ProfilePictureReminderPopup = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                <p className="mb-4">Please change your profile picture to be able to go to other pages.</p>
+                <p className="mb-4">Please update your profile picture to gain full access and attend events.</p>
                 <div className="flex justify-center space-x-2">
                     <button
                         className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
