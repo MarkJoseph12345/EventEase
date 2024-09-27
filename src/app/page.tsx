@@ -134,8 +134,8 @@ const Home = () => {
           <p className="text-center font-poppins font-bold text-lg bg-white laptop:bg-transparent laptop:text-3xl">Explore thrilling events at Wildcat Innovation Labs</p>
           <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent laptop:text-xl">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
           <div className="flex justify-center items-center gap-3 bg-white laptop:bg-transparent">
-            <Link href={"/SignUp"} className="box-border h-9 w-32 tablet:w-48 bg-customYellow px-4 py-2 text-center font-bold hover:text-white flex items-center justify-center">Join</Link>
-            <Link href={"/Events"} className="box-border h-9 w-32 tablet:w-48 border-2 border-black px-4 py-2 text-center font-bold hover:text-customYellow flex items-center justify-center">Explore</Link>
+            <Link href={"/SignUp"} className="box-border h-9 w-32 bg-customYellow px-4 py-2 text-center font-bold hover:text-white flex items-center justify-center">Join</Link>
+            <Link href={"/Events"} className="box-border h-9 w-32 border-2 border-black px-4 py-2 text-center font-bold hover:text-customYellow flex items-center justify-center">Explore</Link>
           </div>
 
         </div>
