@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Event, EventDetailModal } from '@/utils/interfaces';
 import { deleteEvent, updateEvent, updateEventPicture } from '@/utils/apiCalls';
+import PopUps from './PopUps';
 
 const departments = ['CEA', 'CMBA', 'CASE', 'CNAHS', 'CCS', 'CCJ'];
 
@@ -16,6 +17,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         eventStarts: event.eventStarts ? new Date(event.eventStarts) : null,
         eventEnds: event.eventEnds ? new Date(event.eventEnds) : null,
     });
+    const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleCheckboxChange = (department: string) => {
@@ -111,9 +113,10 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         }
 
         if (result) {
+            setMessage({ text: "Successfully updated event", type: "success" });
             window.location.reload();
         } else {
-            console.log("Failed to update event.");
+            setMessage({ text: "Failed to update event", type: "error" });
         }
     };
 
@@ -124,7 +127,10 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         }
         const success = await deleteEvent(event.id);
         if (success) {
+            setMessage({ text: "Successfully deleted event", type: "success" });
             window.location.reload();
+        } else {
+            setMessage({ text: "Failed to delete event", type: "error" });
         }
     };
 
@@ -283,7 +289,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                     </div>
                 </div>
             </div>
-
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div>
     )
 }

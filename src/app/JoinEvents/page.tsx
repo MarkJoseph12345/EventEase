@@ -122,8 +122,8 @@ const JoinEvents = () => {
             <Sidebar />
             <div className="mt-[6rem] mx-[2rem]">
                 <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{user!.department} Events</p>
-                <div className="mx-[10rem] flex flex-col items-center">
-                    <div className="flex items-center mb-5 w-full min-w-96">
+                <div className="">
+                    <div className="flex items-center mb-5 ">
                         <div className="relative mr-3">
                             <div onClick={toggleFilters} className="cursor-pointer">
                                 <img src="/filter.png" className="h-6 w-6" />

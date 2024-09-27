@@ -8,8 +8,7 @@ import { formatDate } from '@/utils/data';
 ChartJS.register(Tooltip, ArcElement);
 
 const predefinedColors = [
-    '#FDCC01', '#AE0404', '#000000', '#FFFFFF', '#F6F6F6',
-    '#FF9F40', '#FF5733', '#C70039', '#900C3F', '#581845'
+    '#FDCC01', '#AE0404', '#000000', '#FFFFFF'
 ];
 
 

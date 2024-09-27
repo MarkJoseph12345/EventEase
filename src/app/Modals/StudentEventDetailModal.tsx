@@ -162,8 +162,8 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
             <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[50rem]">
-                <p className="sticky top-0 text-end text-gray-500 font-bold text-2xl cursor-pointer mr-4 mt-2" onClick={onClose}>✖</p>
-                <div className="flex flex-col overflow-auto mx-20">
+                <p className="sticky top-0 z-10  text-end text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={onClose}>✖</p>
+                <div className="flex flex-col overflow-auto tablet:mx-20">
                     <div className="flex flex-col w-full ">
                         <div
                             className=" relative overflow-hidden text-white rounded-sm mx-auto">
@@ -173,16 +173,16 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
                     <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
                         <div className=" w-full">
-                            <div className="grid grid-cols-2 gap-2 mb-2 ">
+                            <div className="grid tablet:grid-cols-2 gap-2 mb-2 ">
                                 <p className=""><strong>Event Type:</strong> {type[0]}</p>
                                 <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                 <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
                                 <p className=""><strong>Slots left:</strong> {availableSlots}</p>
-                                <p className="col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
+                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                 <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
                             </div>
-                            <p className="col-span-4 text-pretty">
+                            <p className="tablet:col-span-4 text-pretty">
                                 {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
                             </p>
                             {hasLongDescription(event.eventDescription) && (

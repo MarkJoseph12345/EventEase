@@ -32,11 +32,12 @@ export const loginAccount = async (username: string, password: string) => {
             body: JSON.stringify({ username, password }),
         });
         const data = await response.json();
+        const { messages } = data;
         if (response.ok) {
             setCookie("token", JSON.stringify(data.token), 24);
-            return { success: true };
+            return { success: true, message: messages };
         } else {
-            return { success: false, message: data.message || "Invalid username or password" };
+            return { success: false, message: messages };
         }
     } catch (error) {
         return { success: false, message: "An error occurred, please try again" };
@@ -44,23 +45,24 @@ export const loginAccount = async (username: string, password: string) => {
 };
 
 export const registerAccount = async (userForm: any) => {
-    try {
-        const response = await fetch(API_ENDPOINTS.REGISTER, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userForm),
-        });
-        const data = await response.json();
+    const response = await fetch(API_ENDPOINTS.REGISTER, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userForm),
+    });
+    if (response) {
         if (response.ok) {
-            return { success: true, message: "Sign up successful!" };
+            const data = await response.text();
+            return { success: true, message: "Please check your email to verify account!" };
         } else {
-            return { success: false, message: data.message || "Sign up failed" };
+            const data = await response.json();
+            const { messages } = data
+            return { success: false, message: messages };
         }
-    } catch (error) {
-        return { success: false, message: "An error occurred. Please try again." };
     }
+
 };
 
 export const getEvents = async (): Promise<Event[]> => {
@@ -105,10 +107,11 @@ export const createEvent = async (username: string, eventData: any) => {
             body: JSON.stringify(formattedEventData),
         });
         const data = await response.json();
+        const { messages } = data;
         if (response.ok) {
             return { success: true, message: "Event creation successful!", id: data.id };
         } else {
-            return { success: false, message: data.message || "Failed to create event" };
+            return { success: false, message: messages };
         }
     } catch (error) {
         return error;

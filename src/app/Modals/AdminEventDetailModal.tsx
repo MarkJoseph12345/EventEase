@@ -6,8 +6,7 @@ import ViewFeedback from './ViewFeedback';
 import { formatDate } from '@/utils/data';
 import { getAllUsersJoinedToEvent } from '@/utils/apiCalls';
 import ViewJoined from './ViewJoined';
-
-const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
+const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { from?: string }) => {
     const [clickedManage, setClickedManage] = useState(false);
     const [clickedFeedback, setClickedFeedback] = useState(false);
     const [clickedJoined, setClickedJoined] = useState(false);
@@ -43,11 +42,11 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
-            <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[70rem]">
-                <div className="flex justify-end">
-                    <span className="sticky text-gray-500 font-bold text-2xl cursor-pointer mr-4 mt-2" onClick={onClose}>✖</span>
+            <div className="bg-white relative p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto text-pretty tablet:max-w-[70rem]">
+                <div className=" sticky top-0 z-10 flex justify-end">
+                    <span className=" text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={onClose}>✖</span>
                 </div>
-                <div className="flex flex-col overflow-auto mx-20">
+                <div className="flex flex-col overflow-auto mx-1 tablet:mx-20">
                     <div className="flex flex-col w-full ">
                         <div
                             className=" relative overflow-hidden text-white rounded-sm mx-auto">
@@ -56,16 +55,17 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                     </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
                     <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
-                        <div className=" w-full">
-                        <div className="grid grid-cols-2 gap-2 mb-2 ">
+                        <div className="w-full">
+                            <div className="grid tablet:grid-cols-2 gap-2 mb-2 ">
                                 <p className=""><strong>Event Type:</strong> {type[0]}</p>
-                                <p className=""><strong>Department(s):</strong> {event.department.join(', ')}</p>
+                                <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                 <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
                                 <p className=""><strong>Slots left:</strong> {availableSlots}</p>
+                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                 <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
                             </div>
-                            <p className="col-span-4 text-pretty">
+                            <p className="tablet:col-span-4 text-pretty">
                                 {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
                             </p>
                             {hasLongDescription(event.eventDescription) && (
@@ -77,7 +77,7 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                                 </button>
                             )}
 
-                            
+
                         </div>
 
                         {/* <div className="flex flex-col gap-2">
@@ -100,7 +100,14 @@ const AdminEventDetailModal = ({ event, onClose }: EventDetailModal) => {
                 </div>
                 <div className="flex w-full justify-end">
                     <div className=" flex gap-3">
-                        <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedJoined(true) }}>View Participants</button>
+                        {from !== 'create' && (
+                            <button
+                                className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4"
+                                onClick={() => { setClickedJoined(true); }}
+                            >
+                                View Participants
+                            </button>
+                        )}
                         {/* <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button> */}
                         <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
                     </div>

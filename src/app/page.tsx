@@ -9,6 +9,7 @@ import { Event } from '@/utils/interfaces';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Loading from "./Loader/Loading";
 
 const isDateInCurrentWeek = (date: Date): boolean => {
   const now = new Date();
@@ -22,6 +23,7 @@ const isDateInCurrentWeek = (date: Date): boolean => {
 const Home = () => {
   const [eventNow, setEventNow] = useState<Event | null>(null);
   const [eventsThisWeek, setEventsThisWeek] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEventNow = async () => {
@@ -46,6 +48,7 @@ const Home = () => {
         })
       );
       setEventsThisWeek(processedEvents);
+      setLoading(false)
     };
 
     fetchEventNow();
@@ -54,7 +57,7 @@ const Home = () => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderSettings = {
-    centerMode: true,
+    centerMode: false,
     centerPadding: '0',
     autoplay: true,
     autoplaySpeed: 1500,
@@ -64,6 +67,9 @@ const Home = () => {
     arrows: false,
     beforeChange: (oldIndex: number, newIndex: number) => setCurrentSlide(newIndex),
   };
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <div>
@@ -102,22 +108,21 @@ const Home = () => {
                 return (
                   <div
                     key={event.id}
-                    className={`relative transition-transform duration-500 ease-in-out ${scaleClass}`}
+                    className={`relative transition-transform duration-500 ease-in-out ${scaleClass} `}
                   >
                     <img
                       src={event.eventPicture}
-                      className="w-full h-64 object-contain rounded-lg shadow-lg"
+                      className="w-full tablet:h-64 object-contain rounded-lg shadow-lg"
                       alt={event.eventName}
                     />
-                    <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4 text-white">
-                      <p className="text-lg font-bold truncate">{event.eventName}</p>
-                      <p className="text-sm mt-1">{event.eventType}</p>
+                    <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4">
+                      <p className="text-lg font-bold truncate drop-shadow-[0_1.2px_1.2px_rgba(253,204,1,0.8)] text-black">{event.eventName}</p>
+                      <p className="text-sm drop-shadow-[0_1.2px_1.2px_rgba(174,4,4,0.8)] text-white">{event.eventType}</p>
                     </div>
                   </div>
                 );
               })}
             </Slider>
-
           </div>
         ) : (
           <div className="items-center flex flex-col">

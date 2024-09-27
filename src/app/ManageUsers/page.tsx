@@ -5,6 +5,7 @@ import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
 import { blockUser, deleteUser, fetchProfilePicture, getAllUsers, me, setUserAsAdmin, setUserAsStudent, unblockUser } from '@/utils/apiCalls';
 import Confirmation from '../Modals/Confirmation';
+import PopUps from '../Modals/PopUps';
 type SelectedFilters = {
     departments: string[];
     blocked: boolean;
@@ -22,6 +23,7 @@ const ManageUsers = () => {
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [confirmationAction, setConfirmationAction] = useState<'delete' | 'block' | 'role' | null>(null);
     const [selectedUserConfirm, setSelectedUserConfirm] = useState<User | null>(null);
+    const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
 
     const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
         departments: [],
@@ -125,16 +127,18 @@ const ManageUsers = () => {
                     if (selectedUser && !userId) {
                         handleClosePopup();
                     }
+                    setMessage({ text: `Successfully deleted user!`, type: "success" });
                 } else {
-                    console.error("Failed to delete user");
+                    setMessage({ text: `Failed to delete user!`, type: "error" });
                 }
             } catch (error) {
-                console.error("Failed to delete user:", error);
+                setMessage({ text: "Failed to delete user: " + error, type: "success" });
             }
         }
     };
 
     const handleBlockUnblockUser = async (userId?: number) => {
+        setMessage(undefined);
         const id = userId || selectedUser?.id;
         if (id) {
             try {
@@ -149,11 +153,12 @@ const ManageUsers = () => {
                                 u.id === id ? { ...u, blocked: !isBlocked } : u
                             )
                         );
+                        setMessage({ text: `Successfully ${isBlocked ? 'unblocked' : 'blocked'} ${user.firstName} ${user.lastName}`, type: "success" });
                         if (!userId) {
                             setSelectedUser(prevUser => prevUser ? { ...prevUser, blocked: !isBlocked } : null);
                         }
                     } else {
-                        console.error(`Failed to ${isBlocked ? 'unblock' : 'block'} user`);
+                        setMessage({ text: `Failed to ${isBlocked ? 'unblock' : 'block'} ${user.firstName} ${user.lastName}`, type: "error" });
                     }
                 }
             } catch (error) {
@@ -163,6 +168,7 @@ const ManageUsers = () => {
     };
 
     const makeAdminStudent = async (userId?: number) => {
+        setMessage(undefined);
         const id = userId || selectedUser?.id;
         if (id) {
             try {
@@ -172,20 +178,23 @@ const ManageUsers = () => {
                     const action = isAdmin ? setUserAsStudent : setUserAsAdmin;
                     const response = await action(id);
                     if (response) {
+                        setMessage({ text: `Successfully made ${user.firstName} ${user.lastName} into ${isAdmin ? 'student' : 'admin'}!`, type: "success" });
                         setUsers(prevUsers =>
                             prevUsers.map(u =>
-                                u.id === id ? { ...u, role: "STUDENT" } : u
+                                u.id === id ? { ...u, role: isAdmin ? "STUDENT" : "ADMIN" } : u
                             )
                         );
                         if (!userId) {
-                            setSelectedUser(prevUser => prevUser ? { ...prevUser, role: "STUDENT" } : null);
+                            setSelectedUser(prevUser =>
+                                prevUser ? { ...prevUser, role: isAdmin ? "STUDENT" : "ADMIN" } : null
+                            );
                         }
                     } else {
-                        console.error(`Failed to make ${isAdmin ? 'student into admin' : 'admin into student'}!`);
+                        setMessage({ text: `Failed to make ${isAdmin ? 'student into admin' : 'admin into student'}!`, type: "error" });
                     }
                 }
             } catch (error) {
-                console.error(`Failed to toggle user status:`, error);
+                setMessage({text: `Failed to toggle user status:` + error, type: "error"});
             }
         }
     };
@@ -281,7 +290,7 @@ const ManageUsers = () => {
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
                                     <p className="text-gray-600 font-poppins">{user.department}</p>
                                 </div>
-                                <div className="ml-auto flex flex-row gap-2">
+                                <div className="ml-auto tablet:flex flex-row gap-2 hidden">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -340,17 +349,36 @@ const ManageUsers = () => {
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.department}</p>
                             <p className='font-poppins mt-2'><strong>Gender:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.gender}</p>
-                            <button
-                                onClick={() => handleConfirmation('block', selectedUser)}
-                                className={`mt-6 px-4 py-2 ${selectedUser.blocked ? 'bg-green-600' : 'bg-customRed'} text-customYellow rounded-md font-poppins font-medium tablet:hidden`}
-                            >
-                                {selectedUser.blocked ? 'Unblock User' : 'Block User'}
-                            </button>
-                            <button
-                                onClick={() => handleConfirmation('delete', selectedUser)}
-                                className="mt-6 px-4 py-2 mb-5 bg-customRed text-customYellow rounded-md font-poppins font-medium tablet:hidden">
-                                Delete User
-                            </button>
+                            <div className="flex flex-col gap-1 w-full items-center justify-center tablet:hidden">
+                                <button
+                                    onClick={(e) => {
+                                        handleConfirmation('role', selectedUser);
+                                    }}
+                                    className={`w-32 py-1 ${selectedUser.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${selectedUser.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} tablet:hidden`}
+                                    disabled={selectedUser.username === "admin"}
+                                >
+                                    {selectedUser.role === "STUDENT" ? 'Set as Admin' : 'Set as Student'}
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        handleConfirmation('block', selectedUser);
+                                    }}
+                                    className={`w-32 py-1 ${selectedUser.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${selectedUser.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} tablet:hidden`}
+                                    disabled={selectedUser.username === "admin"}
+                                >
+                                    {selectedUser.blocked ? 'Unblock' : 'Block'}
+                                </button>
+
+                                <button
+                                    onClick={(e) => {
+                                        handleConfirmation('delete', selectedUser);
+                                    }}
+                                    className={`w-32 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${selectedUser.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} tablet:hidden`}
+                                    disabled={selectedUser.username === "admin"}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -374,7 +402,7 @@ const ManageUsers = () => {
                 onConfirm={() => confirmAction(selectedUserConfirm!.id!)}
                 onCancel={cancelAction}
             />
-
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div>
     );
 }

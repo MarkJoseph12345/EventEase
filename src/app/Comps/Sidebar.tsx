@@ -119,6 +119,7 @@ const Sidebar = () => {
         setTimeout(() => {
             setShowSuccessMessage(false);
         }, 3000);
+        window.location.reload();
     };
 
     const handleCancelDelete = () => {
@@ -158,7 +159,7 @@ const Sidebar = () => {
                         ))}
                     </div>
                     <div className="absolute bottom-0 mx-5 flex items-center gap-2" onClick={() => setOpenProfile(!openProfile)}>
-                        <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill ml-2 mb-5 w-4 h-4 tablet:h-16 tablet:w-16" />
+                        <img src={imageUrl || "/defaultpic.png"} className="rounded-full cursor-pointer object-fill ml-2 mb-5 w-10 h-10 tablet:h-16 tablet:w-16" />
                         <div className="font-regular font-bebas mb-4 text-lg flex flex-col items-start tablet:text-2xl">
                             <p className='cursor-pointer'>{user!.firstName} {user!.lastName}</p>
                         </div>
@@ -167,7 +168,7 @@ const Sidebar = () => {
                         <div ref={profileRef} className="border mb-5 border-black w-[90%] bg-white rounded-2xl absolute bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col">
                             <div className="flex items-center gap-3">
                                 <div>
-                                    <img src={imageUrl || "/defaultpic.png"} className="rounded-full object-fill ml-2 mt-2 w-4 h-4 tablet:h-16 tablet:w-16" />
+                                    <img src={imageUrl || "/defaultpic.png"} className="rounded-full object-fill ml-2 mt-2 w-10 h-10 tablet:h-16 tablet:w-16" />
                                 </div>
                                 <div className="flex flex-col items-start tablet:text-xl">
                                     <p>{user!.firstName} {user!.lastName}</p>

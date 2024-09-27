@@ -33,11 +33,11 @@ const Login = () => {
 
         const result = await loginAccount(username, password);
         if (result.success) {
-            setMessage({ text: "Login Success", type: "success" });
+            setMessage({ text: "Login success", type: "success" });
             window.location.href = "/Dashboard";
         }
         else {
-            setMessage({ text: "Login Failed", type: "error" });
+            setMessage({ text: result.message, type: "error" });
             setLoading(false);
         }
     };

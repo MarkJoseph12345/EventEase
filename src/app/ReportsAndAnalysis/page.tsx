@@ -124,11 +124,11 @@ const ReportsAndAnalysis: React.FC = () => {
     return (
         <div>
             <Sidebar />
-            <div className="flex flex-row mx-[2rem] justify-stretch flex-wrap gap-4">
-                <div className="flex-1 " ref={reportsDivRef}>
+            <div className="flex flex-col tablet:flex-row tablet:mx-[2rem]  justify-stretch flex-wrap gap-4">
+                <div className="tablet:flex-1 w-full" ref={reportsDivRef}>
                     <h2 className="mt-5 text-center text-2xl font-semibold font-poppins">Reports and Analysis</h2>
-                    <div className="mt-5 w-full flex flex-col items-center">
-                        <div className="bg-white p-2 rounded-md shadow-md w-full max-h-[95%] relative ">
+                    <div className="mt-5 w-11/12 mx-auto tablet:w-full flex flex-col items-center">
+                        <div className="bg-white tablet:p-2 rounded-md shadow-md w-full max-h-[95%] relative ">
                             <div className="relative">
                                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                     <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -143,9 +143,9 @@ const ReportsAndAnalysis: React.FC = () => {
                                     className="block w-full p-2 ps-10 border rounded-md rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-customYellow transition-all duration-300 w-full mb-4"
                                 />
                             </div>
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto w-full">
                                 <div className="relative max-h-[75vh]">
-                                    <table className="min-w-full ">
+                                    <table className="min-w-full">
                                         <thead className="bg-black sticky top-0 ">
                                             <tr>
                                                 {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
@@ -224,7 +224,7 @@ const ReportsAndAnalysis: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <div ref={containerRef} className={`flex flex-wrap items-center p-2 gap-2 ${isWrapped ? 'flex-row flex-1 justify-evenly' : 'flex-col flex-none'}`}>
+                <div ref={containerRef} className={`flex w-full tablet:w-fit flex-wrap items-center tablet:p-2 gap-2 ${isWrapped ? 'flex-row flex-1 justify-evenly' : 'flex-col flex-none'}`}>
                     <EventTypeDistributionChart eventTypeDistribution={eventTypeDistribution} />
                     <EventSchedulingTrends eventSchedulingTrends={eventSchedulingTrends} />
                     <DepartmentEngagement departmentEngagement={departmentEngagement} />

@@ -10,29 +10,20 @@ interface PopUpsProps {
 const PopUps: React.FC<PopUpsProps> = ({ message, onClose }) => {
     const [show, setShow] = useState(false);
     const [visible, setVisible] = useState(false);
-    const hasRendered = useRef(false);
 
     useEffect(() => {
         if (message) {
-            if (hasRendered.current) {
-                setShow(true);
-                const timer = setTimeout(() => {
-                    setShow(false);
-                    setTimeout(onClose, 300);
-                }, 3000);
-
-                return () => clearTimeout(timer);
-            } else {
-                hasRendered.current = true;
-                setVisible(true);
-                setShow(true);
-            }
+            setVisible(true);
+            setShow(true);
+            const timer = setTimeout(() => {
+                setShow(false);
+                setTimeout(onClose, 300);
+            }, 3000);
+            return () => clearTimeout(timer);
         } else {
             setShow(false);
-            setTimeout(() => {
-                setVisible(false);
-                onClose();
-            }, 300);
+            setVisible(false);
+            onClose();
         }
     }, [message, onClose]);
 

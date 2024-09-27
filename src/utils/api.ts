@@ -2,7 +2,7 @@ const BASE_URL = " https://eventease-q2yh.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
-  REGISTER: `${BASE_URL}/api/v1/auth/register`,
+  REGISTER: `${BASE_URL}/api/v1/auth/registerLink`,
   LOGIN: `${BASE_URL}/api/v1/auth/login`,
   CREATE_EVENT: `${BASE_URL}/api/v1/auth/event/createEvent`,
   UPDATE_EVENT_PICTURE: `${BASE_URL}/api/v1/auth/event/updateEventPicture/`,

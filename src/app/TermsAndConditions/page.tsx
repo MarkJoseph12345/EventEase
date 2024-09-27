@@ -6,7 +6,7 @@ const TermsAndConditions = () => {
     return (
         <div>
         <NavBar />
-        <div className="bg-customYellow bg-opacity-20 max-w-[80rem] mx-auto my-16 p-5 flex flex-col gap-4">
+        <div className="bg-customYellow bg-opacity-20 max-w-[80rem] mx-auto tablet:my-16 p-5 flex flex-col gap-4">
             <p className="font-bold text-3xl">Terms and Conditions</p>
             <p>Welcome to EventEase! By using our platform, you agree to comply with the following Terms and Conditions. Please read them carefully before using our services.</p>
             <p className="underline font-semibold">Acceptance of Terms</p>

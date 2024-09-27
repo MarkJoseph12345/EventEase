@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Event } from "@/utils/interfaces";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
-import { createEvent, fetchEventPicture, updateEventPicture, me } from "@/utils/apiCalls";
+import { createEvent, fetchEventPicture, updateEventPicture, me, getEventById } from "@/utils/apiCalls";
 import PopUps from "../Modals/PopUps";
 import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import { User } from '@/utils/interfaces';
@@ -33,6 +33,7 @@ const CreateEvent = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [createdEvent, setCreatedEvent] = useState<Event | null>()
   
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
@@ -165,7 +166,13 @@ const CreateEvent = () => {
         await updateEventPicture(result.id, newPicture);
 
       }
-      event.eventPicture = await fetchEventPicture(result.id!);
+
+      const eventCreated = await getEventById(result.id);
+      setCreatedEvent(eventCreated);
+      if (createdEvent) {
+        const picture = await fetchEventPicture(result.id!);
+        createdEvent.eventPicture = picture;
+      }
       setShowModal(true);
     } else {
       setMessage({ text: result.message, type: "error" });
@@ -401,7 +408,7 @@ const CreateEvent = () => {
           </div>
         </div>
       </div>
-      {showModal && (<AdminEventDetailModal event={event} onClose={() => setShowModal(false)} />)}
+      {showModal && (<AdminEventDetailModal from="create" event={createdEvent!} onClose={() => setShowModal(false)} />)}
       {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
     </div>
   );

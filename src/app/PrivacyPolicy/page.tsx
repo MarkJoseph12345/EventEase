@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
     return (
         <div>
             <NavBar />
-            <div className="bg-customYellow bg-opacity-20 max-w-[80rem] mx-auto my-16 p-5 flex flex-col gap-4">
+            <div className="bg-customYellow bg-opacity-20 max-w-[80rem] mx-auto tablet:my-16 p-5 flex flex-col gap-4">
                 <p className="font-bold text-3xl">Privacy Policy</p>
                 <p>EventEase ('EventEase', 'we', 'us', 'our'), are committed to protecting the privacy and security of the users' personal information. This Privacy Policy explains how we collect, use, and safeguard the information you provide when using our platform for event management.</p>
                 <p><strong>Please read this Privacy Policy carefully.</strong> By visiting EventEase Platform, you are consenting to the collection, processing, usage and disclosure of your Personal Information as set out in this Privacy Policy.</p>
