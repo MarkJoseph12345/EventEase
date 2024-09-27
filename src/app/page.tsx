@@ -130,13 +130,14 @@ const Home = () => {
             <p>No events this week</p>
           </div>
         )}
-        <div className="bg-cover bg-no-repeat bg-center bg-[url('/discover.png')] my-10 px-10 py-2 flex flex-col items-center laptop:py-20 laptop:bg-bottom laptop:gap-8">
-          <p className="text-center font-poppins font-bold text-lg bg-white laptop:bg-transparent laptop:text-5xl">Explore thrilling events at Wildcat Innovation Labs</p>
-          <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent laptop:text-3xl">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
-          <div className="flex justify-center items-center gap-3 bg-white laptop:bg-transparent laptop:mb-10">
-            <Link href={"/SignUp"} className="box-border h-9 w-32 tablet:w-48 bg-customYellow px-4 py-1 text-center font-bold hover:text-white">Join</Link>
-            <Link href={"/Events"} className="box-border h-9 w-32 tablet:w-48 border-2 border-black px-4 py-1 text-center font-bold hover:text-customYellow">Explore</Link>
+        <div className="bg-cover bg-no-repeat bg-center bg-[url('/discover.png')] my-10 px-10 py-2 flex flex-col items-center laptop:py-20 laptop:bg-bottom laptop:gap-6">
+          <p className="text-center font-poppins font-bold text-lg bg-white laptop:bg-transparent laptop:text-3xl">Explore thrilling events at Wildcat Innovation Labs</p>
+          <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent laptop:text-xl">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
+          <div className="flex justify-center items-center gap-3 bg-white laptop:bg-transparent">
+            <Link href={"/SignUp"} className="box-border h-9 w-32 tablet:w-48 bg-customYellow px-4 py-2 text-center font-bold hover:text-white flex items-center justify-center">Join</Link>
+            <Link href={"/Events"} className="box-border h-9 w-32 tablet:w-48 border-2 border-black px-4 py-2 text-center font-bold hover:text-customYellow flex items-center justify-center">Explore</Link>
           </div>
+
         </div>
       </div>
       <Footer />
