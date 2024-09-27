@@ -11,7 +11,7 @@ import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import { User } from '@/utils/interfaces';
 
 const departments = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
-const types = ["Workshop", "Seminar", "Other"];
+const types = ["Workshop", "Seminar", "Networking",  "Other"];
 
 
 const CreateEvent = () => {

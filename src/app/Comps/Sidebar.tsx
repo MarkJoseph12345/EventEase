@@ -130,11 +130,10 @@ const Sidebar = () => {
 
     if (!user) {
         return (
-            // <div className="flex items-center bg-customYellow">
-            //     <p className="ml-2 text-4xl font-bold cursor-pointer tracking-widest">≡</p>
-            //     <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover  ml-4 cursor-pointer tablet:h-16 tablet:w-56" />
-            // </div>
-            <Loading />
+            <div className="flex items-center bg-customYellow">
+                 <p className="ml-2 text-4xl font-bold cursor-pointer">≡</p>
+                 <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover ml-4 cursor-pointer tablet:h-16 tablet:w-56"/>
+            </div>
         );
     }
 

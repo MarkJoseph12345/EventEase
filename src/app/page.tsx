@@ -95,7 +95,7 @@ const Home = () => {
       <div className="mt-10">
         <p className="mx-4 mb-2 font-poppins text-lg font-medium laptop:text-center">Happening this week!</p>
         {eventsThisWeek.length ? (
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-6xl ">
             <Slider {...sliderSettings}>
               {eventsThisWeek.map((event, index) => {
                 const isNextSlide = index === (currentSlide + 1) % eventsThisWeek.length;
@@ -112,12 +112,12 @@ const Home = () => {
                   >
                     <img
                       src={event.eventPicture}
-                      className="w-full tablet:h-64 object-contain rounded-lg shadow-lg"
+                      className="w-full h-48 tablet:h-64 object-fill rounded-lg shadow-lg"
                       alt={event.eventName}
                     />
-                    <div className="w-full absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-transparent to-transparent p-4">
-                      <p className="text-lg font-bold truncate drop-shadow-[0_1.2px_1.2px_rgba(253,204,1,0.8)] text-black">{event.eventName}</p>
-                      <p className="text-sm drop-shadow-[0_1.2px_1.2px_rgba(174,4,4,0.8)] text-white">{event.eventType}</p>
+                    <div className="absolute bottom-6 left-0 bg-customYellow p-2 pr-5">
+                      <p className="text-lg font-bold truncate  text-black">{event.eventName}</p>
+                      <p className="text-sm text-white">{event.eventType}</p>
                     </div>
                   </div>
                 );
@@ -130,12 +130,12 @@ const Home = () => {
             <p>No events this week</p>
           </div>
         )}
-        <div className="bg-cover bg-no-repeat bg-center bg-[url('/discover.png')] my-10 px-10 py-2 flex flex-col items-center laptop:py-20 laptop:bg-bottom">
-          <p className="text-center font-poppins font-bold text-lg bg-white laptop:bg-transparent">Explore thrilling events at Wildcat Innovation Labs</p>
-          <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
-          <div className="flex justify-center items-center gap-3 bg-white laptop:bg-transparent">
-            <Link href={"/SignUp"} className="box-border h-9 w-32 bg-customYellow px-4 py-1 text-center font-bold">JOIN</Link>
-            <Link href={"/Events"} className="box-border h-9 w-32 border-2 border-black px-4 py-1 text-center font-bold">EXPLORE</Link>
+        <div className="bg-cover bg-no-repeat bg-center bg-[url('/discover.png')] my-10 px-10 py-2 flex flex-col items-center laptop:py-20 laptop:bg-bottom laptop:gap-8">
+          <p className="text-center font-poppins font-bold text-lg bg-white laptop:bg-transparent laptop:text-5xl">Explore thrilling events at Wildcat Innovation Labs</p>
+          <p className="text-center font-poppins font-medium bg-white laptop:bg-transparent laptop:text-3xl">Stay informed about the newest happenings at Wildcat Innovation Labs</p>
+          <div className="flex justify-center items-center gap-3 bg-white laptop:bg-transparent laptop:mb-10">
+            <Link href={"/SignUp"} className="box-border h-9 w-32 tablet:w-48 bg-customYellow px-4 py-1 text-center font-bold hover:text-white">Join</Link>
+            <Link href={"/Events"} className="box-border h-9 w-32 tablet:w-48 border-2 border-black px-4 py-1 text-center font-bold hover:text-customYellow">Explore</Link>
           </div>
         </div>
       </div>

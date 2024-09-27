@@ -29,20 +29,20 @@ const ReportsAndAnalysis: React.FC = () => {
         const checkWrapping = () => {
             const container = containerRef.current;
             const reportsDiv = reportsDivRef.current;
-    
+
             if (!container || !reportsDiv) return;
-    
+
             const firstChild = container as HTMLElement;
             const secondChild = reportsDiv as HTMLElement;
-    
+
             if (firstChild && secondChild) {
                 const currentY = firstChild.offsetTop;
                 const reportY = secondChild.offsetTop;
-    
+
                 if (initialYRef.current === null) {
                     initialYRef.current = currentY;
                 }
-    
+
                 const isWrapped = currentY > initialYRef.current || reportY !== currentY;
                 setIsWrapped(isWrapped);
             }
@@ -83,7 +83,7 @@ const ReportsAndAnalysis: React.FC = () => {
                 setEventData(eventsWithUserCounts);
                 setFilteredEventData(eventsWithUserCounts);
                 setEventTypeDistribution(await getEventTypeDistribution())
-                setEventSchedulingTrends(await getEventSchedulingTrends())
+                //setEventSchedulingTrends(await getEventSchedulingTrends())
                 setAverageEventDuration(await getAverageEventDuration())
                 setDepartmentEngagement(await getDepartmentEngagement())
 
@@ -116,6 +116,23 @@ const ReportsAndAnalysis: React.FC = () => {
         );
         setFilteredEventData(filtered);
     };
+
+    const formatDuration = (seconds: number) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+
+        const hoursDisplay = hours > 0 ? `${hours} hr${hours > 1 ? 's' : ''}` : '';
+        const minutesDisplay = minutes > 0 ? `${minutes} min${minutes > 1 ? 's' : ''}` : '';
+
+        return {
+            hoursDisplay,
+            minutesDisplay: minutesDisplay || '0 mins'
+        };
+    };
+
+    const { hoursDisplay, minutesDisplay } = formatDuration(averageEventDuration);
+    const [hoursNumber, hoursLabel] = hoursDisplay.split(' ');
+    const [minutesNumber, minutesLabel] = minutesDisplay.split(' ');
 
     if (loading) {
         return <Loading />;
@@ -226,13 +243,22 @@ const ReportsAndAnalysis: React.FC = () => {
                 </div>
                 <div ref={containerRef} className={`flex w-full tablet:w-fit flex-wrap items-center tablet:p-2 gap-2 ${isWrapped ? 'flex-row flex-1 justify-evenly' : 'flex-col flex-none'}`}>
                     <EventTypeDistributionChart eventTypeDistribution={eventTypeDistribution} />
-                    <EventSchedulingTrends eventSchedulingTrends={eventSchedulingTrends} />
+                    {/* <EventSchedulingTrends eventSchedulingTrends={eventSchedulingTrends} /> */}
                     <DepartmentEngagement departmentEngagement={departmentEngagement} />
-                    <div className="min-w-96 text-center">
-                        To be updated <br />
-                        Average Event Duration: {averageEventDuration}
-                        <br />
-                        kol unsa ni seconds?
+                    <div className="w-full max-w-96 tablet:w-96 h-64 bg-gray-100 flex items-center justify-center flex-col ">
+                        <h2 className="px-3 py-3 text-xs font-medium text-customYellow uppercase tracking-wider bg-black w-full">Average Event Duration</h2>
+                        <div className="w-full mx-auto flex-1 flex items-center justify-center ">
+                            <p className="flex items-baseline">
+                                {hoursDisplay && (
+                                    <>
+                                        <span className="text-red-600 text-5xl font-bold">{hoursNumber}</span>
+                                        <span className="text-customYellow text-3xl font-semibold">{hoursLabel}</span>
+                                    </>
+                                )}
+                                <span className="text-red-600 text-5xl font-bold">{minutesNumber}</span>
+                                <span className="text-customYellow text-3xl font-semibold">{minutesLabel}</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
