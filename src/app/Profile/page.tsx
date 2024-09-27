@@ -79,17 +79,17 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
 const ConfirmationPopup = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="bg-white p-6  shadow-lg">
                 <p className="mb-4">Are you sure you want to save changes in your Profile?</p>
-                <div className="flex justify-center space-x-2">
+                <div className="flex justify-center space-x-5">
                     <button
-                        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+                        className="px-5 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
                         onClick={onConfirm}
                     >
                         Yes
                     </button>
                     <button
-                        className="px-4 py-2 bg-gray-300 text-yellow rounded hover:bg-black-400"
+                        className="px-5 py-2 bg-black  text-yellow-500 rounded hover:bg-black-400"
                         onClick={onCancel}
                     >
                         No
@@ -103,11 +103,11 @@ const ConfirmationPopup = ({ onConfirm, onCancel }: { onConfirm: () => void; onC
 const ProfilePictureReminderPopup = ({ onClose }: { onClose: () => void }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div className="bg-white p-6 shadow-lg text-center">
                 <p className="mb-4">Please update your profile picture to gain full access and attend events.</p>
                 <div className="flex justify-center space-x-2">
                     <button
-                        className="px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-600"
+                        className="px-6 py-2 bg-yellow-500 font-bold text-black rounded hover:bg-yellow-600"
                         onClick={onClose}
                     >
                         Close

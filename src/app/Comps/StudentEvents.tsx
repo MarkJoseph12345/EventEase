@@ -8,9 +8,9 @@ const StudentEventsFilteredList: React.FC<FilteredEventListProps> = ({ events, s
 
     let noEventMessage = 'There are no upcoming events for your department.';
     if (eventType === 'registered') {
-        noEventMessage = 'You have no events joined.';
+        noEventMessage = 'You have not joined any events!';
     } else if (eventType === 'attended') {
-        noEventMessage = 'You have not attended any events.';
+        noEventMessage = 'You have not attended any events!';
     }
 
     return (
