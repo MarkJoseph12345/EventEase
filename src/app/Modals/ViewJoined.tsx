@@ -14,14 +14,14 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
             try {
                 const usersData = await getAllUsersJoinedToEvent(event.id!);
                 const attendedUsers = await getAllUsersAfterAttendance(event.id!);
-    
+
                 const attendedUserIds = attendedUsers.map((user: { id: any; }) => user.id);
-    
+
                 const updatedUsers = usersData.map(user => ({
                     ...user,
                     hasAttended: attendedUserIds.includes(user.id)
                 }));
-                
+
                 setUsers(updatedUsers);
             } catch (error) {
                 console.error('Error fetching users or attendance:', error);
@@ -29,23 +29,24 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                 setLoading(false);
             }
         };
-    
+
         fetchUsersAndAttendance();
     }, [event.id]);
-    
-    
+
+
 
     return (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
-            <div className="bg-white  shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem]">
-                <div className="flex bg-black p-2 w-full">
-                    <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
-                    <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={onClose}>✖</p>
-                </div>
-                <div className="p-4 overflow-x-auto">
-                    {loading ? (
-                        <Loading />
-                    ) : (
+        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
+            {loading ? (
+                <div></div>
+            ) : (
+                <div className={`bg-white shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem] `}>
+                    <div className="flex bg-black p-2 w-full">
+                        <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
+                        <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={onClose}>✖</p>
+                    </div>
+                    <div className="p-4 overflow-x-auto">
+
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
@@ -94,9 +95,10 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                                 )}
                             </tbody>
                         </table>
-                    )}
+
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -98,7 +98,7 @@ export const createEvent = async (username: string, eventData: any) => {
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
-        console.log(formattedEventData)
+        console.log(JSON.stringify(formattedEventData))
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT + `?creator=${encodeURIComponent(username)}`, {
             method: 'POST',
             headers: {
