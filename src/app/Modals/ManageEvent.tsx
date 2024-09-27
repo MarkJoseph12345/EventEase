@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Event, EventDetailModal } from '@/utils/interfaces';
 import { deleteEvent, updateEvent, updateEventPicture } from '@/utils/apiCalls';
 import PopUps from './PopUps';
+import Confirmation from './Confirmation';
 
 const departments = ['CEA', 'CMBA', 'CASE', 'CNAHS', 'CCS', 'CCJ'];
 
@@ -18,6 +19,9 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         eventEnds: event.eventEnds ? new Date(event.eventEnds) : null,
     });
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+    const [confirmationAction, setConfirmationAction] = useState<'delete' | 'update' | null>(null);
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleCheckboxChange = (department: string) => {
@@ -98,7 +102,6 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
 
     const handleUpdateEvent = async () => {
         if (event.id === undefined) {
-            alert("Event ID is not defined.");
             return;
         }
 
@@ -120,6 +123,12 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         }
     };
 
+    const handleConfirmation = (action: 'delete' | 'update', event: Event) => {
+        setConfirmationAction(action);
+        setIsConfirmationOpen(true);
+        setSelectedEvent(event);
+    };
+
 
     const handleDeleteEvent = async () => {
         if (event.id === undefined) {
@@ -133,6 +142,22 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
             setMessage({ text: "Failed to delete event", type: "error" });
         }
     };
+
+    const confirmAction = () => {
+        if (confirmationAction === 'delete') {
+            handleDeleteEvent();
+        } else if (confirmationAction === 'update') {
+            handleUpdateEvent();
+        }
+        setConfirmationAction(null);
+        setIsConfirmationOpen(false);
+    };
+
+    const cancelAction = () => {
+        setIsConfirmationOpen(false);
+        setConfirmationAction(null);
+    };
+
 
     return (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
@@ -284,11 +309,30 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center gap-2 self-end">
-                        <button className="bg-customRed text-white font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={handleDeleteEvent}>Delete Event</button>
-                        <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={handleUpdateEvent}>Update Event</button>
+                        <button className="bg-customRed text-white font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={(e) => {
+                            handleConfirmation('delete', event);
+                        }}>Delete Event</button>
+                        <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={(e) => {
+                            handleConfirmation('update', event);
+                        }}>Update Event</button>
                     </div>
                 </div>
             </div>
+            <Confirmation
+                isOpen={isConfirmationOpen}
+                message={
+                    confirmationAction === "delete"
+                        ? `Are you sure you want to delete ${selectedEvent?.eventName}?`
+                        : `Are you sure you want to update  ${selectedEvent?.eventName}?`
+                }
+                actionType={
+                    confirmationAction === 'delete'
+                        ? "NEGATIVE"
+                        : "NEUTRAL"
+                }
+                onConfirm={() => confirmAction()}
+                onCancel={cancelAction}
+            />
             {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div>
     )
