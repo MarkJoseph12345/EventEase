@@ -98,11 +98,11 @@ export const createEvent = async (username: string, eventData: any) => {
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
-        console.log(JSON.stringify(formattedEventData))
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT + `?creator=${encodeURIComponent(username)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
             body: JSON.stringify(formattedEventData),
         });
@@ -124,6 +124,7 @@ export const getAllUsers = async (): Promise<User[]> => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -143,6 +144,7 @@ export const getTopThree = async (): Promise<any[]> => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -162,6 +164,7 @@ export const getAttendees = async (): Promise<any[]> => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -192,6 +195,7 @@ export const updateEvent = async (eventId: number, eventData: any): Promise<any>
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
             body: JSON.stringify(formattedEventData),
         });
@@ -213,6 +217,7 @@ export const deleteEvent = async (eventId: number): Promise<boolean> => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -231,6 +236,7 @@ export const deleteUser = async (userId: number): Promise<boolean> => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -249,6 +255,7 @@ export const updateUser = async (userId: number, updatedUserData: User): Promise
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
             body: JSON.stringify(updatedUserData),
         });
@@ -268,6 +275,7 @@ export const getUserById = async (userId: number): Promise<User | null> => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -287,10 +295,13 @@ export const updateProfilePicture = async (userId: number, file: File): Promise<
     try {
         const response = await fetch(`${API_ENDPOINTS.UPDATE_PROFILE_PICTURE}${userId}`, {
             method: "PUT",
+            headers: {
+                'Authorization': `Bearer ${getCookie("token")}`
+            },
             body: formData,
         });
         if (!response.ok) {
-            throw new Error("Failed to update profile picture");
+            console.log(response)
         }
         const contentType = response.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {
@@ -311,6 +322,10 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
     try {
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT_PICTURE}${eventId}`, {
             method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
+            },
             body: formData,
         });
         if (!response.ok) {
@@ -333,7 +348,13 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
 
 export const fetchProfilePicture = async (userid: number): Promise<string> => {
     try {
-        const response = await fetch(`${API_ENDPOINTS.GET_PROFILE_PICTURE}${userid}`);
+        const response = await fetch(`${API_ENDPOINTS.GET_PROFILE_PICTURE}${userid}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
+            },
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch profile picture');
         }
@@ -365,9 +386,10 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
 export const joinEvent = async (userId: number, eventId: number): Promise<boolean> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.JOIN_EVENT}${userId}/${eventId}`, {
-            method: 'POST',
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -385,9 +407,10 @@ export const joinEvent = async (userId: number, eventId: number): Promise<boolea
 export const unjoinEvent = async (userId: number, eventId: number): Promise<boolean> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.UNJOIN_EVENT}${userId}/${eventId}`, {
-            method: 'DELETE',
+            method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -404,9 +427,10 @@ export const unjoinEvent = async (userId: number, eventId: number): Promise<bool
 export const getEventsJoinedByUser = async (userId: number): Promise<Event[]> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_EVENTS_JOINED_BY_USER}${userId}`, {
-            method: 'GET',
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -423,9 +447,10 @@ export const getEventsJoinedByUser = async (userId: number): Promise<Event[]> =>
 export const getAllUsersJoinedToEvent = async (eventId: number): Promise<User[]> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_ALL_USERS_JOINED_TO_EVENT}${eventId}`, {
-            method: 'GET',
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -447,6 +472,7 @@ export const blockUser = async (userId: number) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -468,6 +494,7 @@ export const unblockUser = async (userId: number) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -489,6 +516,7 @@ export const getAllEventsAfterAttendance = async (userId: number) => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -510,6 +538,7 @@ export const getAllUsersAfterAttendance = async (eventId: number) => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -531,11 +560,12 @@ export const getEventNow = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
         if (!response.ok) {
-            throw new Error(`Error fetching current event: ${response.statusText}`);
+           return
         }
 
         const result = await response.json();
@@ -552,6 +582,7 @@ export const likeEvent = async (eventId: number, userId: number) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -569,6 +600,7 @@ export const dislikeEvent = async (eventId: number, userId: number) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -586,6 +618,7 @@ export const getEventById = async (eventId: number): Promise<Event | null> => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
         if (!response.ok) {
@@ -687,6 +720,7 @@ export const getEventPopularity = async (eventId: any) => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -708,6 +742,7 @@ export const getJoinRate = async (eventId: any) => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -729,6 +764,7 @@ export const getEventTypeDistribution = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -750,6 +786,7 @@ export const getEventSchedulingTrends = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -771,6 +808,7 @@ export const getAverageEventDuration = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -793,6 +831,7 @@ export const getDepartmentEngagement = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -814,6 +853,7 @@ export const setUserAsAdmin = async (userId: any) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 
@@ -835,6 +875,7 @@ export const setUserAsStudent = async (userId: any) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie("token")}`
             },
         });
 

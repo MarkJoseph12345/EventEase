@@ -1,4 +1,4 @@
-const BASE_URL = " https://eventease-q2yh.onrender.com";
+const BASE_URL = "https://eventease-q2yh.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
@@ -32,7 +32,6 @@ export const API_ENDPOINTS = {
   LIKE_EVENT: `${BASE_URL}/event/likeEvent/`,
   DISLIKE_EVENT: `${BASE_URL}/event/dislikeEvent/`,
   
-  // Routes with /api/v1/auth added back
   FORGOT_PASSWORD: `${BASE_URL}/api/v1/auth/forgot-password`,
   VERIFY_TOKEN: `${BASE_URL}/api/v1/auth/verifyToken`,
   NEW_PASSWORD: `${BASE_URL}/api/v1/auth/new-password`,
