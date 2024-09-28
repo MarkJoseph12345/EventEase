@@ -44,28 +44,34 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
-    /*
+
+
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        return http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> request
-                .requestMatchers("/api/v1/auth/**")
-                .permitAll().requestMatchers("/api/v1/user")
-                .hasAnyAuthority(Role.STUDENT.name())
-                        .requestMatchers("api/v1/admin")
-                        .hasAnyRole(Role.ADMIN.name())
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
-                .anyRequest()
-                .authenticated())
-                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/v1/authenticated/**").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
+                        .requestMatchers("/swagger-ui/**", "/v3/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers("/user").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
+                        .requestMatchers("/admin").hasAnyAuthority(Role.ADMIN.name(), Role.STUDENT.name())
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
-     */
 
 
 
 
+
+
+    /*
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
@@ -88,27 +94,12 @@ public class SecurityConfig {
 
 
 
-/*
-
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(requests -> requests
-                    .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/api/v1/authenticated/**").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
-                    .requestMatchers("/user/**").hasAuthority(Role.STUDENT.name())
-                    .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
-                    .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-}
+     */
 
 
- */
+
+
+
 
 
 

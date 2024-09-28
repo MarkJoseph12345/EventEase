@@ -3,11 +3,13 @@ package com.capstone.EventEase.Controller;
 
 
 import com.capstone.EventEase.Entity.EventAttendance;
+import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserAttendance;
 import com.capstone.EventEase.Exceptions.AttendanceCheckedException;
 import com.capstone.EventEase.Exceptions.UserNotJoinedToAnEventException;
 import com.capstone.EventEase.Service.AdminService;
 import com.capstone.EventEase.Service.AttendanceService;
+import com.capstone.EventEase.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/auth/admin")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 @Tag(name = "ADMIN CONTROLLER", description = "THIS IS THE ADMIN CONTROLLER")
 public class AdminController {
@@ -33,6 +35,24 @@ public class AdminController {
     private final AttendanceService attendanceService;
 
     private final AdminService adminService;
+
+    private final UserService    userService;
+
+
+
+
+    @Operation(summary = "Delete User By Admin")
+    @DeleteMapping("/deleteUserByAdmin/{userId}")
+    public ResponseEntity<?> deleteUserByAdmin(@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(userService.deleteUserByIdByAdmin(userId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Operation(summary = "Check The Attendance of the User")
     @PostMapping("/attend/{eventId}/{uuid}/")
     public ResponseEntity<?> attendUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("attendanceDate") @DateTimeFormat(
@@ -60,6 +80,10 @@ public class AdminController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
+
+
+
 
 
 
@@ -100,8 +124,6 @@ public class AdminController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
-
 
 
 
@@ -181,7 +203,6 @@ public class AdminController {
     @Operation(summary = "Get All Events Joined By Event After Attendance")
     @GetMapping("/getEventsJoinedAttendance/{userId}")
     public ResponseEntity<?> getEventsJoinedAfterAttending(@PathVariable Long userId){
-
         try{
             return new ResponseEntity<>(attendanceService.getAllEventsJoinedByUserAfterAttendance(userId),HttpStatus.OK);
         }catch (Exception e){

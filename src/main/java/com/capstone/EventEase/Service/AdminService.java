@@ -17,6 +17,8 @@ public class AdminService {
 
     private final UserRepository userRepository;
 
+    private final EmailService emailService;
+
     public String checkAttendance(String username){
 
         User user = userRepository.findByUsername(username);
@@ -35,16 +37,22 @@ public class AdminService {
     public User blockUser(Long userId){
         User user = getUserById(userId);
         user.setBlocked(true);
+        emailService.sendBlockEmail(user.getUsername());
         userRepository.save(user);
+
         return user;
     }
 
     public User unblockUser(Long userId){
         User user = getUserById(userId);
         user.setBlocked(false);
+        emailService.sendUnblockEmail(user.getUsername());
         userRepository.save(user);
+
         return user;
     }
+
+
 
 
     public User setAdmin(Long userId){
@@ -60,6 +68,9 @@ public class AdminService {
         userRepository.save(user);
         return user;
     }
+
+
+
 
 
 

@@ -78,6 +78,8 @@ public class EventService {
         }
     }
 
+
+
     public Event createEvent(String nameUser, Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
             EntityNotFoundException {
 
@@ -93,9 +95,9 @@ public class EventService {
         List<EmailSendRequestDTO> emails = new ArrayList<>();
 
         for (String username : event.getPreRegisteredUsers()) {
-            User user = createUser(username, passwords);
+           // User user = createUser(username, passwords);
             emails.add(createEmailDTO(username));
-            userEventService.joinEvent(user.getId(), newEvent.getId());
+           // userEventService.joinEvent(user.getId(), newEvent.getId());
         }
 
         emailService.emailSend(emails, passwords, newEvent);
@@ -103,8 +105,6 @@ public class EventService {
         return newEvent;
     }
 
-
-    
 
     private void validateEventDates(Event event) {
         ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
@@ -119,11 +119,16 @@ public class EventService {
         for (Event e : events) {
             ZonedDateTime eStart = e.getEventStarts().atZoneSameInstant(UTC_8);
             ZonedDateTime eEnd = e.getEventEnds().atZoneSameInstant(UTC_8);
-            if (eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)) {
-                throw new DateTimeException("Event cannot start or end before the current date.");
+            if(eventStart.toLocalDate().isEqual(eStart.toLocalDate()) || eventStart.toLocalDate().isEqual(eEnd.toLocalDate())){
+                if (eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)) {
+                    throw new DateTimeException("Event cannot start or end before the current date.");
+                }
             }
         }
     }
+
+
+
 
     private User createUser(String username, List<String> passwords) {
         User findUser = userRepository.findByUsername(username);

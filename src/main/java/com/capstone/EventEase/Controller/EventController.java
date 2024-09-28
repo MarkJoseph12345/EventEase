@@ -31,7 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/event")
+@RequestMapping("/event")
 @Tag(name = "EVENT CONTROLLER", description = "THIS IS THE EVENT CONTROLLER")
 public class EventController {
 

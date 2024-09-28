@@ -18,6 +18,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -112,6 +113,7 @@ public class AuthenticationController {
 
 
 
+    /*
 
     @Operation(summary = "Confirm Account Creation")
     @GetMapping("/confirm/")
@@ -128,6 +130,100 @@ public class AuthenticationController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
+     */
+
+
+
+
+
+    @Operation(summary = "Confirm Account Creation")
+    @GetMapping("/confirm/")
+    public ResponseEntity<?> confirmRegister(@RequestParam("token") String token) {
+        try {
+            boolean isConfirmed = authenticationService.confirmAccount(token);
+            if (isConfirmed) {
+                // Return the confirmation HTML page
+                String confirmationHtml = getConfirmationHtml();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.TEXT_HTML)
+                        .body(confirmationHtml);
+            }
+            return ResponseEntity.badRequest().body("Invalid or expired token");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    private String getConfirmationHtml() {
+        return """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Account Confirmed</title>
+                <style>
+                    body {
+                        font-family: 'Arial', sans-serif;
+                        line-height: 1.6;
+                        color: #333;
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background-color: #f4f4f4;
+                        text-align: center;
+                    }
+                    .container {
+                        background-color: #ffffff;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        padding: 40px;
+                    }
+                    h1 {
+                        color: #FDCC01;
+                    }
+                    #timer {
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin: 20px 0;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Account Confirmed!</h1>
+                    <p>Your account has been successfully confirmed. Thank you for joining EventEase!</p>
+                    <p>You will be redirected to the login page in <span id="timer">5</span> seconds.</p>
+                </div>
+
+                <script>
+                    let timeLeft = 5;
+                    const timerElement = document.getElementById('timer');
+
+                    function updateTimer() {
+                        timerElement.textContent = timeLeft;
+                        if (timeLeft === 0) {
+                            window.location.href = 'http://localhost:3000/Login';
+                        } else {
+                            timeLeft--;
+                            setTimeout(updateTimer, 1000);
+                        }
+                    }
+
+                    updateTimer();
+                </script>
+            </body>
+            </html>
+        """;
+    }
+
+
+
+
 
 
     @Operation(summary = "Register A User")
@@ -164,18 +260,6 @@ public class AuthenticationController {
 
 
 
-
-    @Operation(summary = "Update User By passing UserId and new User Credentials")
-    @PutMapping("/updateUser/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
-    User user) throws EntityExistsException{
-        try{
-            LoginResponse updatedUser = authenticationService.updateUser(userId,user);
-            return new ResponseEntity<>(updatedUser,HttpStatus.CREATED);
-        }catch (Exception e){
-            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
-        }
-    }
 
 
     @Operation(summary = "Calls Db")
