@@ -64,7 +64,6 @@ public class AuthenticationController {
 
 
     @Operation(summary = "Get Event Picture by Passing Event Id")
-
     @GetMapping("event/getEventPicture/{eventId}")
     public ResponseEntity<?> getEventPicture(@PathVariable Long eventId) throws IOException{
 
