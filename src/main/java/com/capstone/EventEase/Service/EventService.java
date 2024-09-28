@@ -106,23 +106,29 @@ public class EventService {
     }
 
 
-    private void validateEventDates(Event event) {
-        ZonedDateTime currentDate = ZonedDateTime.now(UTC_8);
-        ZonedDateTime eventStart = event.getEventStarts().atZoneSameInstant(UTC_8);
-        ZonedDateTime eventEnd = event.getEventEnds().atZoneSameInstant(UTC_8);
+    private void validateEventDates(Event newEvent) {
+        ZonedDateTime currentDateTime = ZonedDateTime.now(UTC_8);
+        ZonedDateTime eventStart = newEvent.getEventStarts().atZoneSameInstant(UTC_8);
+        ZonedDateTime eventEnd = newEvent.getEventEnds().atZoneSameInstant(UTC_8);
 
-        if (eventStart.isBefore(currentDate) || eventEnd.isBefore(currentDate)) {
-            throw new DateTimeException("Event cannot start or end before the current date.");
+        if (eventStart.isBefore(currentDateTime)) {
+            throw new DateTimeException("Event cannot start in the past.");
         }
 
-        List<Event> events = eventRepository.findAll();
-        for (Event e : events) {
-            ZonedDateTime eStart = e.getEventStarts().atZoneSameInstant(UTC_8);
-            ZonedDateTime eEnd = e.getEventEnds().atZoneSameInstant(UTC_8);
-            if(eventStart.toLocalDate().isEqual(eStart.toLocalDate()) || eventStart.toLocalDate().isEqual(eEnd.toLocalDate())){
-                if (eventStart.isBefore(eEnd) || eventStart.isBefore(eStart)) {
-                    throw new DateTimeException("Event cannot start or end before the current date.");
-                }
+        if (eventEnd.isBefore(eventStart)) {
+            throw new DateTimeException("Event cannot end before it starts.");
+        }
+
+        List<Event> existingEvents = eventRepository.findAll();
+        for (Event existingEvent : existingEvents) {
+            ZonedDateTime existingStart = existingEvent.getEventStarts().atZoneSameInstant(UTC_8);
+            ZonedDateTime existingEnd = existingEvent.getEventEnds().atZoneSameInstant(UTC_8);
+
+            boolean overlap = (eventStart.isBefore(existingEnd) && eventEnd.isAfter(existingStart)) ||
+                    (existingStart.isBefore(eventEnd) && existingEnd.isAfter(eventStart));
+
+            if (overlap) {
+                throw new DateTimeException("Event overlaps with an existing event.");
             }
         }
     }
