@@ -30,7 +30,7 @@ export const loginAccount = async (username: string, password: string) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ username, password }),
-        });
+        }); 
         const data = await response.json();
         const { messages } = data;
         if (response.ok) {
@@ -230,6 +230,25 @@ export const deleteEvent = async (eventId: number): Promise<boolean> => {
     }
 };
 
+export const deleteUserByAdmin = async (userId: number): Promise<boolean> => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.DELETE_USER_BY_ADMIN}${userId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`
+            },
+        });
+        if (!response.ok) {
+            throw new Error("Failed to delete user");
+        }
+        return true;
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return false;
+    }
+};
+
 export const deleteUser = async (userId: number): Promise<boolean> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.DELETE_USER}${userId}`, {
@@ -323,7 +342,6 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT_PICTURE}${eventId}`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
                 'Authorization': `Bearer ${getCookie("token")}`
             },
             body: formData,
@@ -371,7 +389,7 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_EVENT_PICTURE}${eventid}`);
         if (!response.ok) {
-            throw new Error('Failed to fetch profile picture');
+            throw new Error('Failed to fetch event picture');
         }
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);

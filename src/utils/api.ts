@@ -1,4 +1,4 @@
-const BASE_URL = "https://eventease-q2yh.onrender.com";
+const BASE_URL = "https://eventeasedev.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   GET_PROFILE_PICTURE_SVG: `${BASE_URL}/user/getProfilePicture/svg/`,
   GET_EVENT_BY_ID: `${BASE_URL}/event/getEventById/`,
   GET_USER_BY_ID: `${BASE_URL}/user/`,
+  DELETE_USER_BY_ADMIN: `${BASE_URL}/deleteUserByAdmin/`,
   DELETE_USER: `${BASE_URL}/user/deleteUser/`,
   UPDATE_USER: `${BASE_URL}/user/updateUser/`,
   JOIN_EVENT: `${BASE_URL}/userevent/joinEvent/`,

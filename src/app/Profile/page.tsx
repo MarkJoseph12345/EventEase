@@ -14,6 +14,7 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
     const [preview, setPreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -48,6 +49,7 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
         if (newPicture) {
             const success = await updateProfilePicture(user!.id!, newPicture);
             if (success) {
+                setMessage({ text: "Your profile picture has been updated", type: "success" });
                 window.location.reload();
                 onClose();
             } else {

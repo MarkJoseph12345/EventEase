@@ -11,7 +11,7 @@ import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import { User } from '@/utils/interfaces';
 
 const departments = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
-const types = ["Workshop", "Seminar", "Networking",  "Other"];
+const types = ["Workshop", "Seminar", "Networking",  "Others"];
 
 
 const CreateEvent = () => {
@@ -156,7 +156,6 @@ const CreateEvent = () => {
       setIsCreating(false);
       return;
     }
-    console.log(user!.username!)
     const result: any = await createEvent(user!.username!,event);
     setIsCreating(false);
 
@@ -168,11 +167,11 @@ const CreateEvent = () => {
       }
 
       const eventCreated = await getEventById(result.id);
-      setCreatedEvent(eventCreated);
-      if (createdEvent) {
+      if (eventCreated) {
         const picture = await fetchEventPicture(result.id!);
-        createdEvent.eventPicture = picture;
+        eventCreated.eventPicture = picture;
       }
+      setCreatedEvent(eventCreated);
       setShowModal(true);
     } else {
       setMessage({ text: result.message, type: "error" });

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { User } from '@/utils/interfaces';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { blockUser, deleteUser, fetchProfilePicture, getAllUsers, me, setUserAsAdmin, setUserAsStudent, unblockUser } from '@/utils/apiCalls';
+import { blockUser, deleteUser, deleteUserByAdmin, fetchProfilePicture, getAllUsers, me, setUserAsAdmin, setUserAsStudent, unblockUser } from '@/utils/apiCalls';
 import Confirmation from '../Modals/Confirmation';
 import PopUps from '../Modals/PopUps';
 type SelectedFilters = {
