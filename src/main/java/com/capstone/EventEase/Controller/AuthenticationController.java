@@ -6,8 +6,10 @@ import com.capstone.EventEase.DTO.Request.LoginRequest;
 import com.capstone.EventEase.DTO.Request.NewPasswordRequest;
 import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
+import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Service.AuthenticationService;
+import com.capstone.EventEase.Service.EventService;
 import com.capstone.EventEase.Service.PasswordResetTokenService;
 import com.capstone.EventEase.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,6 +39,9 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     private final PasswordResetTokenService passwordResetTokenService;
+
+    private final EventService eventService;
+
 
 
 
@@ -55,6 +61,10 @@ public class AuthenticationController {
 
 
 
+    @GetMapping("/getAllEvents")
+    public List<Event> getAllEvents(){
+        return eventService.getAllEvents();
+    }
 
 
 

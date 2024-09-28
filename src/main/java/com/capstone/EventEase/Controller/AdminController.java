@@ -125,8 +125,6 @@ public class AdminController {
         }
     }
 
-
-
     /*
     @Operation(summary = "Get The Number of Attended by UserId")
     @GetMapping("/getAttendance/{userId}")
@@ -166,7 +164,6 @@ public class AdminController {
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
             }
     }
-
 
 
 
