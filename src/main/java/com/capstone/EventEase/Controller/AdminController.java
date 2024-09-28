@@ -68,6 +68,7 @@ public class AdminController {
 
 
 
+
     @Operation(summary = "Timeout User")
     @PostMapping("/timeout/{eventId}/{uuid}/")
     public ResponseEntity<?> timeoutUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("timeoutDate") @DateTimeFormat(
@@ -80,12 +81,6 @@ public class AdminController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
-
-
-
-
-
 
 
     @Operation(summary = "Check if The User Attended the Event")
