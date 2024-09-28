@@ -22,18 +22,16 @@ public class UserServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-
-
-
     @Test
     void testSaveUserAndGetUserByUsername(){
             User user = new User();
             user.setUsername("testUser");
             userService.saveUser(user);
 
-
             User fetchedUser = userService.getUserByUsername("testUser");
             assertNotNull(fetchedUser);
             assertEquals("testUser",fetchedUser.getUsername());
     }
 }
+
+

@@ -31,6 +31,7 @@ public class UserService implements UserDetailsService {
 
 
 
+
     private final UserRepository userRepository;
 
     private final UserEventRepository userEventRepository;
@@ -39,17 +40,11 @@ public class UserService implements UserDetailsService {
 
     private final EmailService emailService;
 
-
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-
-
 
     public void saveUser(User user){
         userRepository.save(user);
     }
-
-
-
 
     public List<User> getAllUsers(){
         return userRepository.findAll().stream().filter(User::isVerified).collect(Collectors.toList());

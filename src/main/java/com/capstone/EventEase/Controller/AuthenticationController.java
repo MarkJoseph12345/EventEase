@@ -8,10 +8,7 @@ import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
-import com.capstone.EventEase.Service.AuthenticationService;
-import com.capstone.EventEase.Service.EventService;
-import com.capstone.EventEase.Service.PasswordResetTokenService;
-import com.capstone.EventEase.Service.UserService;
+import com.capstone.EventEase.Service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -40,10 +37,9 @@ public class AuthenticationController {
 
     private final PasswordResetTokenService passwordResetTokenService;
 
+    private final ImageService imageService;
+
     private final EventService eventService;
-
-
-
 
 
 
@@ -61,11 +57,53 @@ public class AuthenticationController {
 
 
 
-    @GetMapping("/getAllEvents")
+    @GetMapping("/event/getAllEvents")
     public List<Event> getAllEvents(){
         return eventService.getAllEvents();
     }
 
+
+    @Operation(summary = "Get Event Picture by Passing Event Id")
+
+    @GetMapping("event/getEventPicture/{eventId}")
+    public ResponseEntity<?> getEventPicture(@PathVariable Long eventId) throws IOException{
+
+        String format = imageService.getPictureFormat(eventId,true);
+        MediaType mediaType;
+
+        switch (format) {
+            case "png":
+                mediaType = MediaType.IMAGE_PNG;
+                break;
+            case "jpg":
+            case "jpeg":
+            case "jfif":
+                mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "gif":
+                mediaType = MediaType.IMAGE_GIF;
+                break;
+            case "bmp":
+                mediaType = MediaType.valueOf("image/bmp");
+                break;
+            case "tiff":
+                mediaType = MediaType.valueOf("image/tiff");
+                break;
+            case "webp":
+                mediaType = MediaType.valueOf("image/webp");
+                break;
+            case "svg":
+                mediaType = MediaType.valueOf("image/svg+xml");
+                break;
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
+        }
+
+        byte[] eventImage = imageService.downloadImage(eventId,true);
+        return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(eventImage);
+
+
+    }
 
 
     @PostMapping("/new-password")
