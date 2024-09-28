@@ -65,7 +65,7 @@ const NavBar = () => {
         </div>
       )}
       <div className={`flex items-center justify-between bg-customYellow ${isSidebarOpen ? "hidden" : "block"} tablet:h-[4rem]`}>
-        <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover" onClick={() => handleLogoClick()} />
+        <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover cursor-pointer" onClick={() => handleLogoClick()} />
         <p className="mr-4 text-4xl font-bold smartphone:hidden" onClick={toggleSidebar}>≡</p>
         <div className="flex items-center gap-5 mr-5 hidden smartphone:flex tablet:text-xl tablet:gap-10">
           {navLinks.map((link) => {

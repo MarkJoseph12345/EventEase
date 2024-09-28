@@ -31,7 +31,7 @@ const TermsAndConditions = () => {
                 <p className="underline font-semibold">Termination</p>
                 <p>We reserve the right to suspend or terminate your access to EventEase if you violate these Terms and Conditions or engage in inappropriate behavior.</p>
                 <p className="underline font-semibold">Limitation of Liability</p>
-                <p>EventEase is provided "as is" and without warranties of any kind. We are not liable for any damages arising from your use of the platform, including but not limited to data loss, service interruptions, or technical issues.</p>
+                <p>EventEase is provided &#34;as is&#34; and without warranties of any kind. We are not liable for any damages arising from your use of the platform, including but not limited to data loss, service interruptions, or technical issues.</p>
                 <p className="underline font-semibold">Changes to the Terms</p>
                 <p>We may update these Terms and Conditions from time to time. You will be notified of any significant changes, and continued use of the platform constitutes your acceptance of the revised terms.</p>
                 <p className="underline font-semibold">Contact Us</p>
