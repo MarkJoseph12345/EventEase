@@ -23,8 +23,6 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                 }));
 
                 setUsers(updatedUsers);
-            } catch (error) {
-                console.error('Error fetching users or attendance:', error);
             } finally {
                 setLoading(false);
             }

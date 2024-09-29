@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { EventDetailModal, User } from '@/utils/interfaces';
 import { formatDate } from '@/utils/data';
 import { dislikeEvent, getAllUsersJoinedToEvent, getEventById, getEventsJoinedByUser, joinEvent, likeEvent, me, unjoinEvent } from '@/utils/apiCalls';
+import PopUps from './PopUps';
 
 const POLL_INTERVAL = 10000;
 
@@ -22,14 +23,15 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
     const [genderMismatch, setGenderMismatch] = useState(false);
     const [activeButton, setActiveButton] = useState<'like' | 'dislike' | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
 
     const hasLongDescription = (description: string) => {
-        return description.split(' ').length > 50;
+        return description.split(' ').length > 30;
     };
 
     const truncateDescription = (description: string) => {
         const words = description.split(' ');
-        return words.slice(0, 50).join(' ') + '...';
+        return words.slice(0, 30).join(' ')
     };
 
 
@@ -44,7 +46,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     setGenderMismatch(false);
                 }
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+                
             }
         };
 
@@ -85,7 +87,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 setIsJoined(hasJoined);
                 setIsLoading(false);
             } catch (error) {
-                console.error("Failed to check if user joined event:", error);
+               
                 setIsLoading(false);
             }
         };
@@ -97,7 +99,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 const allUsers = usersArrays.flat();
                 setUsersJoinedToEvent(allUsers);
             } catch (error) {
-                console.error("Error fetching users joined to event:", error);
+               
             }
         };
 
@@ -123,6 +125,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     if (onJoinUnjoin) {
                         onJoinUnjoin(event.id!);
                     }
+                    setMessage({ text: "Successfuly unjoined event", type: "success" });
                 }
             } else {
                 const success = await joinEvent(user!.id!, event.id!);
@@ -132,10 +135,11 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     if (onJoinUnjoin) {
                         onJoinUnjoin(event.id!);
                     }
+                    setMessage({ text: "Successfuly joined event", type: "success" });
                 }
             }
         } catch (error) {
-            console.error("Failed to join/unjoin event:", error);
+         
         }
     };
 
@@ -178,21 +182,23 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                                 <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                 <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
                                 <p className=""><strong>Slots left:</strong> {availableSlots}</p>
-                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                 <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
+                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                             </div>
                             <p className="tablet:col-span-4 text-pretty">
-                                {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
+                                <strong>Description: </strong>{showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)} {hasLongDescription(event.eventDescription) && (
+                                    <>{isExpanded ? <span></span>: <span className='font-bold'>... </span>}
+                                        < button
+                                            className="font-bold underline"
+                                            onClick={() => setIsExpanded(!isExpanded)}
+                                        >
+                                            {isExpanded ? 'See less' : 'See more'}
+                                        </button>
+                                    </>
+                                )}
                             </p>
-                            {hasLongDescription(event.eventDescription) && (
-                                <button
-                                    className="font-bold"
-                                    onClick={() => setIsExpanded(!isExpanded)}
-                                >
-                                    {isExpanded ? 'See less' : 'See more'}
-                                </button>
-                            )}
+
 
 
                         </div>
@@ -269,7 +275,9 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     )}
                 </div>
             </div>
-        </div>
+
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
+        </div >
     );
 };
 

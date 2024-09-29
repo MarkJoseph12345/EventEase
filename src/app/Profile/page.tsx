@@ -21,7 +21,7 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+
             }
         };
 
@@ -51,9 +51,8 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
             if (success) {
                 setMessage({ text: "Your profile picture has been updated", type: "success" });
                 window.location.reload();
-                onClose();
             } else {
-                console.error("Failed to update profile picture");
+                setMessage({ text: "Failed to update profile picture", type: "success" });
             }
         }
     };
@@ -74,6 +73,8 @@ const ProfilePopup = ({ picture, onClose }: { picture: string; onClose: () => vo
                     )}
                 </div>
             </div>
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
+
         </div>
     );
 };
@@ -141,37 +142,23 @@ const Profile = () => {
 
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchUserData = async () => {
             try {
                 const userData = await me();
                 setUser(userData);
                 if (userData.profilePictureName === "XyloGraph1.png") {
                     setShowProfilePicturePrompt(true);
                 }
-            } catch (error) {
-                console.error('Failed to fetch user', error);
+                const url = await fetchProfilePicture(userData.id!);
+                setImageUrl(url);
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchUser();
+    
+        fetchUserData();
     }, []);
-
-    useEffect(() => {
-        if (user) {
-            const fetchImage = async () => {
-                try {
-                    const url = await fetchProfilePicture(user.id!);
-                    setImageUrl(url);
-                } catch (error) {
-                    console.error('Failed to fetch profile picture', error);
-                }
-            };
-
-            fetchImage();
-        }
-    }, [user]);
+    
 
     const handleProfilePicClick = (picture: string) => {
         setClickedProfilePic(picture);
@@ -197,22 +184,22 @@ const Profile = () => {
         if (!user) return;
 
 
-        const { firstName, lastName, password } = user;
+        const { firstName, lastName, newPassword } = user;
         const userFormClone: Partial<User> = { firstName, lastName };
 
-
-
-        if (password) {
-            userFormClone.password = password;
+        if (newPassword) {
+            userFormClone.password = newPassword;
         }
 
         const success = await updateUser(user!.id!, userFormClone);
         if (success) {
-            console.log("User details updated successfully");
+            setMessage({ text: "User details updated successfully", type: "success" });
         } else {
-            console.log("Failed to update user details");
+            setMessage({ text: "User details updated unsuccessfully", type: "error" });
         }
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -232,14 +219,12 @@ const Profile = () => {
         if (user && user.newPassword && !passwordRegex.test(user!.newPassword!)) {
             setMessage({ text: "Password must be at least 8 characters long, include 1 uppercase letter, 1 lowercase letter, and 1 number.", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
-            setLoading(false);
             return;
         }
 
         if (currentPassword != "" && user && user.newPassword != confirmPass) {
             setMessage({ text: "Passwords do not match!", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
-            setLoading(false)
             return;
         }
         setShowConfirmation(true);
@@ -258,7 +243,7 @@ const Profile = () => {
         setShowProfilePicturePrompt(false);
     };
 
-    if (loading || !user) {
+    if (loading) {
         return <Loading />;
     }
 
@@ -268,8 +253,8 @@ const Profile = () => {
             <div>
                 <img src={imageUrl || "/defaultpic.png"} alt="Profile Pic" className="my-4 w-32 mt-10 h-32 rounded-full object-cover object-center mx-auto hover:cursor-pointer hover:border-8 hover:border-customRed transition-all duration-300 ease-in-out" onClick={(e) => { handleProfilePicClick(imageUrl || "/defaultpic.png") }} />
             </div>
-            <h2 className="text-2xl font-semibold font-poppins">{user.firstName} {user.lastName}</h2>
-            <p className="text-gray-700 underline">{user.username}</p>
+            <h2 className="text-2xl font-semibold font-poppins">{user!.firstName} {user!.lastName}</h2>
+            <p className="text-gray-700 underline">{user!.username}</p>
             {clickedProfilePic && <ProfilePopup picture={clickedProfilePic} onClose={handleClosePopup} />}
             <div className="h-fit rounded-2xl mt-4 border-2 p-2 bg-customWhite mx-auto w-fit smartphone:w-9/12 laptop:w-[48rem]">
                 <h1 className="text-center text-xl font-semibold font-poppins">Change your account details</h1>
@@ -285,7 +270,7 @@ const Profile = () => {
                     </div> */}
                     <div className="relative h-11 w-full ">
                         <input placeholder="First Name" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-customYellow focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-                            defaultValue={user.firstName} onChange={handleInputChange}
+                            defaultValue={user!.firstName} onChange={handleInputChange}
                             name="firstName" />
                         <label className="after:content[''] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             First Name
@@ -293,7 +278,7 @@ const Profile = () => {
                     </div>
                     <div className="relative h-11 w-full ">
                         <input placeholder="Last Name" className="peer h-full w-full border-b border-black bg-transparent pt-4 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-black focus:border-gray-500 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
-                            defaultValue={user.lastName} onChange={handleInputChange}
+                            defaultValue={user!.lastName} onChange={handleInputChange}
                             name="lastName" />
                         <label className="after:content[''] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all after:absolute after:-bottom-1.5 after:block after:w-full after:scale-x-0 after:border-b-2 after:border-customYellow after:transition-transform after:duration-300 peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[4.25] peer-placeholder-shown:text-blue-gray-500 peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-customYellow peer-focus:after:scale-x-100 peer-focus:after:border-customYellow peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                             Last Name

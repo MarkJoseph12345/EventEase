@@ -13,12 +13,12 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
     const [isExpanded, setIsExpanded] = useState(false);
 
     const hasLongDescription = (description: string) => {
-        return description.split(' ').length > 50;
+        return description.split(' ').length > 30;
     };
 
     const truncateDescription = (description: string) => {
         const words = description.split(' ');
-        return words.slice(0, 50).join(' ') + '...';
+        return words.slice(0, 30).join(' ') + '...';
     };
 
     const [usersJoinedToEvent, setUsersJoinedToEvent] = useState<User[]>([]);
@@ -29,7 +29,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                 const allUsers = usersArrays.flat();
                 setUsersJoinedToEvent(allUsers);
             } catch (error) {
-                console.error("Error fetching users joined to event:", error);
+               
             }
         };
         fetchUsersJoinedToEvent()
@@ -62,12 +62,12 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                                     <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                     <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
                                     <p className=""><strong>Slots left:</strong> {availableSlots}</p>
-                                    <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                     <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                     <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
+                                    <p className=""><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 </div>
                                 <p className="tablet:col-span-4 text-pretty">
-                                    {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
+                                    <strong>Description: </strong>{showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
                                 </p>
                                 {hasLongDescription(event.eventDescription) && (
                                     <button
@@ -80,23 +80,6 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
 
 
                             </div>
-
-                            {/* <div className="flex flex-col gap-2">
-                            <p><strong>Event Description:</strong></p>  
-                            <p><strong>Event Type:</strong></p>
-                            <p><strong>Department(s):</strong></p>
-                            <p><strong>Event Classification:</strong></p>
-                            <p><strong>Start Date:</strong></p>
-                            <p><strong>End Date:</strong></p>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <p className='text-pretty truncate overflow-hidden'>{event.eventDescription}</p>
-                            <p>{type[0]}</p>
-                            <p>{event.department.join(', ')}</p>
-                            <p>{type[1]}</p>
-                            <p>{formatDate(event.eventStarts)}</p>
-                            <p>{formatDate(event.eventEnds)}</p>
-                        </div> */}
                         </div>
                     </div>
                     <div className="flex w-full justify-end">

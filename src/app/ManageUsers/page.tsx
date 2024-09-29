@@ -18,7 +18,7 @@ const ManageUsers = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [showDepartments, setShowDepartments] = useState<boolean>(false);
     const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
-    const departments = Array.from(new Set(users.map(user => user.department || '')));
+    const departments = Array.from(new Set(users.map(user => user.department).filter(department => department)));
     const roles = ["Admin", "Student"];
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [confirmationAction, setConfirmationAction] = useState<'delete' | 'block' | 'role' | null>(null);
@@ -92,9 +92,7 @@ const ManageUsers = () => {
                 const userData = await me();
                 const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id);
                 setUsers(filteredUsers);
-                fetchUserImages(filteredUsers);
-            } catch (error) {
-                console.error("Failed to fetch users:", error);
+                await fetchUserImages(filteredUsers);
             } finally {
                 setLoading(false);
             }
@@ -162,7 +160,7 @@ const ManageUsers = () => {
                     }
                 }
             } catch (error) {
-                console.error(`Failed to toggle user block status:`, error);
+                
             }
         }
     };
@@ -194,7 +192,7 @@ const ManageUsers = () => {
                     }
                 }
             } catch (error) {
-                setMessage({text: `Failed to toggle user status:` + error, type: "error"});
+                setMessage({ text: `Failed to toggle user status:` + error, type: "error" });
             }
         }
     };
@@ -246,7 +244,7 @@ const ManageUsers = () => {
                                     {departments.map((department, index) => (
                                         <div key={index} className="flex items-center">
                                             <label className="flex items-center cursor-pointer">
-                                                <input type="checkbox" checked={selectedFilters.departments.includes(department)} onChange={() => handleFilterChange('departments', department)} className="mr-2 cursor-pointer accent-customYellow" />
+                                                <input type="checkbox" checked={selectedFilters.departments.includes(department!)} onChange={() => handleFilterChange('departments', department)} className="mr-2 cursor-pointer accent-customYellow" />
                                                 {department}</label>
                                         </div>
                                     ))}

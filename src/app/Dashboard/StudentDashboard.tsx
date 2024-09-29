@@ -6,12 +6,13 @@ import StudentEventDetailModal from "../Modals/StudentEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
 import { fetchEventPicture, getEvents, me, getAllEventsAfterAttendance } from "@/utils/apiCalls";
 import { formatDate } from "@/utils/data";
+import Loading from "../Loader/Loading";
 
 const StudentDashboard = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -19,7 +20,7 @@ const StudentDashboard = () => {
         const fetchedUser = await me();
         setUser(fetchedUser);
       } catch (error) {
-        console.error("Error fetching user details:", error);
+       
       }
     };
 
@@ -34,7 +35,6 @@ const StudentDashboard = () => {
         const fetchedEvents = await getEvents();
 
         if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
-          setError(true);
           return;
         }
         const attendedEvents = await getAllEventsAfterAttendance(user.id);
@@ -66,10 +66,8 @@ const StudentDashboard = () => {
         const closestEvents = sortedEvents.slice(0, 3);
 
         setEvents(closestEvents);
-        setError(false);
-      } catch (error) {
-        console.error("Error loading events:", error);
-        setError(true);
+      } finally {
+        setLoading(false)
       }
     };
 
@@ -86,6 +84,10 @@ const StudentDashboard = () => {
 
   if (!user) {
     return null;
+  }
+
+  if (loading) {
+    return <Loading />;
   }
 
   return (
@@ -106,7 +108,7 @@ const StudentDashboard = () => {
             events.map(event => (
               <div
                 key={event.id}
-                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer"
+                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
                 onClick={() => handleEventClick(event)}
               >
                 <img

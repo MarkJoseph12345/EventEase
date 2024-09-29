@@ -36,7 +36,7 @@ const Sidebar = () => {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+                
             }
         };
 
@@ -50,7 +50,7 @@ const Sidebar = () => {
                     const url = await fetchProfilePicture(user.id);
                     setImageUrl(url);
                 } catch (error) {
-                    console.error('Failed to fetch profile picture:', error);
+                  
                 }
             }
         };

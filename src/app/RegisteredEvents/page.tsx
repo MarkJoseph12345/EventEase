@@ -31,7 +31,7 @@ const RegisteredEvents = () => {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+
             }
         };
 
@@ -67,7 +67,6 @@ const RegisteredEvents = () => {
                 setJoinedEvents(finalEvents);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching joined events:", error);
                 setLoading(false);
             }
         };
@@ -101,7 +100,7 @@ const RegisteredEvents = () => {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+
             }
         };
 

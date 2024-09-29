@@ -42,7 +42,6 @@ const CreateEvent = () => {
         const userData = await me();
         setUser(userData);
       } catch (error) {
-        console.error('Failed to fetch user:', error);
       }
     };
 

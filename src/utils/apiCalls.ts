@@ -74,7 +74,7 @@ export const getEvents = async (): Promise<Event[]> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to fetch events");
+             console.error("Failed to fetch events");
         }
         const data = await response.json();
         return data || [];
@@ -128,7 +128,7 @@ export const getAllUsers = async (): Promise<User[]> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to fetch users");
+             console.error("Failed to fetch users");
         }
         const data = await response.json();
         return data || [];
@@ -148,7 +148,7 @@ export const getTopThree = async (): Promise<any[]> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to fetch top three");
+             console.error("Failed to fetch top three");
         }
         const data = await response.json();
         return data || [];
@@ -169,7 +169,7 @@ export const getAttendees = async (): Promise<any[]> => {
         });
 
         if (!response.ok) {
-            throw new Error("Failed to fetch attendees");
+             console.error("Failed to fetch attendees");
         }
         const data = await response.json();
         return data || [];
@@ -201,7 +201,7 @@ export const updateEvent = async (eventId: number, eventData: any): Promise<any>
         });
 
         if (!response.ok) {
-            throw new Error("Failed to update event");
+             console.error("Failed to update event");
         }
         const data = await response.json();
         return data;
@@ -221,7 +221,7 @@ export const deleteEvent = async (eventId: number): Promise<boolean> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to delete event");
+             console.error("Failed to delete event");
         }
         return true;
     } catch (error) {
@@ -240,7 +240,7 @@ export const deleteUserByAdmin = async (userId: number): Promise<boolean> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to delete user");
+             console.error("Failed to delete user");
         }
         return true;
     } catch (error) {
@@ -259,7 +259,7 @@ export const deleteUser = async (userId: number): Promise<boolean> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to delete user");
+             console.error("Failed to delete user");
         }
         return true;
     } catch (error) {
@@ -279,7 +279,7 @@ export const updateUser = async (userId: number, updatedUserData: User): Promise
             body: JSON.stringify(updatedUserData),
         });
         if (!response.ok) {
-            throw new Error("Failed to update user");
+             console.error("Failed to update user");
         }
         return true;
     } catch (error) {
@@ -298,7 +298,7 @@ export const getUserById = async (userId: number): Promise<User | null> => {
             },
         });
         if (!response.ok) {
-            throw new Error("Failed to fetch user");
+             console.error("Failed to fetch user");
         }
         const user: User = await response.json();
         return user;
@@ -347,7 +347,7 @@ export const updateEventPicture = async (eventId: number, file: File): Promise<b
             body: formData,
         });
         if (!response.ok) {
-            throw new Error("Failed to update event picture");
+             console.error("Failed to update event picture");
         }
 
         const contentType = response.headers.get("Content-Type");
@@ -374,7 +374,7 @@ export const fetchProfilePicture = async (userid: number): Promise<string> => {
             },
         });
         if (!response.ok) {
-            throw new Error('Failed to fetch profile picture');
+             console.error('Failed to fetch profile picture');
         }
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
@@ -389,7 +389,7 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
     try {
         const response = await fetch(`${API_ENDPOINTS.GET_EVENT_PICTURE}${eventid}`);
         if (!response.ok) {
-            throw new Error('Failed to fetch event picture');
+             console.error('Failed to fetch event picture');
         }
         const arrayBuffer = await response.arrayBuffer();
         const base64String = arrayBufferToBase64(arrayBuffer);
@@ -433,7 +433,7 @@ export const unjoinEvent = async (userId: number, eventId: number): Promise<bool
         });
 
         if (!response.ok) {
-            throw new Error('Failed to unjoin event');
+             console.error('Failed to unjoin event');
         }
         return true;
     } catch (error) {
@@ -452,7 +452,7 @@ export const getEventsJoinedByUser = async (userId: number): Promise<Event[]> =>
             },
         });
         if (!response.ok) {
-            throw new Error('Failed to fetch events joined by user');
+             console.error('Failed to fetch events joined by user');
         }
         const events = await response.json();
         return events;
@@ -473,7 +473,7 @@ export const getAllUsersJoinedToEvent = async (eventId: number): Promise<User[]>
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch users joined to event');
+             console.error('Failed to fetch users joined to event');
         }
 
         const users = await response.json();
@@ -495,14 +495,13 @@ export const blockUser = async (userId: number) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Error blocking user: ${response.statusText}`);
+             console.error(`Error blocking user: ${response.statusText}`);
         }
         const result = await response.json();
         return result;
 
     } catch (error) {
         console.error('Failed to block user:', error);
-        throw error;
     }
 }
 
@@ -517,14 +516,13 @@ export const unblockUser = async (userId: number) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Error blocking user: ${response.statusText}`);
+             console.error(`Error blocking user: ${response.statusText}`);
         }
 
         const result = await response.json();
         return result;
     } catch (error) {
         console.error('Failed to block user:', error);
-        throw error;
     }
 }
 
@@ -539,14 +537,13 @@ export const getAllEventsAfterAttendance = async (userId: number) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Error fetching events after attendance: ${response.statusText}`);
+             console.error(`Error fetching events after attendance: ${response.statusText}`);
         }
 
         const result = await response.json();
         return result;
     } catch (error) {
         console.error('Failed to fetch events after attendance:', error);
-        throw error;
     }
 };
 
@@ -561,14 +558,13 @@ export const getAllUsersAfterAttendance = async (eventId: number) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Error fetching users after attendance: ${response.statusText}`);
+             console.error(`Error fetching users after attendance: ${response.statusText}`);
         }
 
         const result = await response.json();
         return result;
     } catch (error) {
         console.error('Failed to fetch users after attendance:', error);
-        throw error;
     }
 };
 
@@ -590,7 +586,6 @@ export const getEventNow = async () => {
         return result;
     } catch (error) {
         console.error('Failed to fetch current event:', error);
-        throw error;
     }
 };
 
@@ -608,7 +603,6 @@ export const likeEvent = async (eventId: number, userId: number) => {
         return result;
     } catch (error) {
         console.error('Failed to like event:', error);
-        throw error;
     }
 };
 
@@ -626,7 +620,6 @@ export const dislikeEvent = async (eventId: number, userId: number) => {
         return result;
     } catch (error) {
         console.error('Failed to dislike event:', error);
-        throw error;
     }
 };
 
@@ -640,7 +633,7 @@ export const getEventById = async (eventId: number): Promise<Event | null> => {
             },
         });
         if (!response.ok) {
-            throw new Error(`Failed to fetch event with ID ${eventId}`);
+             console.error(`Failed to fetch event with ID ${eventId}`);
         }
         const data: Event = await response.json();
         return data || null;
@@ -658,8 +651,14 @@ export const sendPasswordResetEmail = async (email: string) => {
                 'Content-Type': 'application/json',
             },
         });
-        const data = await response.text();
-        return data;
+        if(response.ok) {
+            const data = await response.text()
+            return data;
+        } else {
+
+            const data = await response.json();
+            return data;
+        }
     } catch (error) {
         console.error('Error sending password reset email:', error);
         return 'Failed to send password reset email.';
@@ -677,7 +676,7 @@ export const verifyToken = async (token: string) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -700,7 +699,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
         console.log(response.status)
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.text();
@@ -721,7 +720,7 @@ export const verifyPassword = async (userId: number, password: string) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -743,7 +742,7 @@ export const getEventPopularity = async (eventId: any) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -765,7 +764,7 @@ export const getJoinRate = async (eventId: any) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -787,7 +786,7 @@ export const getEventTypeDistribution = async () => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -809,7 +808,7 @@ export const getEventSchedulingTrends = async () => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -831,7 +830,7 @@ export const getAverageEventDuration = async () => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -854,7 +853,7 @@ export const getDepartmentEngagement = async () => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -876,7 +875,7 @@ export const setUserAsAdmin = async (userId: any) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -898,7 +897,7 @@ export const setUserAsStudent = async (userId: any) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();

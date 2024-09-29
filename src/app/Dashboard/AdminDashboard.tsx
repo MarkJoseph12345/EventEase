@@ -6,11 +6,12 @@ import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import Sidebar from "../Comps/Sidebar";
 import { fetchEventPicture, getEvents } from "@/utils/apiCalls";
 import { formatDate } from "@/utils/data";
+import Loading from "../Loader/Loading";
 
 const AdminDashboard = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
   };
@@ -22,14 +23,13 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const loadEvents = async () => {
+
       try {
         const fetchedEvents = await getEvents();
 
         if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
-          setError(true);
+          return
         } else {
-          setError(false);
-
           const currentTime = new Date();
 
           const processedEvents = await Promise.all(
@@ -55,14 +55,18 @@ const AdminDashboard = () => {
 
           setEvents(closestEvents);
         }
-      } catch (error) {
-        console.error("Error loading events:", error);
-        setError(true);
+      } finally {
+        setLoading(false);
       }
     };
 
     loadEvents();
   }, []);
+
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div>
@@ -83,7 +87,7 @@ const AdminDashboard = () => {
             events.map(event => (
               <div
                 key={event.id}
-                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center"
+                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
                 onClick={() => handleEventClick(event)}
               >
                 <img

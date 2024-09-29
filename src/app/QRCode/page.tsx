@@ -18,7 +18,6 @@ const QRCode = () => {
             setUser(userData);
             setLoading(false)
           } catch (error) {
-            console.error('Failed to fetch user:', error);
           }
         };
     

@@ -87,8 +87,6 @@ const ReportsAndAnalysis: React.FC = () => {
                 setAverageEventDuration(await getAverageEventDuration())
                 setDepartmentEngagement(await getDepartmentEngagement())
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
             } finally {
                 setLoading(false);
             }

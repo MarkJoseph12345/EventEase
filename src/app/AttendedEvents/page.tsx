@@ -12,7 +12,6 @@ const AttendedEvents = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);const [user, setUser] = useState<User | null>(null);
     const [selectedFilters, setSelectedFilters] = useState<{ types: string[], createdBy: string[] }>({ types: [], createdBy: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
@@ -31,19 +30,6 @@ const AttendedEvents = () => {
     };
 
     const dropdownRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const userData = await me();
-                setUser(userData);
-            } catch (error) {
-                console.error('Failed to fetch user:', error);
-            }
-        };
-
-        fetchUser();
-    }, []);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,9 +50,6 @@ const AttendedEvents = () => {
 
                     setEvents(processedEvents);
                 }
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
-                setError('Failed to fetch data.');
             } finally {
                 setLoading(false);
             }
@@ -94,10 +77,6 @@ const AttendedEvents = () => {
 
     if (loading) {
         return <Loading />;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
     }
 
     return (

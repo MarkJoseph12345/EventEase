@@ -13,7 +13,6 @@ const JoinEvents = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [selectedFilters, setSelectedFilters] = useState<{ types: string[], createdBy: string[] }>({ types: [], createdBy: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
@@ -39,7 +38,7 @@ const JoinEvents = () => {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                console.error('Failed to fetch user:', error);
+            
             }
         };
 
@@ -79,8 +78,6 @@ const JoinEvents = () => {
                 setEvents(processedEvents);
                 setLoading(false);
             } catch (error) {
-                console.error("Error loading events:", error);
-                setError(true);
                 setLoading(false);
             }
         };

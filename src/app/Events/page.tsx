@@ -10,17 +10,17 @@ import { formatDate } from "@/utils/data";
 const EventDetail = ({ event, onClose }: EventDetailModal) => {
     const type = event.eventType.toString().split(', ');
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
 
     const hasLongDescription = (description: string) => {
-        return description.split(' ').length > 50;
+        return description.split(' ').length > 30;
     };
 
     const truncateDescription = (description: string) => {
         const words = description.split(' ');
-        return words.slice(0, 50).join(' ') + '...';
+        return words.slice(0, 30).join(' ') + '...';
     };
-    
+
     const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
     return (
@@ -37,28 +37,29 @@ const EventDetail = ({ event, onClose }: EventDetailModal) => {
                         </div>
                     </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
-                     <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
+                    <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
                         <div className=" w-full">
-                            <div className="grid tablet:grid-cols-2 gap-4 mb-2 ">
+                            <div className="grid tablet:grid-cols-2 gap-2 mb-2 ">
                                 <p className=""><strong>Event Type:</strong> {type[0]}</p>
+                                <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                 <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
                                 <p className=""><strong>Slots:</strong> {event.eventLimit}</p>
-                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                 <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
-                                <p className=""><strong>Created By:</strong> {event.createdBy}</p>
+                                <p className="tablet:col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                             </div>
                             <p className="tablet:col-span-4 text-pretty">
-                                {showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}
+                                <strong>Description: </strong>{showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)} {hasLongDescription(event.eventDescription) && (
+                                    <>{isExpanded ? <span></span> : <span className='font-bold'>... </span>}
+                                        < button
+                                            className="font-bold underline"
+                                            onClick={() => setIsExpanded(!isExpanded)}
+                                        >
+                                            {isExpanded ? 'See less' : 'See more'}
+                                        </button>
+                                    </>
+                                )}
                             </p>
-                            {hasLongDescription(event.eventDescription) && (
-                                <button
-                                    className="font-bold"
-                                    onClick={() => setIsExpanded(!isExpanded)}
-                                >
-                                    {isExpanded ? 'See less' : 'See more'}
-                                </button>
-                            )}
 
 
                         </div>
@@ -92,13 +93,7 @@ const Events = () => {
                             return event;
                         })
                     );
-
-                    const currentTime = new Date();
-                    const upcomingEvents = processedEvents.filter(
-                        (event) => new Date(event.eventEnds!).getTime() > currentTime.getTime()
-                    );
-
-                    const sortedEvents = upcomingEvents.sort((a, b) =>
+                    const sortedEvents = processedEvents.sort((a, b) =>
                         new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
                     );
 
@@ -106,7 +101,6 @@ const Events = () => {
                     setEvents(sortedEvents);
                 }
             } catch (error) {
-                console.error("Error loading events:", error);
                 setError(true);
             } finally {
                 setLoading(false);
@@ -150,7 +144,7 @@ const Events = () => {
                             <div
                                 key={event.id}
                                 onClick={() => handleEventClick(event)}
-                                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center"
+                                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
                             >
                                 <img
                                     src={event.eventPicture}

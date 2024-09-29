@@ -8,8 +8,14 @@ ChartJS.register(Tooltip, ArcElement);
 
 
 const predefinedColors = [
-    '#FDCC01', '#AE0404', '#000000', '#FFFFFF'
+    '#FDCC01',
+    '#AE0404',
+    '#000000',
+    '#FFFFFF',
+    '#A9A9A9',
+    '#FF8C00'
 ];
+
 
 
 const DepartmentEngagement = ({ departmentEngagement }: { departmentEngagement: Record<string, number> }) => {
