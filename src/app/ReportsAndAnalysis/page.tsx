@@ -115,11 +115,12 @@ const ReportsAndAnalysis: React.FC = () => {
         setFilteredEventData(filtered);
     };
 
-    const formatDuration = (seconds: number) => {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
+    const formatDuration = (hours: number) => {
+        const totalSeconds = hours * 3600;
+        const calculatedHours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
 
-        const hoursDisplay = hours > 0 ? `${hours} hr${hours > 1 ? 's' : ''}` : '';
+        const hoursDisplay = calculatedHours > 0 ? `${calculatedHours} hr${calculatedHours > 1 ? 's' : ''}` : '';
         const minutesDisplay = minutes > 0 ? `${minutes} min${minutes > 1 ? 's' : ''}` : '';
 
         return {
@@ -127,6 +128,7 @@ const ReportsAndAnalysis: React.FC = () => {
             minutesDisplay: minutesDisplay || '0 mins'
         };
     };
+
 
     const { hoursDisplay, minutesDisplay } = formatDuration(averageEventDuration);
     const [hoursNumber, hoursLabel] = hoursDisplay.split(' ');

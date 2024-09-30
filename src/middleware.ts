@@ -45,9 +45,10 @@ export async function middleware(request: NextRequest) {
     "/login": "/Login",
     "/profile": "/Profile",
     "/dashboard": "/Dashboard",
+    "/preregister": "/Preregister",
   };
 
-  const publicRoutes = ["/", "/AboutUs", "/Events", "/PrivacyPolicy", "/TermsAndConditions", "/Login", "/SignUp"];
+  const publicRoutes = ["/", "/AboutUs", "/Events", "/PrivacyPolicy", "/TermsAndConditions", "/Login", "/SignUp", "/Preregister"];
   const adminRoutes = ["/CreateEvent", "/ManageEvents", "/ManageUsers", "/ReportsAndAnalysis"];
   const studentRoutes = ["/AttendedEvents", "/JoinEvents", "/QRCode", "/RegisteredEvents"];
 
@@ -66,11 +67,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/Dashboard", request.url));
     }
 
-    if (lowercasePathname === "/login" || lowercasePathname === "/signup") {
+    if (lowercasePathname === "/login" || lowercasePathname === "/signup" || lowercasePathname === "/preregister") {
       return NextResponse.redirect(new URL("/Dashboard", request.url));
     }
   } else {
-    if (lowercasePathname !== "/login" && lowercasePathname !== "/signup") {
+    if (lowercasePathname !== "/login" && lowercasePathname !== "/signup" && lowercasePathname !== "/preregister") {
       return NextResponse.redirect(new URL("/Login", request.url));
     }
   }
@@ -100,6 +101,7 @@ export const config = {
     "/AboutUs",
     "/Events",
     "/PrivacyPolicy",
-    "/TermsAndConditions"
+    "/TermsAndConditions",
+    "/Preregister"
   ],
 };
