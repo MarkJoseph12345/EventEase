@@ -129,7 +129,7 @@ const RegisteredEvents = () => {
                 <p className="text-2xl mb-2 font-semibold font-bevietnam tablet:text-3xl">Registered Events</p>
                 <div className="">
                     <div className="flex items-center">
-                        <div className="relative mr-3">
+                        <div className="relative mr-3 z-10">
                             <div onClick={toggleFilters} className="cursor-pointer">
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>

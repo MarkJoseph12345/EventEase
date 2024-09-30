@@ -81,8 +81,11 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({ onClose }) =>
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg w-80">
-        <h2 className="text-lg font-bold mb-4">Forgot Password</h2>
+      <div className="bg-white pb-6 rounded shadow-lg w-80">
+        <div className="bg-black w-full">
+          <h2 className="text-lg font-bold mb-4 text-customYellow px-1">Forgot Password</h2>
+        </div>
+        <div className="px-6">
         {step === 'sendEmail' && (
           <form onSubmit={handleEmailSubmit}>
             <div className="mb-4">
@@ -164,6 +167,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({ onClose }) =>
           </form>
         )}
       </div>
+    </div>
     </div>
   );
 };

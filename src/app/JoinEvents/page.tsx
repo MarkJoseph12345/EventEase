@@ -121,7 +121,7 @@ const JoinEvents = () => {
                 <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{user!.department} Events</p>
                 <div className="">
                     <div className="flex items-center mb-5 ">
-                        <div className="relative mr-3">
+                        <div className="relative mr-3 z-10">
                             <div onClick={toggleFilters} className="cursor-pointer">
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>

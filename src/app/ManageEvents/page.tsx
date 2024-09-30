@@ -109,7 +109,7 @@ const ManageEvents = () => {
                 <p className="text-xl font-semibold font-bevietnam mb-2 tablet:text-3xl">Manage Events</p>
                 <div className="">
                     <div className="flex items-center mb-5 ">
-                        <div className="relative mr-3">
+                        <div className="relative mr-3 z-10">
                             <div onClick={toggleFilters} className="cursor-pointer">
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>
