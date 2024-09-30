@@ -85,7 +85,7 @@ public class EventService {
         if (userCreator == null) {
             throw new EntityNotFoundException("User Not Found!");
         }
-        event.setCreatedBy(userCreator.getUsername());
+        event.setCreatedBy(userCreator.getFirstName());
         validateEventDates(event);
 
         Event newEvent = eventRepository.save(event);
