@@ -42,8 +42,6 @@ public class StartUp{
         }
     }
 
-
-
     @PostConstruct
     public void init() {
         if (userRepository.findByUsername("admin") == null) {

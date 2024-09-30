@@ -17,7 +17,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/auth/analytics")
+@RequestMapping("/analytics")
 @RequiredArgsConstructor
 @Tag(name = "ANALYTICS CONTROLLER", description = "THIS IS THE ANALYTICS CONTROLLER")
 public class AnalyticsController {

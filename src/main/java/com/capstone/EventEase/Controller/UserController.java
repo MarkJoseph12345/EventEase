@@ -1,12 +1,15 @@
 package com.capstone.EventEase.Controller;
 
+import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Exceptions.EntityNotDeletedException;
 import com.capstone.EventEase.Repository.UserRepository;
+import com.capstone.EventEase.Service.AuthenticationService;
 import com.capstone.EventEase.Service.ImageService;
 import com.capstone.EventEase.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +27,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/auth/user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @Tag(name = "USER CONTROLLER", description = "THIS IS WHERE THE USER CONTROLLERS ARE")
 public class UserController {
@@ -34,6 +37,7 @@ public class UserController {
 
     private final ImageService imageService;
 
+    private final AuthenticationService authenticationService;
 
    // @Tag(name = "userGET")
     @Operation(summary = "Greet The User")
@@ -41,6 +45,7 @@ public class UserController {
     public ResponseEntity<String> greet(){
         return new ResponseEntity<>("Hello World User",HttpStatus.OK);
     }
+
 
 
 
@@ -54,6 +59,20 @@ public class UserController {
     }
 
 
+    @Operation(summary = "Update User By passing UserId and new User Credentials")
+    @PutMapping("/updateUser/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable Long userId,@RequestBody
+    User user) throws EntityExistsException {
+        try{
+            LoginResponse updatedUser = authenticationService.updateUser(userId,user);
+            return new ResponseEntity<>(updatedUser,HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    
    // @Tag(name = "userGET")
     @Operation(summary = "Gets the users profile picture by sending an id")
     @GetMapping("/getProfilePicture/{userId}")
@@ -102,6 +121,7 @@ public class UserController {
     public List<User> getAllUsers(){
          return userService.getAllUsers();
     }
+
 
 
 

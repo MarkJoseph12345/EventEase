@@ -20,14 +20,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth/userevent")
+@RequestMapping("/userevent")
 @Tag(name = "USER EVENT CONTROLLER",description = "THIS IS WHERE THE USER EVENT CONTROLLERS ARE")
 public class UserEventController {
 
 
 
         private  final UserEventService userEventService;
-
 
 
 

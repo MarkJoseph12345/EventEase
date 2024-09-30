@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
+
+
 public class UserServiceUnitTest {
 
 
@@ -27,10 +29,15 @@ public class UserServiceUnitTest {
     private UserService userService;
 
 
+
+
+
     @BeforeEach
     void setUp(){
         MockitoAnnotations.openMocks(this);
     }
+
+
 
 
     @Test
@@ -51,29 +58,6 @@ public class UserServiceUnitTest {
         verify(userRepository, times(1)).save(user);
     }
 
-
-
-/*
-    @Test
-    void testGetUserById(){
-        User user = new User();
-
-        user.setId(1L);
-        user.setUsername("testUser");
-
-        when(userRepository.save(user)).thenReturn(user);
-        when(userService.getUserById(1L)).thenReturn(user);
-
-
-        userService.saveUser(user);
-
-        User fetchedUser = userService.getUserById(1L);
-
-    }
-
-
-
- */
 
 
 }

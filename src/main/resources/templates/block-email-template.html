@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Your Account</title>
+    <title>Account Blocked</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -34,23 +35,14 @@
         .content {
             padding: 40px;
         }
-        .button {
-            display: inline-block;
-            padding: 14px 28px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
-            background-color: #FDCC01;
-            text-decoration: none;
-            border-radius: 50px;
-            margin-top: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .button:hover {
-            background-color: #e0b601;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: #2980b9;
         }
         .footer {
             text-align: center;
@@ -65,18 +57,20 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1 th:text="${subject}">Confirm Your Account</h1>
+        <h1>Account Blocked</h1>
     </div>
     <div class="content">
-        <p style="font-size: 18px; color: #555;">Thank you for creating an account with EventEase. To complete your registration, please click the button below to confirm your email address:</p>
-
-        <a th:href="@{'https://eventeasedev.onrender.com/api/v1/auth/confirm/?token=' + ${token}}" class="button">Confirm Your Account</a>
-
-        <p style="font-size: 16px; color: #555; margin-top: 30px;">If you didn't create an account with EventEase, you can safely ignore this email.</p>
+        <p style="font-size: 18px; color: #555;">Dear User,</p>
+        <p style="font-size: 18px; color: #555;">Your account has been blocked due to suspicious activity. This action has been taken to protect your account and our platform's security.</p>
+        <div class="info-box">
+            <p style="margin: 0;">If you believe this is an error or would like to resolve this issue, please contact our support team for assistance and further information.</p>
+        </div>
+        <p style="font-size: 18px; color: #555;">Thank you for your understanding.</p>
+        <p style="font-size: 18px; color: #555; margin-top: 30px;">Best regards,<br>The EventEase Team</p>
     </div>
     <div class="footer">
-        <p>This is an automated message, please do not reply to this email.</p>
         <p>&copy; 2024 EventEase. All rights reserved.</p>
+        <p>If you have any questions, please contact our <a href="#" style="color: #FDCC01;">support team</a>.</p>
     </div>
 </div>
 </body>

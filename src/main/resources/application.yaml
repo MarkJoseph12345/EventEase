@@ -19,7 +19,7 @@ spring:
 
 
   mail:
-    host: smtp.gmail.com
+    host:  smtp.gmail.com
     port: 587
     username: ${user.email}
     password: ${user.password}
@@ -38,9 +38,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
+
+
 security:
   jwt:
-    jwtSigningKey: 413F4428472B4B6250655368566D5970337336763979244226452948404D6351
+    jwtSigningKey: ${secret.Key}
 
 
 

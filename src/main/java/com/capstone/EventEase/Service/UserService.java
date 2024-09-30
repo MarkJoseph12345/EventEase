@@ -31,24 +31,20 @@ public class UserService implements UserDetailsService {
 
 
 
+
     private final UserRepository userRepository;
 
     private final UserEventRepository userEventRepository;
 
     private final AttendanceRepository attendanceRepository;
 
-    private final ImageService imageService;
+    private final EmailService emailService;
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-
-
 
     public void saveUser(User user){
         userRepository.save(user);
     }
-
-
-
 
     public List<User> getAllUsers(){
         return userRepository.findAll().stream().filter(User::isVerified).collect(Collectors.toList());
@@ -67,9 +63,6 @@ public class UserService implements UserDetailsService {
     }
 
 
-
-
-
     public User getUserById(Long id){
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User Does not Exists!"));
     }
@@ -80,6 +73,16 @@ public class UserService implements UserDetailsService {
         deleteUserEvents(user);
         userRepository.deleteById(userId);
         return "User has been Deleted";
+    }
+
+    public String deleteUserByIdByAdmin(Long userId) throws IOException {
+        User user = getUserById(userId);
+        emailService.sendDeleteEmail(user.getUsername());
+        deletePasswordResetToken(user);
+        deleteUserEvents(user);
+        userRepository.deleteById(userId);
+
+        return "User has been Deleted By Admin";
     }
 
 

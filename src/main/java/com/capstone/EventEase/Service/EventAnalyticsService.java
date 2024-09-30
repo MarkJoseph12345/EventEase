@@ -23,7 +23,6 @@ public class EventAnalyticsService {
 
 
 
-
     public Event getEventById(Long eventId) {
         return repository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event Not Found!"));
      }
@@ -48,7 +47,6 @@ public class EventAnalyticsService {
     }
 
 
-
     public List<Event> getAllEvents() {
         return repository.findAll();
     }
@@ -66,7 +64,7 @@ public class EventAnalyticsService {
     public double calculateAverageEventDuration() {
         return getAllEvents().stream()
                 .mapToLong(event ->
-                        event.getEventEnds().toEpochSecond() - event.getEventStarts().toEpochSecond())
+                        (event.getEventEnds().toEpochSecond() - event.getEventStarts().toEpochSecond()) / 3600)
                 .average()
                 .orElse(0);
     }
