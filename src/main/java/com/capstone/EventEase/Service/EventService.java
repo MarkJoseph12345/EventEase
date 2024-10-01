@@ -106,6 +106,8 @@ public class EventService {
     }
 
 
+
+
     private void validateEventDates(Event newEvent) {
         ZonedDateTime currentDateTime = ZonedDateTime.now(UTC_8);
         ZonedDateTime eventStart = newEvent.getEventStarts().atZoneSameInstant(UTC_8);
@@ -164,6 +166,8 @@ public class EventService {
         passwords.add(userPass);
         return user;
     }
+
+
 
     private EmailSendRequestDTO createEmailDTO(String username) {
         return EmailSendRequestDTO.builder()
