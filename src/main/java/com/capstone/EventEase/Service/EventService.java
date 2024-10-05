@@ -80,6 +80,7 @@ public class EventService {
 
 
 
+
     public Event createEvent(String nameUser, Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
             EntityNotFoundException {
 
@@ -91,8 +92,10 @@ public class EventService {
         validateEventDates(event);
 
         Event newEvent = eventRepository.save(event);
-        List<String> passwords = new ArrayList<>();
         List<EmailSendRequestDTO> emails = new ArrayList<>();
+
+        System.out.println("Event starts: " + event.getEventStarts());
+        System.out.println("Event ends: " + event.getEventEnds());
 
         for (String username : event.getPreRegisteredUsers()) {
            // User user = createUser(username, passwords);
@@ -100,11 +103,66 @@ public class EventService {
            // userEventService.joinEvent(user.getId(), newEvent.getId());
         }
 
-        emailService.emailSend(emails, passwords, newEvent);
+        emailService.emailSend(emails, newEvent);
         logEventData(newEvent);
         return newEvent;
     }
 
+    /*
+    public Event createEvent(String nameUser, Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
+            EntityNotFoundException {
+
+        User userCreator = userRepository.findByUsername(nameUser);
+        if (userCreator == null) {
+            throw new EntityNotFoundException("User Not Found!");
+        }
+        event.setCreatedBy(userCreator.getFirstName());
+        validateEventDates(event);
+
+        Event newEvent = eventRepository.save(event);
+        List<EmailSendRequestDTO> emails = new ArrayList<>();
+
+        System.out.println("Event starts: " + event.getEventStarts());
+        System.out.println("Event ends: " + event.getEventEnds());
+
+        for (String username : event.getPreRegisteredUsers()) {
+            // User user = createUser(username, passwords);
+            emails.add(createEmailDTO(username));
+            // userEventService.joinEvent(user.getId(), newEvent.getId());
+        }
+
+     //   emailService.emailSend(emails, newEvent);
+        logEventData(newEvent);
+        return newEvent;
+    }
+
+     */
+
+/*
+    public void sendEmails(List<String> emails, Event event) {
+        List<EmailSendRequestDTO> emailSendRequestDTOS = emails.stream()
+                .map(email -> EmailSendRequestDTO.builder()
+                        .message("You have Been Invited To An Event From EventEase")
+                        .subject("EventEase Event Invite")
+                        .receiver(email)
+                        .build())
+                .collect(Collectors.toList());
+
+        emailService.emailSend(emailSendRequestDTOS, event);
+    }
+
+    public void sendAllEventsEmails(){
+        List<Event> events = eventRepository.findAll().stream().filter(event -> !event.isDoneSending()).toList();
+        for (Event event : events) {
+            Set<String> emails = event.getPreRegisteredUsers();
+            sendEmails(new ArrayList<>(emails), event);
+            event.setDoneSending(true);
+            eventRepository.save(event);
+        }
+    }
+
+
+ */
 
 
 
@@ -257,10 +315,13 @@ public class EventService {
         if (event.getAllowedGender() != null) {
             oldEvent.setAllowedGender(event.getAllowedGender());
         }
-
+        if(event.getLocation() != null && !event.getLocation().isEmpty()){
+            oldEvent.setLocation(event.getLocation());
+        }
 
         return eventRepository.save(oldEvent);
     }
+
 
 
 

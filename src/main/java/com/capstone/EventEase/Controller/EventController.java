@@ -9,6 +9,8 @@ import com.capstone.EventEase.Exceptions.GenderNotAllowedException;
 import com.capstone.EventEase.Exceptions.UserBlockedException;
 import com.capstone.EventEase.Service.EventService;
 import com.capstone.EventEase.Service.ImageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
-
-
+import java.util.*;
 
 
 @RestController
@@ -39,6 +38,7 @@ public class EventController {
 
     private final ImageService imageService;
 
+    private final ObjectMapper objectMapper;
 
 
     @Operation(summary = "CREATE AN EVENT")
@@ -53,17 +53,62 @@ public class EventController {
     }
 
 
-    @Operation(summary = "Update Event By Passing Event Id With New Event Credentials")
-    @PutMapping("updateEvent/{eventId}")
-    public ResponseEntity<?> updateEvent(@PathVariable Long eventId,@RequestBody Event event){
-       try{
-           return new ResponseEntity<>(eventService.updateEvent(eventId,event),HttpStatus.OK);
-       }catch (DateTimeException | EntityNotFoundException e){
-           return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.NOT_FOUND);
-       } catch (Exception e){
-           return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.BAD_REQUEST);
-       }
+
+
+/*
+    @Operation(summary = "CREATE AN EVENT")
+    @PostMapping(value = "/createEvent", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> createEvent(@RequestParam("createdBy") String username,
+                                         @RequestParam("event") String eventJson,
+                                         @RequestParam("eventImage") MultipartFile file,
+                                         @RequestParam("eventName") String eventName,
+                                         @RequestParam("eventDescription") String eventDescription,
+                                         @RequestParam("eventStarts") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime eventStarts,
+                                         @RequestParam("eventEnds") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime eventEnds,
+                                         @RequestParam("location") String location,
+                                         @RequestParam("eventLimit") Integer eventLimit,
+                                         @RequestParam("allowedGender") AllowedGender allowedGender,
+                                         @RequestParam("eventType") String eventType,
+                                         @RequestParam(value = "usersLiked", required = false) Set<String> usersLiked,
+                                         @RequestParam(value = "usersDisliked", required = false) Set<String> usersDisliked,
+                                         @RequestParam(value = "preRegisteredUsers", required = false) Set<String> preRegisteredUsers)
+            throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException, EntityNotFoundException, DateTimeException, IOException {
+        try {
+            // Convert eventJson to Event object
+            ObjectMapper objectMapper = new ObjectMapper();
+            Event event = objectMapper.readValue(eventJson, Event.class);
+
+            // Set the image and other fields
+            event.setEventPicture(file.getBytes());
+            event.setEventName(eventName);
+            event.setEventDescription(eventDescription);
+            event.setEventStarts(eventStarts);
+            event.setEventEnds(eventEnds);
+            event.setLocation(location);
+            event.setEventLimit(eventLimit);
+            event.setAllowedGender(allowedGender);
+            event.setEventType(eventType);
+
+            // Set usersLiked, usersDisliked, and preRegisteredUsers if provided
+            if (usersLiked != null) {
+                event.setUsersLiked(usersLiked);
+            }
+            if (usersDisliked != null) {
+                event.setUsersDisliked(usersDisliked);
+            }
+            if (preRegisteredUsers != null) {
+                event.setPreRegisteredUsers(preRegisteredUsers);
+            }
+
+            // Call the service to create the event
+            return new ResponseEntity<>(eventService.createEvent(username, event), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("messages", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
+
+
+ */
 
 
 
@@ -75,15 +120,11 @@ public class EventController {
 
 
 
-
     @Operation(summary = "Get Event By Passing EventId")
     @GetMapping("getEventById/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) throws Exception{
         return new ResponseEntity<>(eventService.getEvent(eventId),HttpStatus.OK);
     }
-
-
-
 
 
 
@@ -190,6 +231,13 @@ public class EventController {
     }
 
 
+//
+//    @PostMapping("/sendAllEmails")
+//    public void sendAllEmails() throws JsonProcessingException {
+//        eventService.sendAllEventsEmails();
+//    }
+
+
 
     @GetMapping("/getStartByEventId/{eventId}")
     public ResponseEntity<?> getStartsByEvent(@PathVariable Long eventId){
@@ -203,7 +251,12 @@ public class EventController {
             return ResponseEntity.ok(eventService.getEventByNow());
     }
 
+    
 
+@GetMapping("/greet")
+    public String greet(){
+        return "Hello";
+    }
 
 
 }

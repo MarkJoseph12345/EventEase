@@ -52,7 +52,7 @@ public class Event {
 
     private int usersJoined = 0;
 
-
+    private String location;
 
     @Enumerated(EnumType.STRING)
     private AllowedGender allowedGender;
@@ -77,6 +77,7 @@ public class Event {
 
     private List<String> department;
 
+    private boolean doneSending = false;
 
     private String eventType;
 }

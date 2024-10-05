@@ -1,112 +1,197 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Event Invitation</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: 'Arial', sans-serif;-->
+<!--            line-height: 1.6;-->
+<!--            color: #333;-->
+<!--            max-width: 600px;-->
+<!--            margin: 0 auto;-->
+<!--            padding: 20px;-->
+<!--            background-color: #f4f4f4;-->
+<!--        }-->
+<!--        .container {-->
+<!--            background-color: #ffffff;-->
+<!--            border-radius: 8px;-->
+<!--            overflow: hidden;-->
+<!--            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        .header {-->
+<!--            background-color: #FDCC01;-->
+<!--            padding: 30px;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        .header h1 {-->
+<!--            color: #ffffff;-->
+<!--            margin: 0;-->
+<!--            font-size: 28px;-->
+<!--            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);-->
+<!--        }-->
+<!--        .content {-->
+<!--            padding: 40px;-->
+<!--        }-->
+<!--        .event-details {-->
+<!--            background-color: #f9f9f9;-->
+<!--            border-left: 4px solid #FDCC01;-->
+<!--            padding: 25px;-->
+<!--            margin-top: 30px;-->
+<!--            border-radius: 0 8px 8px 0;-->
+<!--        }-->
+<!--        .event-details h2 {-->
+<!--            color: #FDCC01;-->
+<!--            margin-top: 0;-->
+<!--            font-size: 24px;-->
+<!--        }-->
+<!--        .event-info {-->
+<!--            margin-bottom: 15px;-->
+<!--        }-->
+<!--        .event-info strong {-->
+<!--            color: #555;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+<!--        .button {-->
+<!--            display: inline-block;-->
+<!--            padding: 14px 28px;-->
+<!--            font-size: 18px;-->
+<!--            font-weight: bold;-->
+<!--            color: #ffffff;-->
+<!--            background-color: #FDCC01;-->
+<!--            text-decoration: none;-->
+<!--            border-radius: 50px;-->
+<!--            margin-top: 30px;-->
+<!--            text-align: center;-->
+<!--            transition: all 0.3s ease;-->
+<!--        }-->
+<!--        .button:hover {-->
+<!--            background-color: #e0b601;-->
+<!--            transform: translateY(-3px);-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);-->
+<!--        }-->
+<!--        .footer {-->
+<!--            text-align: center;-->
+<!--            font-size: 12px;-->
+<!--            color: #777;-->
+<!--            margin-top: 20px;-->
+<!--            padding: 20px;-->
+<!--            border-top: 1px solid #eee;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container">-->
+<!--    <div class="header">-->
+<!--        <h1>Event Invitation</h1>-->
+<!--    </div>-->
+<!--    <div class="content">-->
+<!--        <p style="font-size: 18px; color: #555;">You have been invited to join an event. Please sign up to participate.</p>-->
+<!--        <div class="event-details">-->
+<!--            <h2 th:text="${eventName}" style="margin-bottom: 15px;">Event Name</h2>-->
+<!--            <div class="event-info">-->
+<!--                <strong>Description:</strong>-->
+<!--                <p th:text="${eventDescription}" style="margin-top: 10px; font-style: italic;">Event Description</p>-->
+<!--            </div>-->
+<!--            <div class="event-info">-->
+<!--                <strong>Allowed Gender:</strong> <span th:text="${allowedGender}">Allowed Gender</span>-->
+<!--            </div>-->
+<!--            <div class="event-info">-->
+<!--                <strong>Event Limit:</strong> <span th:text="${eventLimit}">Event Limit</span>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <a th:href="${actionUrl}" class="button">Sign Up Now</a>-->
+<!--    </div>-->
+<!--    <div class="footer">-->
+<!--        <p>This invitation was sent to you via EventEase. If you have any questions, please contact the event organizer.</p>-->
+<!--        <p>&copy; 2024 EventEase. All rights reserved.</p>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Invitation</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            background-color: #FDCC01;
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 {
-            color: #ffffff;
-            margin: 0;
-            font-size: 28px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .content {
-            padding: 40px;
-        }
-        .event-details {
-            background-color: #f9f9f9;
-            border-left: 4px solid #FDCC01;
-            padding: 25px;
-            margin-top: 30px;
-            border-radius: 0 8px 8px 0;
-        }
-        .event-details h2 {
-            color: #FDCC01;
-            margin-top: 0;
-            font-size: 24px;
-        }
-        .event-info {
-            margin-bottom: 15px;
-        }
-        .event-info strong {
-            color: #555;
-            font-weight: bold;
-        }
-        .button {
-            display: inline-block;
-            padding: 14px 28px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
-            background-color: #FDCC01;
-            text-decoration: none;
-            border-radius: 50px;
-            margin-top: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .button:hover {
-            background-color: #e0b601;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-            margin-top: 20px;
-            padding: 20px;
-            border-top: 1px solid #eee;
-        }
-    </style>
 </head>
-<body>
-<div class="container">
-    <div class="header">
-        <h1>Event Invitation</h1>
-    </div>
-    <div class="content">
-        <p style="font-size: 18px; color: #555;">You have been invited to join an event. Please sign up to participate.</p>
-        <div class="event-details">
-            <h2 th:text="${eventName}" style="margin-bottom: 15px;">Event Name</h2>
-            <div class="event-info">
-                <strong>Description:</strong>
-                <p th:text="${eventDescription}" style="margin-top: 10px; font-style: italic;">Event Description</p>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    <tr>
+        <td align="center" style="padding: 40px 0; background-color: #FDCC01;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Event Invitation</h1>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 40px 30px;">
+            <p style="font-size: 18px; color: #555; text-align: center;">
+                <span th:if="${actionUrl.contains('Login')}">
+                    You've been invited to an exciting event! Log in to your account to join.
+                </span>
+                <span th:if="${actionUrl.contains('SignUp')}">
+                    You've been invited to an exciting event! Sign up now to participate.
+                </span>
+            </p>
+            <!-- Event Picture -->
+<!--            <div style="text-align: center; margin-bottom: 20px;">-->
+<!--               &lt;!&ndash; <img th:src="'cid:' + ${eventImageCid}" alt="Event Image" /> &ndash;&gt;-->
+<!--                &lt;!&ndash;<img src="https://drive.google.com/uc?export=view&id=1B4V7UywHM6XF_fRd8lJCK4YCxlZFNRok" alt="Your Image" /> &ndash;&gt;-->
+
+<!--               &lt;!&ndash; <img th:src="${eventImage}" alt="Event Image" style="max-width: 100%; height: auto; border-radius: 8px;" /> &ndash;&gt;-->
+<!--            </div>-->
+            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f9f9f9; border-left: 4px solid #FDCC01; margin-top: 30px;">
+                <tr>
+                    <td style="padding: 25px;">
+                        <h2 style="color: #FDCC01; margin-top: 0; font-size: 24px; text-align: center;" th:text="${eventName}">Event Name</h2>
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">Description:</strong>
+                            <p style="margin-top: 10px; font-style: italic;" th:text="${eventDescription}">Event Description</p>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">Allowed Gender:</strong> <span th:text="${allowedGender}">Allowed Gender</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">Event Limit:</strong> <span th:text="${eventLimit}">Event Limit</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">Start Date:</strong>
+                            <span th:text="${#temporals.format(eventStarts, 'MMMM dd, yyyy hh:mm a')}">
+        Start Date
+    </span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">End Date:</strong>
+                            <span th:text="${#temporals.format(eventEnds, 'MMMM dd, yyyy hh:mm a')}">
+        End Date
+    </span>
+                        </div>
+
+
+
+                        <div style="margin-bottom: 15px;">
+                            <strong style="color: #555;">Location:</strong> <span th:text="${location}">Location</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div style="text-align: center; margin-top: 30px;">
+                <a th:href="${actionUrl}" style="display: inline-block; padding: 14px 28px; font-size: 18px; font-weight: bold; color: #ffffff; background-color: #FDCC01; text-decoration: none; border-radius: 50px;">
+                    <span th:if="${actionUrl.contains('Login')}">Log In Now</span>
+                    <span th:if="${actionUrl.contains('SignUp')}">Sign Up Now</span>
+                </a>
             </div>
-            <div class="event-info">
-                <strong>Allowed Gender:</strong> <span th:text="${allowedGender}">Allowed Gender</span>
-            </div>
-            <div class="event-info">
-                <strong>Event Limit:</strong> <span th:text="${eventLimit}">Event Limit</span>
-            </div>
-        </div>
-        <a th:href="${actionUrl}" class="button">Sign Up Now</a>
-    </div>
-    <div class="footer">
-        <p>This invitation was sent to you via EventEase. If you have any questions, please contact the event organizer.</p>
-        <p>&copy; 2024 EventEase. All rights reserved.</p>
-    </div>
-</div>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align: center; font-size: 12px; color: #777; padding: 20px; border-top: 1px solid #eee;">
+            <p>This invitation was sent to you via EventEase. If you have any questions, please contact the event organizer.</p>
+            <p>&copy; 2024 EventEase. All rights reserved.</p>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
