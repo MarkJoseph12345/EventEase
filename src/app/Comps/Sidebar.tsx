@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Link from "next/link";
 import { deleteCookie } from '@/utils/cookies';
 import { deleteUser, fetchProfilePicture, me } from '@/utils/apiCalls';
-import Loading from '../Loader/Loading';
 import { User } from '@/utils/interfaces';
 
 const studentSideBarLinks = [
@@ -132,7 +131,7 @@ const Sidebar = () => {
         return (
             <div className="flex items-center bg-customYellow">
                  <p className="ml-2 text-4xl font-bold cursor-pointer">≡</p>
-                 <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover ml-4 cursor-pointer tablet:h-16 tablet:w-56"/>
+                 <img src="/logo.png" alt="Logo" className="h-10 object-cover ml-4 cursor-pointer m-3 "/>
             </div>
         );
     }
@@ -141,12 +140,12 @@ const Sidebar = () => {
         <div className="w-full sticky top-0 z-20">
             <div className="flex items-center bg-customYellow">
                 <p className="ml-2 text-4xl font-bold cursor-pointer" onClick={toggleSidebar}>≡</p>
-                <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover ml-4 cursor-pointer tablet:h-16 tablet:w-56" onClick={handleLogoClick} />
+                <img src="/logo.png" alt="Logo" className="h-10 object-cover ml-4 cursor-pointer m-3 " onClick={handleLogoClick} />
             </div>
             <div className={`min-h-dvh ${isSidebarOpen ? "w-3/4 border-r smartphone:w-72 tablet:w-96" : "w-0"} bg-white fixed inset-0 transition-all duration-100 ease-in-out`} ref={sidebarRef}>
                 <div className={`min-h-dvh ${isSidebarOpen ? "block" : "hidden"} `}>
                     <div>
-                        <img src="/logo.png" alt="Logo" className="m-3 h-10 w-40 object-cover bg-customYellow cursor-pointer tablet:h-14 tablet:w-44" onClick={handleLogoClick} />
+                        <img src="/logo.png" alt="Logo" className="m-3 object-cover cursor-pointer" onClick={handleLogoClick} />
                         <p className="font-semibold absolute top-1 right-4 cursor-pointer tablet:text-3xl" onClick={toggleSidebar}>✖</p>
                     </div>
                     <div className="grid mx-10 gap-5 mt-10 smartphone:w-fit smartphone:mx-auto ">

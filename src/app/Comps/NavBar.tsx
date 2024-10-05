@@ -23,8 +23,9 @@ const NavBar = () => {
   };
 
   const handleClick = (href: string) => {
+    const pathname = window.location.pathname;
     if (pathname === href) {
-      window.location.reload();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -65,13 +66,13 @@ const NavBar = () => {
         </div>
       )}
       <div className={`flex items-center justify-between bg-customYellow ${isSidebarOpen ? "hidden" : "block"} tablet:h-[4rem]`}>
-        <img src="/logo.png" alt="Logo" className="h-10 w-40 object-cover cursor-pointer" onClick={() => handleLogoClick()} />
+        <img src="/logo.png" alt="Logo" className="h-10 w-48 object-cover cursor-pointer ml-4" onClick={() => handleLogoClick()} />
         <p className="mr-4 text-4xl font-bold smartphone:hidden" onClick={toggleSidebar}>≡</p>
         <div className="flex items-center gap-5 mr-5 hidden smartphone:flex tablet:text-xl tablet:gap-10">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link href={link.href} key={link.name} className={isActive ? "font-bold" : ""}>
+              <Link href={link.href} key={link.name} className={isActive ? "font-bold" : ""} onClick={() => handleClick(link.href)}>
                 {link.name}
               </Link>
             )

@@ -5,25 +5,27 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Event } from "@/utils/interfaces";
 import Sidebar from "../Comps/Sidebar";
 import Loading from "../Loader/Loading";
-import { createEvent, fetchEventPicture, updateEventPicture, me, getEventById } from "@/utils/apiCalls";
+import { createEvent, fetchEventPicture, updateEventPicture, me, getEventById, getAllUsers, fetchProfilePicture } from "@/utils/apiCalls";
 import PopUps from "../Modals/PopUps";
 import AdminEventDetailModal from "../Modals/AdminEventDetailModal";
 import { User } from '@/utils/interfaces';
 
 const departments = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
-const types = ["Workshop", "Seminar", "Networking",  "Others"];
+const types = ["Networking Event", "Seminar", "Workshop", "Others"];
 
 
 const CreateEvent = () => {
   const [newPicture, setNewPicture] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<User[]>([]);
+  const [inputValue, setInputValue] = useState("");
   const [event, setEvent] = useState<Event>({
     eventName: "",
     eventPicture: "",
     eventDescription: "",
     eventStarts: null,
     eventEnds: null,
-    eventType: "Workshop",
+    eventType: "Networking Event",
     department: [],
     eventLimit: 50,
     allowedGender: "ALL",
@@ -34,7 +36,8 @@ const CreateEvent = () => {
   const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [createdEvent, setCreatedEvent] = useState<Event | null>()
-  
+  const [users, setUsers] = useState<User[]>([]);
+  const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,6 +50,35 @@ const CreateEvent = () => {
 
     fetchUser();
   }, []);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const fetchedUsers = await getAllUsers();
+        const userData = await me();
+        const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id);
+        setUsers(filteredUsers);
+        await fetchUserImages(filteredUsers);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const fetchUserImages = async (users: User[]) => {
+    const imagePromises = users.map(async (user) => {
+      if (user.id) {
+        const url = await fetchProfilePicture(user.id);
+        return { [user.id]: url };
+      }
+      return {};
+    });
+
+    const images = await Promise.all(imagePromises);
+    const imagesMap = images.reduce((acc, image) => ({ ...acc, ...image }), {});
+    setUserImages(imagesMap);
+  };
 
 
   useEffect(() => {
@@ -57,7 +89,7 @@ const CreateEvent = () => {
         eventDescription: "",
         eventStarts: null,
         eventEnds: null,
-        eventType: "Workshop",
+        eventType: "Networking Event",
         department: [],
         eventLimit: 50,
         allowedGender: "ALL",
@@ -80,21 +112,55 @@ const CreateEvent = () => {
     });
   };
 
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
 
     if (name === "preRegisteredUsers") {
+      setInputValue(value);
       const usersArray = value.split(',').map(user => user.trim()).filter(user => user !== "");
       setEvent(prevEvent => ({
         ...prevEvent,
-        [name]: usersArray
+        preRegisteredUsers: usersArray
       }));
+
+
+      if (value) {
+        const lastUser = usersArray[usersArray.length - 1];
+        if (lastUser) {
+          const filteredSuggestions = users.filter(user =>
+            user.username!.toLowerCase().includes(lastUser.toLowerCase())
+          );
+          setSuggestions(filteredSuggestions);
+        } else {
+          setSuggestions([]);
+        }
+      } else {
+        setSuggestions([]);
+      }
     } else {
       setEvent(prevEvent => ({
         ...prevEvent,
         [name]: value
       }));
     }
+  };
+
+  const addUser = (username: string) => {
+    const parts = inputValue.split(',').map(part => part.trim());
+
+    parts.pop();
+
+    const updatedValue = [...parts, username].join(', ');
+
+
+    setInputValue(updatedValue);
+    setEvent(prevEvent => ({
+      ...prevEvent,
+      preRegisteredUsers: [...parts, username]
+    }));
+
+    setSuggestions([]);
   };
 
 
@@ -141,6 +207,7 @@ const CreateEvent = () => {
       reader.readAsDataURL(file);
     }
   };
+
   const handleCreateEvent = async () => {
     setIsCreating(true);
     const {
@@ -155,16 +222,14 @@ const CreateEvent = () => {
       setIsCreating(false);
       return;
     }
-    const result: any = await createEvent(user!.username!,event);
+    const result: any = await createEvent(user!.username!, event);
     setIsCreating(false);
-
     if (result.success) {
       setMessage({ text: result.message, type: "success" });
       if (newPicture instanceof File) {
         await updateEventPicture(result.id, newPicture);
 
       }
-
       const eventCreated = await getEventById(result.id);
       if (eventCreated) {
         const picture = await fetchEventPicture(result.id!);
@@ -177,6 +242,8 @@ const CreateEvent = () => {
     }
   };
 
+  const [imageUrl, setImageUrl] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -188,6 +255,7 @@ const CreateEvent = () => {
   if (loading) {
     return <Loading />;
   }
+
 
   return (
     <div>
@@ -275,17 +343,32 @@ const CreateEvent = () => {
               Event Limit <span className="text-customRed">*</span>
             </label>
           </div>
+
           <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
             <input
               placeholder="Pre-registered Users (comma-separated)"
               name="preRegisteredUsers"
-              value={event.preRegisteredUsers}
+              value={inputValue}
               onChange={handleInputChange}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
             <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Pre-registered Users
+              Pre-registered Users(comma-separated)
             </label>
+            {suggestions.length > 0 && (
+              <ul className="absolute w-full z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1 max-h-40 overflow-auto">
+                {suggestions.map(user => (
+                  <li
+                    key={user.id}
+                    onClick={() => addUser(user.username!)}
+                    className="flex w-full cursor-pointer hover:bg-gray-200 px-2 py-1"
+                  >
+                    <img src={userImages[user.id!] || "/defaultpic.png"} alt={user.username} className="w-8 h-8 rounded-full mr-2" />
+                    {user.username}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
 

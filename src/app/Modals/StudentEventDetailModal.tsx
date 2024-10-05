@@ -114,6 +114,14 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
 
         return () => clearInterval(interval);
     }, [event?.id, user?.id]);
+    
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
 
     const handleJoinUnjoin = async () => {
         try {

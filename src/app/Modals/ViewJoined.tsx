@@ -30,6 +30,14 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
 
         fetchUsersAndAttendance();
     }, [event.id]);
+    
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
 
 
 

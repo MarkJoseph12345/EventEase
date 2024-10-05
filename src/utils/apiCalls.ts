@@ -91,13 +91,14 @@ export const createEvent = async (username: string, eventData: any) => {
             eventDescription: eventData.eventDescription,
             eventStarts: eventData.eventStarts,
             eventEnds: eventData.eventEnds,
-            eventPicture: eventData.eventPicture.split(',')[1],
+            eventPicture: eventData.eventPicture,
             department: eventData.department,
             eventType: eventData.eventType,
             allowedGender: eventData.allowedGender,
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
+        console.log(formattedEventData)
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT + `?creator=${encodeURIComponent(username)}`, {
             method: 'POST',
             headers: {
@@ -106,6 +107,7 @@ export const createEvent = async (username: string, eventData: any) => {
             },
             body: JSON.stringify(formattedEventData),
         });
+        console.log(response.status)
         const data = await response.json();
         const { messages } = data;
         if (response.ok) {

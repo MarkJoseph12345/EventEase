@@ -35,6 +35,15 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
         fetchUsersJoinedToEvent()
     }, [])
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
+
+
     const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
     const type = event.eventType.toString().split(', ');
 
