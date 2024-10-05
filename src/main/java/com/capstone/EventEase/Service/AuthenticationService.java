@@ -51,6 +51,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
 
 
+    private final VerificationTokenService verificationTokenService;
+
 
     private final EmailService emailService;
 
@@ -77,9 +79,19 @@ public class AuthenticationService {
     }
 
 
+
     private void checkIfUserExists(String username){
         if(userRepository.findByUsername(username) != null){
-            throw new EntityExistsException("Username Already Exists!");
+            User user = userRepository.findByUsername(username);
+            VerificationToken verificationToken = verificationTokenRepository.findByUser(user);
+            String token = verificationToken.getToken();
+            if(verificationTokenService.isVerificationTokenExpired(token)){
+                emailService.sendConfirmationLink(username,token);
+                verificationTokenRepository.delete(verificationToken);
+                throw new EntityExistsException("Check your email for confirmation");
+            }else{
+                throw new EntityExistsException("Username Already Exists!");
+            }
         }
     }
 

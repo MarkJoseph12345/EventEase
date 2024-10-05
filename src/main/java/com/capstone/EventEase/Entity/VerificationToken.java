@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -31,10 +34,12 @@ public class VerificationToken {
 
 
 
+    private LocalDateTime expiryDate;
 
     public VerificationToken(String token, User user){
         this.token = token;
         this.user = user;
+        this.expiryDate = LocalDateTime.now().plusMinutes(30);
     }
 }
 
