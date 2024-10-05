@@ -16,6 +16,9 @@ spring:
 
 
 
+
+
+
   mail:
     host:  smtp.gmail.com
     port: 587
@@ -24,6 +27,7 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
 
 
     servlet:
@@ -35,6 +39,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+
 
 
 

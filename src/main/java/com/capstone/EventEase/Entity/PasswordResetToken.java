@@ -37,6 +37,6 @@ public class PasswordResetToken {
     public PasswordResetToken(String randomToken, User user) {
         this.token = randomToken;
         this.user = user;
-        this.expiryDate = LocalDateTime.now().plusMinutes(30);
+        this.expiryDate = LocalDateTime.now().plusMinutes(2);
     }
 }

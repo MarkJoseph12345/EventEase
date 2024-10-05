@@ -28,6 +28,8 @@ public class VerificationToken {
 
 
 
+
+
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
@@ -36,10 +38,12 @@ public class VerificationToken {
 
     private LocalDateTime expiryDate;
 
+
+
     public VerificationToken(String token, User user){
         this.token = token;
         this.user = user;
-        this.expiryDate = LocalDateTime.now().plusMinutes(30);
+        this.expiryDate = LocalDateTime.now().plusMinutes(2);
     }
 }
 
