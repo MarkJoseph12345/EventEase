@@ -77,7 +77,6 @@ public class AuthenticationService {
     }
 
 
-
     private void checkIfUserExists(String username){
         if(userRepository.findByUsername(username) != null){
             throw new EntityExistsException("Username Already Exists!");

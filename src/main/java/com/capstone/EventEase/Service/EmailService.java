@@ -6,6 +6,7 @@ import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Repository.UserRepository;
 import com.capstone.EventEase.UTIL.ImageUtils;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
 import jakarta.persistence.EntityNotFoundException;
@@ -19,6 +20,7 @@ import org.thymeleaf.context.Context;
     import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Base64;
@@ -91,6 +93,7 @@ public class EmailService {
 
              //  ByteArrayDataSource dataSource = new ByteArrayDataSource(ImageUtils.decompressImage(event.getEventPicture()), "image/png");
            // helper.addInline("eventPicture", dataSource);
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email.getReceiver());
             helper.setSubject("Event Invitation");
             helper.setText(htmlContent, true);
@@ -98,6 +101,8 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MessagingException e) {
             logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
     public void forgotPasswordEmail(String email, String token) {
@@ -114,6 +119,7 @@ public class EmailService {
 
          MimeMessage message = javaMailSender.createMimeMessage();
          MimeMessageHelper helper = new MimeMessageHelper(message,true);
+         helper.setFrom("eventease2002@gmail.com", "EventEase");
          helper.setTo(email);
          helper.setSubject("Forgot Password Token");
          helper.setText(htmlContent,true);
@@ -121,6 +127,8 @@ public class EmailService {
          javaMailSender.send(message);
      }catch (MessagingException e){
          logger.error("Failed to send email to {}: {}", email, e.getMessage());
+     } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException(e);
      }
     }
 
@@ -136,6 +144,7 @@ public class EmailService {
 
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,true);
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email);
             helper.setSubject("Account Confirmation");
             helper.setText(htmlContent,true);
@@ -144,6 +153,8 @@ public class EmailService {
             javaMailSender.send(message);
         }catch (MessagingException e){
             logger.error("Failed to send email to {}: {}", email, e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -153,6 +164,7 @@ public class EmailService {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email);
             helper.setSubject("Account Blocked");
 
@@ -162,6 +174,8 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MessagingException e) {
             logger.error("Failed to send block email to {}: {}", email, e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -169,6 +183,7 @@ public class EmailService {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email);
             helper.setSubject("Account Unblocked");
 
@@ -178,6 +193,8 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MessagingException e) {
             logger.error("Failed to send unblock email to {}: {}", email, e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -187,6 +204,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(email);
             helper.setSubject("Account Deleted");
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
 
             String htmlContent = templateEngine.process("delete-email-template", new Context());
             helper.setText(htmlContent, true);
@@ -194,6 +212,8 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MessagingException e) {
             logger.error("Failed to send delete email to {}: {}", email, e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

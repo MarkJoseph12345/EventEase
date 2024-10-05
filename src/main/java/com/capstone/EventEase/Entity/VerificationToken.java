@@ -21,16 +21,13 @@ public class VerificationToken {
     @Column(name = "verification_id")
     private Long id;
 
-
     private String token;
-
 
 
 
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
-
 
 
 
