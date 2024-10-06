@@ -93,9 +93,9 @@ const Home = () => {
         </div>
       ) : null}
       <div className="mt-10">
-        <p className="mx-4 mb-2 font-poppins text-lg font-medium laptop:text-center">Happening this week!</p>
+        <p className="mx-4 mb-2 font-poppins text-lg font-medium text-center">Happening this week!</p>
         {eventsThisWeek.length ? (
-          <div className="mx-auto max-w-6xl ">
+          <div className={`mx-auto ${eventsThisWeek.length <= 2 ? 'max-w-xl' : 'max-w-6xl'}`}>
             <Slider {...sliderSettings}>
               {eventsThisWeek.map((event, index) => {
                 const isNextSlide = index === (currentSlide + 1) % eventsThisWeek.length;
