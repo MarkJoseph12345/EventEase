@@ -13,7 +13,7 @@ const Footer = () => {
   return (
     <div>
       <div className="mt-4 mx-4 laptop:flex laptop:gap-10 laptop:text-wrap laptop:ml-8">
-        <div className="w-5/6 laptop:w-auto">
+        <div className="w-full laptop:w-auto">
           {/* <img src="/logo.png" className="bg-customYellow h-10 w-32 object-cover mr-20" /> */}
           <p className=" font-poppins font-medium laptop:w-80 laptop:text-pretty text-center">Event Tracking Platform for Wildcat Innovation Labs</p>
           <div className="flex gap-2 justify-center">
