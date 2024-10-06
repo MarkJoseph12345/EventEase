@@ -111,7 +111,7 @@ export const createEvent = async (username: string, eventData: any) => {
         const data = await response.json();
         const { messages } = data;
         if (response.ok) {
-            return { success: true, message: "Event creation successful!", id: data.id };
+            return { success: true, message: "Event Successfully Created", id: data.id };
         } else {
             return { success: false, message: messages };
         }

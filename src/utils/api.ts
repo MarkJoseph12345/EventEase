@@ -1,4 +1,4 @@
-const BASE_URL = "https://eventease-cu3r.onrender.com";
+const BASE_URL = "https://eventease-meey.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
@@ -8,8 +8,6 @@ export const API_ENDPOINTS = {
   UPDATE_EVENT_PICTURE: `${BASE_URL}/event/updateEventPicture/`,
   UPDATE_EVENT: `${BASE_URL}/event/updateEvent/`,
   UPDATE_PROFILE_PICTURE: `${BASE_URL}/user/updateProfilePicture/`,
-  GET_ALL_EVENTS: `${BASE_URL}/api/v1/auth/event/getAllEvents`,
-  GET_EVENT_PICTURE: `${BASE_URL}/api/v1/auth/event/getEventPicture/`,
   GET_ALL_USERS: `${BASE_URL}/user/getAllUsers`,
   GET_PROFILE_PICTURE: `${BASE_URL}/user/getProfilePicture/`,
   GET_PROFILE_PICTURE_SVG: `${BASE_URL}/user/getProfilePicture/svg/`,
@@ -43,6 +41,8 @@ export const API_ENDPOINTS = {
   TEST: `${BASE_URL}/api/v1/auth/test`,
   CALL_CRON: `${BASE_URL}/api/v1/auth/callCron`,
   
+  GET_ALL_EVENTS: `${BASE_URL}/api/v1/auth/event/getAllEvents`,
+  GET_EVENT_PICTURE: `${BASE_URL}/api/v1/auth/event/getEventPicture/`,
   EVENT_POPULARITY: `${BASE_URL}/analytics/getEventPopularity/`,
   JOIN_RATE: `${BASE_URL}/analytics/getJoinRate/`,
   EVENT_DISTRIBUTION: `${BASE_URL}/analytics/getEventTypeDistribution`,

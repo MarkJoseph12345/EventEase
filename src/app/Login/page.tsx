@@ -29,7 +29,13 @@ const Login = () => {
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setLoading(true);
+
         const { username, password } = userForm;
+        
+        if(!username && !password) {
+            setMessage({ text: "Please fill in all fields", type: "error" });
+            return setLoading(false);
+        }
 
         const result = await loginAccount(username, password);
         if (result.success) {
@@ -48,7 +54,7 @@ const Login = () => {
                 <img src="/logo.png" className="h-10 w-48 object-cover cursor-pointer" onClick={() => window.location.href = "/"} />
             </div>
             <p className="text-center text-4xl font-poppins font-bold mt-10">Log In</p>
-            <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite w-fit mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">
+            <div className="min-h-10 rounded-2xl mt-4 border-2 p-2 bg-customWhite mx-auto smartphone:w-9/12 tablet:w-[34.125rem]">
                 <h1 className="text-center text-xl font-bold">Enter your Credentials</h1>
                 <form onSubmit={handleLogin} className="mt-2 flex flex-col gap-3">
                     <div className="relative h-11 w-full ">

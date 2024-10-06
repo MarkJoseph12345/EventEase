@@ -38,7 +38,11 @@ const CreateEvent = () => {
   const [createdEvent, setCreatedEvent] = useState<Event | null>()
   const [users, setUsers] = useState<User[]>([]);
   const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const suggestionRef = useRef(null);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -55,7 +59,7 @@ const CreateEvent = () => {
       try {
         const fetchedUsers = await getAllUsers();
         const userData = await me();
-        const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id);
+        const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id && user.role === "STUDENT");
         setUsers(filteredUsers);
         await fetchUserImages(filteredUsers);
       } finally {
@@ -118,25 +122,30 @@ const CreateEvent = () => {
 
     if (name === "preRegisteredUsers") {
       setInputValue(value);
-      const usersArray = value.split(',').map(user => user.trim()).filter(user => user !== "");
-      setEvent(prevEvent => ({
-        ...prevEvent,
-        preRegisteredUsers: usersArray
-      }));
-
-
-      if (value) {
-        const lastUser = usersArray[usersArray.length - 1];
-        if (lastUser) {
-          const filteredSuggestions = users.filter(user =>
-            user.username!.toLowerCase().includes(lastUser.toLowerCase())
-          );
-          setSuggestions(filteredSuggestions);
+      if (value.trim() === '') {
+        setSelectedIndex(0);
+        setSuggestions([]);
+      }
+      else {
+        const usersArray = value.split(',').map(user => user.trim()).filter(user => user !== "");
+        setEvent(prevEvent => ({
+          ...prevEvent,
+          preRegisteredUsers: usersArray
+        }));
+        setDropdownOpen(true);
+        if (value) {
+          const lastUser = usersArray[usersArray.length - 1];
+          if (lastUser) {
+            const filteredSuggestions = users.filter(user =>
+              user.username!.toLowerCase().includes(lastUser.toLowerCase())
+            );
+            setSuggestions(filteredSuggestions);
+          } else {
+            setSuggestions([]);
+          }
         } else {
           setSuggestions([]);
         }
-      } else {
-        setSuggestions([]);
       }
     } else {
       setEvent(prevEvent => ({
@@ -147,22 +156,25 @@ const CreateEvent = () => {
   };
 
   const addUser = (username: string) => {
-    const parts = inputValue.split(',').map(part => part.trim());
+    if (!selectedUsers.includes(username)) {
+      setSelectedUsers([...selectedUsers, username]);
+    }
 
-    parts.pop();
-
-    const updatedValue = [...parts, username].join(', ');
-
-
-    setInputValue(updatedValue);
     setEvent(prevEvent => ({
       ...prevEvent,
-      preRegisteredUsers: [...parts, username]
+      preRegisteredUsers: selectedUsers,
     }));
 
     setSuggestions([]);
+    setDropdownOpen(false);
+    setSelectedIndex(0);
+    setInputValue('');
   };
 
+
+  const removeUser = (username: string) => {
+    setSelectedUsers(selectedUsers.filter(user => user !== username));
+  };
 
   const handleStartDateChange = (date: Date | null) => {
     if (date) {
@@ -218,7 +230,7 @@ const CreateEvent = () => {
       department,
     } = event;
     if (!eventName || !eventDescription || !eventStarts || !eventEnds || department.length === 0) {
-      setMessage({ text: "Please fill in all fields.", type: "error" });
+      setMessage({ text: "Please fill in all the required fields.", type: "error" });
       setIsCreating(false);
       return;
     }
@@ -242,7 +254,37 @@ const CreateEvent = () => {
     }
   };
 
-  const [imageUrl, setImageUrl] = useState("");
+  const handleBlur = () => {
+    setDropdownOpen(false);
+    setSuggestions([]);
+    setSelectedIndex(0);
+  };
+
+  const handleFocus = () => {
+    if (suggestions.length > 0) {
+      setDropdownOpen(true);
+    }
+  };
+
+  const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
+    if (event.key === 'ArrowDown' || event.key === 'Tab') {
+      event.preventDefault();
+      setSelectedIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setSelectedIndex((prevIndex) => (prevIndex - 1 + suggestions.length) % suggestions.length);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        addUser(suggestions[selectedIndex].username!);
+      } else {
+        const trimmedInputValue = inputValue.trim();
+        if (trimmedInputValue && !selectedUsers.includes(trimmedInputValue)) {
+          addUser(trimmedInputValue);
+        }
+      }
+    }
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -344,24 +386,30 @@ const CreateEvent = () => {
             </label>
           </div>
 
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%] ">
             <input
-              placeholder="Pre-registered Users (comma-separated)"
+              placeholder="Pre-registered Users"
               name="preRegisteredUsers"
               value={inputValue}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
             />
             <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Pre-registered Users(comma-separated)
+              Pre-registered Users
             </label>
-            {suggestions.length > 0 && (
-              <ul className="absolute w-full z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1 max-h-40 overflow-auto">
-                {suggestions.map(user => (
+            {suggestions.length > 0 && isDropdownOpen && (
+              <ul
+                ref={suggestionRef}
+                className="absolute w-full z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1 max-h-40 overflow-auto"
+              >
+                {suggestions.map((user, index) => (
                   <li
                     key={user.id}
-                    onClick={() => addUser(user.username!)}
-                    className="flex w-full cursor-pointer hover:bg-gray-200 px-2 py-1"
+                    onMouseDown={() => addUser(user.username!)}
+                    className={`flex w-full cursor-pointer hover:bg-customYellow px-2 py-1 hover:bg-opacity-20 ${selectedIndex === index ? 'bg-customYellow bg-opacity-20' : ''}`}
                   >
                     <img src={userImages[user.id!] || "/defaultpic.png"} alt={user.username} className="w-8 h-8 rounded-full mr-2" />
                     {user.username}
@@ -370,6 +418,23 @@ const CreateEvent = () => {
               </ul>
             )}
           </div>
+
+
+          {selectedUsers.length > 0 && (
+            <div className="w-full max-w-[24rem] tablet:max-w-[32rem] mx-auto flex flex-wrap mb-2 max-h-24 overflow-auto">
+              {selectedUsers.map((username, index) => (
+                <div key={index} className="flex items-center bg-customYellow rounded-full px-2 py-1 mr-2 mb-2">
+                  {username}
+                  <button
+                    onClick={() => removeUser(username)}
+                    className="ml-2 focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
 
           <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
