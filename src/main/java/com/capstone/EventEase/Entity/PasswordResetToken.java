@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_password")
 public class PasswordResetToken {
 
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "passtoken_id")
@@ -29,14 +32,11 @@ public class PasswordResetToken {
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
 
-
     private LocalDateTime expiryDate;
-
-
 
     public PasswordResetToken(String randomToken, User user) {
         this.token = randomToken;
         this.user = user;
-        this.expiryDate = LocalDateTime.now().plusMinutes(2);
+        this.expiryDate = LocalDateTime.now().plusMinutes(30);
     }
 }

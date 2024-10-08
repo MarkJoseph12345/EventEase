@@ -27,23 +27,16 @@ public class VerificationToken {
     private String token;
 
 
-
-
-
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
 
-
-
     private LocalDateTime expiryDate;
-
-
 
     public VerificationToken(String token, User user){
         this.token = token;
         this.user = user;
-        this.expiryDate = LocalDateTime.now().plusMinutes(2);
+        this.expiryDate = LocalDateTime.now().plusMinutes(30);
     }
 }
 

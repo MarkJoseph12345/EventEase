@@ -48,6 +48,8 @@ public class EventService {
 
     private final UserEventRepository userEventRepository;
 
+
+
     private final UserRepository userRepository;
 
     private final AttendanceRepository attendanceRepository;
@@ -226,7 +228,6 @@ public class EventService {
     }
 
 
-
     private EmailSendRequestDTO createEmailDTO(String username) {
         return EmailSendRequestDTO.builder()
                 .message("You have Been Invited To An Event From EventEase")
@@ -236,12 +237,13 @@ public class EventService {
     }
 
 
+
+
+
     public void logEventData(Event event) {
         logger.info("Event Data Picture is: " + Arrays.toString(event.getEventPicture()));
         logger.info("Event Name is: " + event.getEventName());
     }
-
-
 
 
     public Event getEvent(Long eventId) {
@@ -319,7 +321,19 @@ public class EventService {
             oldEvent.setLocation(event.getLocation());
         }
 
-        return eventRepository.save(oldEvent);
+
+
+        Event updatedEvent = eventRepository.save(oldEvent);
+
+        List<User> usersJoined = userEventService.getAllUsersJoinedToEvent(updatedEvent.getId());
+        for(User user: usersJoined){
+            String username = user.getUsername();
+            EmailSendRequestDTO emailSendRequestDTO = createEmailDTO(username);
+
+        }
+
+
+        return updatedEvent;
     }
 
 

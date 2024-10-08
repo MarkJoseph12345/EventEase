@@ -70,6 +70,46 @@ public class EmailService {
         logger.info("Emails failed to send: {}", failureCount);
     }
 
+
+
+    private void updateEmailSend(EmailSendRequestDTO email, Event event){
+        try{
+            Context context = new Context();
+            context.setVariable("subject", "Event Update");
+            context.setVariable("eventName", event.getEventName());
+            context.setVariable("eventDescription", event.getEventDescription());
+            context.setVariable("allowedGender", event.getAllowedGender().toString());
+            context.setVariable("eventLimit", event.getEventLimit());
+            context.setVariable("location", event.getLocation());
+            context.setVariable("actionUrl", "http://localhost:3000/Login");
+
+
+            ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
+            ZonedDateTime eventEnds = event.getEventEnds().atZoneSameInstant(UTC_8);
+            context.setVariable("eventStarts", eventStarts);
+            context.setVariable("eventEnds", eventEnds);
+
+            String htmlContent = templateEngine.process("updateEvent-template", context);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            // helper.addInline("eventPicture", dataSource);
+            helper.setFrom("eventease2002@gmail.com", "EventEase");
+            helper.setTo(email.getReceiver());
+            helper.setSubject("Event Update");
+            helper.setText(htmlContent, true);
+
+            javaMailSender.send(message);
+
+        } catch (MessagingException e) {
+            logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
     private void sendEmail(EmailSendRequestDTO email, Event event) {
         try {
             Context context = new Context();
@@ -105,6 +145,12 @@ public class EmailService {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
+
+
     public void forgotPasswordEmail(String email, String token) {
 
      try{

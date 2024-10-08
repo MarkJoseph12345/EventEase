@@ -80,22 +80,34 @@ public class AuthenticationService {
 
 
 
-    private void checkIfUserExists(String username){
+
+    private void checkIfUserExists(String username) throws MessagingException {
         if(userRepository.findByUsername(username) != null){
             User user = userRepository.findByUsername(username);
             VerificationToken verificationToken = verificationTokenRepository.findByUser(user);
+            if(verificationToken == null){
+                throw new EntityExistsException("Username Already Exists hehe!");
+            }else{
             String token = verificationToken.getToken();
             if(verificationTokenService.isVerificationTokenExpired(token)){
                 emailService.sendConfirmationLink(username,token);
                 verificationTokenRepository.delete(verificationToken);
+
+                String newToken = UUID.randomUUID().toString();
+                User oldUser = userRepository.findByUsername(username);
+                generateVerificationToken(newToken,oldUser);
                 throw new EntityExistsException("Check your email for confirmation");
+            }else if(!verificationTokenService.isVerificationTokenExpired(token)){
+                throw new EntityExistsException("Confirmation Link already sent to Gmail");
             }else{
                 throw new EntityExistsException("Username Already Exists!");
+            }
             }
         }
     }
 
-    public LoginResponse registerUser(RegisterRequest registerRequest) {
+
+    public LoginResponse registerUser(RegisterRequest registerRequest) throws MessagingException {
         checkIfUserExists(registerRequest.getUsername());
         User newUser = createUserFromRequest(registerRequest);
         User user = userRepository.save(newUser);
