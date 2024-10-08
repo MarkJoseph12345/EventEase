@@ -120,6 +120,19 @@ public class EventController {
 
 
 
+
+    @Operation(summary = "Update Event")
+    @PutMapping("/updateEvent/{eventId}")
+    public ResponseEntity<?> updateEvent(@PathVariable Long eventId, @RequestBody Event event){
+        try{
+            return new ResponseEntity<>(eventService.updateEvent(eventId,event),HttpStatus.OK);
+        }catch (EntityNotFoundException | DateTimeException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @Operation(summary = "Get Event By Passing EventId")
     @GetMapping("getEventById/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) throws Exception{
