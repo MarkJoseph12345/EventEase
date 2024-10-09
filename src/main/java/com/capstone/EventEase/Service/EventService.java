@@ -326,13 +326,13 @@ public class EventService {
         Event updatedEvent = eventRepository.save(oldEvent);
 
         List<User> usersJoined = userEventService.getAllUsersJoinedToEvent(updatedEvent.getId());
+        List<EmailSendRequestDTO> emails = new ArrayList<>();
         for(User user: usersJoined){
             String username = user.getUsername();
             EmailSendRequestDTO emailSendRequestDTO = createEmailDTO(username);
-
+            emails.add(emailSendRequestDTO);
         }
-
-
+        emailService.emailUpdateSend(emails,event);
         return updatedEvent;
     }
 
@@ -400,6 +400,8 @@ public class EventService {
         eventRepository.save(event);
         return event;
     }
+
+
 
 
     public Optional<Event> getEventByNow() {

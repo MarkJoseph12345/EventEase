@@ -45,6 +45,8 @@ spring:
 
 
 
+
+
 security:
   jwt:
     jwtSigningKey: ${secret.Key}

@@ -67,9 +67,13 @@ public class Event {
 
     private OffsetDateTime eventEnds;
 
+
+
     @Basic(fetch = FetchType.LAZY)
     @Column(columnDefinition = "BYTEA")
     private byte[] eventPicture;
+
+
 
     private String eventPictureType;
 

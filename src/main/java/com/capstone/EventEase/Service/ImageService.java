@@ -82,6 +82,7 @@ public class ImageService {
     }
 
 
+
     public String getPictureFormat(Long id, boolean isEvent){
         String pictureName = isEvent ? getEventById(id).getEventPictureName():getUserById(id).getProfilePictureName();
             return pictureName.substring(pictureName.lastIndexOf(".") + 1);

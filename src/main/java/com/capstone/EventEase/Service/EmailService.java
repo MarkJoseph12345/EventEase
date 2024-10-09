@@ -31,7 +31,7 @@ import java.util.List;
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
-    private static  String ACTION_URL = "http://localhost:3000/Preregister";
+    private static  String ACTION_URL = "";
     private static final ZoneId UTC_8 = ZoneId.of("Asia/Singapore");
 
     private final UserRepository userRepository;
@@ -70,6 +70,27 @@ public class EmailService {
         logger.info("Emails failed to send: {}", failureCount);
     }
 
+    public void emailUpdateSend(List<EmailSendRequestDTO> emails, Event event) {
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (int i = 0; i < emails.size(); i++) {
+            EmailSendRequestDTO email = emails.get(i);
+            try {
+                updateEmailSend(email,event);
+                successCount++;
+            } catch (Exception e) {
+                logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
+                failureCount++;
+            }
+        }
+
+
+        logger.info("Emails sent successfully: {}", successCount);
+        logger.info("Emails failed to send: {}", failureCount);
+    }
+
+
 
 
     private void updateEmailSend(EmailSendRequestDTO email, Event event){
@@ -81,7 +102,7 @@ public class EmailService {
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
             context.setVariable("location", event.getLocation());
-            context.setVariable("actionUrl", "http://localhost:3000/Login");
+            context.setVariable("actionUrl", "https://eventease-five.vercel.app/Login");
 
 
             ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
@@ -119,7 +140,7 @@ public class EmailService {
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
             context.setVariable("location", event.getLocation());
-            setActionUrl(getUserByUsername(email.getReceiver()) ? "http://localhost:3000/Login" : "http://localhost:3000/SignUp");
+            setActionUrl(getUserByUsername(email.getReceiver()) ? "https://eventease-five.vercel.app/Login" : "https://eventease-five.vercel.app/SignUp");
             context.setVariable("actionUrl", ACTION_URL);
 
             ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
