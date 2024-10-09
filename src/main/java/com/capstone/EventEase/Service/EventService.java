@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -402,11 +401,11 @@ public class EventService {
     }
 
 
-
-
     public Optional<Event> getEventByNow() {
         return eventRepository.findByCurrentEvent(OffsetDateTime.now());
     }
+
+
 
 
 

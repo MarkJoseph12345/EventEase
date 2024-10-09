@@ -8,6 +8,9 @@ import com.capstone.EventEase.DTO.Request.RegisterRequest;
 import com.capstone.EventEase.DTO.Response.LoginResponse;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
+import com.capstone.EventEase.Exceptions.AttendanceCheckedException;
+import com.capstone.EventEase.Exceptions.UserNotJoinedToAnEventException;
+import com.capstone.EventEase.Repository.EventRepository;
 import com.capstone.EventEase.Service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +19,7 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +28,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/auth/")
@@ -36,6 +42,9 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     private final PasswordResetTokenService passwordResetTokenService;
+
+
+    private final AttendanceService attendanceService;
 
     private final ImageService imageService;
 
@@ -57,10 +66,121 @@ public class AuthenticationController {
 
 
 
+    @Operation(summary = "Get The User if it fits all the criterias")
+    @GetMapping("/auth/getUserByUuid/{eventId}/{uuid}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String uuid){
+        try{
+            return new ResponseEntity<>(attendanceService.verifyUser(eventId,uuid),HttpStatus.OK);
+        }catch (UserNotJoinedToAnEventException | AttendanceCheckedException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        } catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @Operation(summary = "Counter Attendance")
+    @GetMapping("/auth/count/{eventId}")
+    public ResponseEntity<?> counterAttendance(@PathVariable Long eventId){
+        return new ResponseEntity<>(attendanceService.counterAttendance(eventId),HttpStatus.OK);
+    }
+
+
+
+
     @GetMapping("/event/getAllEvents")
     public List<Event> getAllEvents(){
         return eventService.getAllEvents();
     }
+
+    @GetMapping("/event/getEventNow")
+    public ResponseEntity<?> getEventNow(){
+        return ResponseEntity.ok(eventService.getEventByNow());
+    }
+
+
+
+
+    @Operation(summary = "Check The Attendance of the User")
+    @PostMapping("/attend/{eventId}/{uuid}/")
+    public ResponseEntity<?> attendUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("attendanceDate") @DateTimeFormat(
+            iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime attendanceDate){
+        try{
+            return new ResponseEntity<>(attendanceService.checkAttendance(eventId,uuid,attendanceDate),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
+    @Operation(summary = "Timeout User")
+    @PostMapping("/timeout/{eventId}/{uuid}/")
+    public ResponseEntity<?> timeoutUsers(@PathVariable Long eventId, @PathVariable String uuid,@RequestParam("timeoutDate") @DateTimeFormat(
+            iso = DateTimeFormat.ISO.DATE_TIME)OffsetDateTime timeoutDate){
+        try{
+            return new ResponseEntity<>(attendanceService.checkTimeout(eventId,uuid,timeoutDate),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
+
+
+    // @Tag(name = "userGET")
+    @Operation(summary = "Gets the users profile picture by sending an id")
+    @GetMapping("/user/getProfilePicture/{userId}")
+    public ResponseEntity<?> getProfilePicture(@PathVariable Long userId) throws IOException{
+
+        String format = imageService.getPictureFormat(userId,false);
+        MediaType mediaType;
+
+        switch (format) {
+            case "png":
+                mediaType = MediaType.IMAGE_PNG;
+                break;
+            case "jpg":
+            case "jpeg":
+            case "jfif":
+                mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "gif":
+                mediaType = MediaType.IMAGE_GIF;
+                break;
+            case "bmp":
+                mediaType = MediaType.valueOf("image/bmp");
+                break;
+            case "tiff":
+                mediaType = MediaType.valueOf("image/tiff");
+                break;
+            case "webp":
+                mediaType = MediaType.valueOf("image/webp");
+                break;
+            case "svg":
+                mediaType = MediaType.valueOf("image/svg+xml");
+                break;
+            default:
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unsupported Format: " + format);
+        }
+        byte[] profilePicture = imageService.downloadImage(userId,false);
+        return ResponseEntity.status(HttpStatus.OK).contentType(mediaType).body(profilePicture);
+
+    }
+
+
+
+
+
+
+
 
 
     @Operation(summary = "Get Event Picture by Passing Event Id")
