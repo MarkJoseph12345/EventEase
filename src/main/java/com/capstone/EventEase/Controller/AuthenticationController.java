@@ -40,14 +40,9 @@ import java.util.Optional;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-
     private final PasswordResetTokenService passwordResetTokenService;
-
-
     private final AttendanceService attendanceService;
-
     private final ImageService imageService;
-
     private final EventService eventService;
 
 
@@ -64,8 +59,6 @@ public class AuthenticationController {
         }
     }
 
-
-
     @Operation(summary = "Get The User if it fits all the criterias")
     @GetMapping("/auth/getUserByUuid/{eventId}/{uuid}")
     public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String uuid){
@@ -80,18 +73,19 @@ public class AuthenticationController {
 
 
     @Operation(summary = "Counter Attendance")
-    @GetMapping("/auth/count/{eventId}")
+    @GetMapping("/event/count/{eventId}")
     public ResponseEntity<?> counterAttendance(@PathVariable Long eventId){
         return new ResponseEntity<>(attendanceService.counterAttendance(eventId),HttpStatus.OK);
     }
-
-
-
 
     @GetMapping("/event/getAllEvents")
     public List<Event> getAllEvents(){
         return eventService.getAllEvents();
     }
+
+
+
+
 
     @GetMapping("/event/getEventNow")
     public ResponseEntity<?> getEventNow(){
@@ -258,6 +252,10 @@ public class AuthenticationController {
 
 
 
+
+
+
+
     @GetMapping("/hello")
     @Operation(summary = "Say Hello", description = "This will say hello")
     public ResponseEntity<String> greet(){
@@ -297,7 +295,6 @@ public class AuthenticationController {
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
      */
 
 
