@@ -60,7 +60,7 @@ public class AuthenticationController {
     }
 
     @Operation(summary = "Get The User if it fits all the criterias")
-    @GetMapping("/auth/getUserByUuid/{eventId}/{uuid}")
+    @GetMapping("/getUserByUuid/{eventId}/{uuid}")
     public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String uuid){
         try{
             return new ResponseEntity<>(attendanceService.verifyUser(eventId,uuid),HttpStatus.OK);
