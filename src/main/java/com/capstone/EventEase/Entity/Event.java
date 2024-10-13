@@ -52,7 +52,7 @@ public class Event {
 
     private int usersJoined = 0;
 
-    private String location;
+
 
     @Enumerated(EnumType.STRING)
     private AllowedGender allowedGender;

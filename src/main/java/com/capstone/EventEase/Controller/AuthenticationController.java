@@ -59,6 +59,11 @@ public class AuthenticationController {
         }
     }
 
+
+
+    
+
+
     @Operation(summary = "Get The User if it fits all the criterias")
     @GetMapping("/getUserByUuid/{eventId}/{uuid}")
     public ResponseEntity<?> getUserByUsername(@PathVariable Long eventId, @PathVariable String uuid){

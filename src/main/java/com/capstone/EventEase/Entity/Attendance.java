@@ -44,6 +44,8 @@ public class Attendance {
     private List<OffsetDateTime> attendedTime = new ArrayList<>();
 
 
+
+
     @ElementCollection
     @CollectionTable(name = "Timeout_Date", joinColumns = @JoinColumn(name = "attendance_id"))
     @Column(name = "TimeOut")

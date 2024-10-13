@@ -316,9 +316,6 @@ public class EventService {
         if (event.getAllowedGender() != null) {
             oldEvent.setAllowedGender(event.getAllowedGender());
         }
-        if(event.getLocation() != null && !event.getLocation().isEmpty()){
-            oldEvent.setLocation(event.getLocation());
-        }
 
 
 

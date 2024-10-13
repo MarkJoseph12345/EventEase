@@ -211,6 +211,8 @@ public class AttendanceService {
                 });
     }
 
+
+
     public long countDays(Long eventId) {
 
         Event event = getEventById(eventId);
@@ -239,6 +241,19 @@ public class AttendanceService {
     }
 
 
+
+
+    public AttendanceTimes getAttendanceTimeByUserandEvent(Long userId, Long eventId) {
+        User user = getUserById(userId);
+        Event event = getEventById(eventId);
+        UserEvent userEvent = getByUserAndEvent(user, event);
+        Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
+        return attendance.map(value -> new AttendanceTimes(value.getAttendedTime(), value.getTimeOut())).orElse(null);
+    }
+
+
+
+
     public long counterAttendance(Long eventId) {
         Event event = getEventById(eventId);
 
@@ -249,6 +264,8 @@ public class AttendanceService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         System.out.println("Event Start (UTC-8): " + start.format(formatter));
         System.out.println("Event End (UTC-8): " + end.format(formatter));
+
+
 
         LocalTime noonTime = LocalTime.of(12, 0); // 12:00 PM
 

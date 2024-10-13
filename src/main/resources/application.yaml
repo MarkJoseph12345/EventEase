@@ -13,7 +13,7 @@ spring:
 
 
 
-
+#
 #
 #    url: jdbc:postgresql://localhost:5432/eventease
 #    username: postgres
@@ -40,8 +40,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
-
 
 
 

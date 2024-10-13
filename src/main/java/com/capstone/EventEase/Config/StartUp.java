@@ -42,6 +42,9 @@ public class StartUp{
         }
     }
 
+
+    
+
     @PostConstruct
     public void init() {
         if (userRepository.findByUsername("admin") == null) {
@@ -59,6 +62,8 @@ public class StartUp{
                     .build();
             userRepository.save(newUser);
         }
+
+
 
         /*
         String[] departments = {"CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"};
@@ -93,6 +98,7 @@ public class StartUp{
         }
 
          */
+
 
 
     }

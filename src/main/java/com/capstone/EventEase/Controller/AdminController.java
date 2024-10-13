@@ -3,7 +3,6 @@ package com.capstone.EventEase.Controller;
 
 
 import com.capstone.EventEase.Entity.EventAttendance;
-import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserAttendance;
 import com.capstone.EventEase.Exceptions.AttendanceCheckedException;
 import com.capstone.EventEase.Exceptions.UserNotJoinedToAnEventException;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -157,6 +155,17 @@ public class AdminController {
             } catch (Exception e){
                 return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
             }
+    }
+
+    @GetMapping("/getAllAttendanceAndTimeout/{userId}/{eventId}")
+    public ResponseEntity<?> getAllAttendanceAndTimeout(@PathVariable Long userId, @PathVariable Long eventId){
+        try{
+            return new ResponseEntity<>(attendanceService.getAttendanceTimeByUserandEvent(userId,eventId),HttpStatus.OK);
+        }catch (EntityNotFoundException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
+        }catch (Exception e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        }
     }
 
 

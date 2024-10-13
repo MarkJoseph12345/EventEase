@@ -101,7 +101,7 @@ public class EmailService {
             context.setVariable("eventDescription", event.getEventDescription());
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
-            context.setVariable("location", event.getLocation());
+         //   context.setVariable("location", event.getLocation());
             context.setVariable("actionUrl", "https://eventease-five.vercel.app/Login");
 
 
@@ -139,7 +139,7 @@ public class EmailService {
             context.setVariable("eventDescription", event.getEventDescription());
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
-            context.setVariable("location", event.getLocation());
+           // context.setVariable("location", event.getLocation());
             setActionUrl(getUserByUsername(email.getReceiver()) ? "https://eventease-five.vercel.app/Login" : "https://eventease-five.vercel.app/SignUp");
             context.setVariable("actionUrl", ACTION_URL);
 
