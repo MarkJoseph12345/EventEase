@@ -18,7 +18,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     Optional<Attendance> findByUserevent(UserEvent userEvent);
 
 
-    Optional<Attendance> findByUserIdAndEventId(Long userId, Long eventId);
+   // Optional<Attendance> findByUserIdAndEventId(Long userId, Long eventId);
    // List<Attendance>findAllByUserevent(List<UserEvent> userEvent);
 
 
