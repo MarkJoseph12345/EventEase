@@ -2,12 +2,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { getAllUsersAfterAttendance, getAllUsersJoinedToEvent, getEvents, getEventPopularity, getJoinRate, getEventTypeDistribution, getEventSchedulingTrends, getAverageEventDuration, getDepartmentEngagement } from '@/utils/apiCalls';
+import { getAllUsersAfterAttendance, getAllUsersJoinedToEvent, getEvents, getEventPopularity, getJoinRate, getEventTypeDistribution, getEventSchedulingTrends, getAverageEventDuration, getDepartmentEngagement, fetchEventPicture } from '@/utils/apiCalls';
 import { Event } from '@/utils/interfaces';
 import ViewJoined from '../Modals/ViewJoined';
 import EventTypeDistributionChart from '../Charts/EventTypeDistribution';
 import EventSchedulingTrends from '../Charts/EventScheduleTrends';
 import DepartmentEngagement from '../Charts/DepartmentEngagement';
+import AdminEventDetailModal from '../Modals/AdminEventDetailModal';
 
 const ReportsAndAnalysis: React.FC = () => {
     const [loading, setLoading] = useState(true);
@@ -71,6 +72,7 @@ const ReportsAndAnalysis: React.FC = () => {
                     const joinRate = await getJoinRate(eventId!);
                     const registeredCount = usersData.length;
                     const attendedCount = attendedUsers.length;
+                    event.eventPicture = await fetchEventPicture(event.id!);
 
                     return {
                         ...event,
@@ -120,7 +122,7 @@ const ReportsAndAnalysis: React.FC = () => {
         const calculatedHours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
 
-        const hoursDisplay = calculatedHours > 0 ? `${calculatedHours} hr${calculatedHours > 1 ? 's' : ''}` : '';
+        const hoursDisplay = calculatedHours > 0 ? `${calculatedHours} hr${calculatedHours > 1 ? 's ' : ' '}` : '';
         const minutesDisplay = minutes > 0 ? `${minutes} min${minutes > 1 ? 's' : ''}` : '';
 
         return {
@@ -133,6 +135,16 @@ const ReportsAndAnalysis: React.FC = () => {
     const { hoursDisplay, minutesDisplay } = formatDuration(averageEventDuration);
     const [hoursNumber, hoursLabel] = hoursDisplay.split(' ');
     const [minutesNumber, minutesLabel] = minutesDisplay.split(' ');
+    const [eventToShow, setEventToShow] = React.useState(null);
+
+    const handleOpenPopup = (eventId: any) => {
+        const eventToShow = eventData.find(event => event.id === eventId);
+        setEventToShow(eventToShow);
+    };
+
+    const handleClosePopup = () => {
+        setEventToShow(null);
+    };
 
     if (loading) {
         return <Loading />;
@@ -198,7 +210,7 @@ const ReportsAndAnalysis: React.FC = () => {
                                                         {/* <td className="px-6 py-4 whitespace-nowrap text-center">
                                                         {event.id}
                                                     </td> */}
-                                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <td className="px-6 py-4 whitespace-nowrap hover:underline hover:cursor-pointer" onClick={() => handleOpenPopup(event.id)}>
                                                             {event.eventName}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -212,15 +224,18 @@ const ReportsAndAnalysis: React.FC = () => {
                                                             <span className="text-red-500">{event.dislikes || 0}</span>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                            {event.eventPopularity.likesDislikesRatio.toFixed(2)}
+                                                            {/* {event.eventPopularity.likesDislikesRatio} */}
+                                                            {new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(event.eventPopularity.likesDislikesRatio)}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                            {event.joinRate.toFixed(2)}
+                                                            {/* {event.joinRate.toFixed(2)} */}
+                                                            {new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(event.joinRate)}
+
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                                             <button
                                                                 onClick={() => handleViewParticipants(event)}
-                                                                className="bg-customYellow px-4 py-2 rounded"
+                                                                className="bg-customYellow px-4 py-2 rounded hover:bg-black duration-300 hover:text-customYellow"
                                                             >
                                                                 View Participants
                                                             </button>
@@ -255,7 +270,7 @@ const ReportsAndAnalysis: React.FC = () => {
                                         <span className="text-customYellow text-3xl font-semibold">{hoursLabel}</span>
                                     </>
                                 )}
-                                <span className="text-red-600 text-5xl font-bold">{minutesNumber}</span>
+                                <span className="text-red-600 text-5xl font-bold ml-2">{minutesNumber}</span>
                                 <span className="text-customYellow text-3xl font-semibold">{minutesLabel}</span>
                             </p>
                         </div>
@@ -269,6 +284,7 @@ const ReportsAndAnalysis: React.FC = () => {
                     onClose={handleCloseModal}
                 />
             )}
+            {eventToShow && <AdminEventDetailModal event={eventToShow} from="analytics" onClose={handleClosePopup} />}
         </div>
     );
 };

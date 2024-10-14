@@ -53,7 +53,43 @@ const ManageEvents = () => {
                         return event;
                     }));
 
-                    setEvents(processedEvents);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const sortedEvents = processedEvents.sort((a, b) => {
+                        const aStartDate = new Date(a.eventStarts!);
+                        const bStartDate = new Date(b.eventStarts!);
+                        const aEndDate = new Date(a.eventEnds!);
+                        const bEndDate = new Date(b.eventEnds!);
+
+                        if (isNaN(aStartDate.getTime()) || isNaN(bStartDate.getTime())) {
+                            return 0;
+                        }
+
+                        const aIsToday = aStartDate.setHours(0, 0, 0, 0) === today.getTime();
+                        const bIsToday = bStartDate.setHours(0, 0, 0, 0) === today.getTime();
+
+                        if (aEndDate < today && bEndDate < today) {
+                            return aStartDate.getTime() - bStartDate.getTime();
+                        } else if (aEndDate < today) {
+                            return 1;
+                        } else if (bEndDate < today) {
+                            return -1;
+                        } else {
+                            if (aIsToday && bIsToday) {
+                                return aStartDate.getTime() - bStartDate.getTime();
+                            } else if (aIsToday) {
+                                return -1;
+                            } else if (bIsToday) {
+                                return 1;
+                            } else {
+                                return aStartDate.getTime() - bStartDate.getTime();
+                            }
+                        }
+                    });
+
+                    setEvents(sortedEvents);
+
                 }
             } catch (error) {
                 setError(true);
@@ -164,10 +200,10 @@ const ManageEvents = () => {
                                         className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-2"
                                         onClick={() => handleEventClick(event)}
                                     >
-                                        <img src={event.eventPicture} alt={event.eventName} className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill" />
+                                        <img src={event.eventPicture} alt={event.eventName} className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-scale-down" />
                                         <div>
-                                            <p className="font-semibold">{event.eventName}</p>
-                                            <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                                            <p className="font-semibold text-lg mt-2">{event.eventName}</p>
+                                            <p className="text-gray-600 text-sm">{formatDate(event.eventStarts)}</p>
                                         </div>
                                     </div>
                                 ))

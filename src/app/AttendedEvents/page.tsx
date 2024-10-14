@@ -48,7 +48,17 @@ const AttendedEvents = () => {
                         })
                     );
 
-                    setEvents(processedEvents);
+                    const sortedEvents = processedEvents.sort((a, b) => {
+                        const aStartDate = new Date(a.eventStarts!);
+                        const bStartDate = new Date(b.eventStarts!);
+                        if (isNaN(aStartDate.getTime()) || isNaN(bStartDate.getTime())) {
+                            return 0;
+                        }
+        
+                        return aStartDate.getTime() - bStartDate.getTime();
+                    });
+        
+                    setEvents(sortedEvents);
                 }
             } finally {
                 setLoading(false);

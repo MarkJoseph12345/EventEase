@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import NavBar from "./Comps/NavBar";
 import Link from "next/link";
 import Footer from "./Comps/Footer";
@@ -10,6 +10,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loading from "./Loader/Loading";
+import { formatDate } from "@/utils/data";
 
 const isDateInCurrentWeek = (date: Date): boolean => {
   const now = new Date();
@@ -24,6 +25,18 @@ const Home = () => {
   const [eventNow, setEventNow] = useState<Event | null>(null);
   const [eventsThisWeek, setEventsThisWeek] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredEvent, setHoveredEvent] = useState<Event | null>(null);
+  const [autoScroll, setAutoScroll] = useState(true);
+
+  const handleMouseEnter = (event: Event) => {
+    setHoveredEvent(event);
+    setAutoScroll(false);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredEvent(null);
+    setAutoScroll(true);
+  };
 
   useEffect(() => {
     const fetchEventNow = async () => {
@@ -105,24 +118,39 @@ const Home = () => {
                   eventsThisWeek.length === 1 ? 'scale-100' :
                     eventsThisWeek.length === 2 ? 'scale-90' :
                       isNextSlide || isFirstSlide ? 'scale-110' : 'scale-75';
+
                 return (
                   <div
                     key={event.id}
-                    className={`relative transition-transform duration-500 ease-in-out ${scaleClass} `}
+                    className={`relative transition-transform duration-500 ease-in-out ${scaleClass}`}
+                    onMouseEnter={() => handleMouseEnter(event)}
+                    onMouseLeave={handleMouseLeave}
                   >
+                    {hoveredEvent === event && (
+                      <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-20 rounded-lg shadow-xl transition-opacity duration-300 opacity-100">
+                        <div className="bg-customYellow p-4 rounded-lg shadow-md">
+                          <h3 className="text-lg font-bold text-black mb-2">{event.eventName}</h3>
+                          {/* <p className="text-gray-700 text-sm">{event.eventDescription}</p> */}
+                          <p className="">Event starts at {formatDate(event.eventStarts)}</p>
+                        </div>
+                      </div>
+                    )}
+
                     <img
                       src={event.eventPicture}
                       className="w-full h-48 tablet:h-64 object-fill rounded-lg shadow-lg"
                       alt={event.eventName}
                     />
-                    <div className="absolute bottom-6 left-0 bg-customYellow p-2 pr-5">
-                      <p className="text-lg font-bold truncate  text-black">{event.eventName}</p>
+                    <div className="absolute bottom-6 left-0 bg-customYellow p-2 pr-5 z-10">
+                      <p className="text-lg font-bold truncate text-black">{event.eventName}</p>
                       <p className="text-sm text-white">{event.eventType}</p>
                     </div>
+
                   </div>
                 );
               })}
             </Slider>
+
           </div>
         ) : (
           <div className="items-center flex flex-col">

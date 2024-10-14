@@ -28,7 +28,7 @@ const CreateEvent = () => {
     eventType: "Networking Event",
     department: [],
     eventLimit: 50,
-    allowedGender: "ALL",
+    allowedGender: "MALE",
     preRegisteredUsers: []
   });
   const [isCreating, setIsCreating] = useState(false);
@@ -42,6 +42,8 @@ const CreateEvent = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showGenderExclusive, setShowGenderExclusive] = useState(false);
+  const [showDepartmentExclusive, setShowDepartmentExclusive] = useState(false);
   const suggestionRef = useRef(null);
   useEffect(() => {
     const fetchUser = async () => {
@@ -128,10 +130,7 @@ const CreateEvent = () => {
       }
       else {
         const usersArray = value.split(',').map(user => user.trim()).filter(user => user !== "");
-        setEvent(prevEvent => ({
-          ...prevEvent,
-          preRegisteredUsers: usersArray
-        }));
+
         setDropdownOpen(true);
         if (value) {
           const lastUser = usersArray[usersArray.length - 1];
@@ -162,8 +161,9 @@ const CreateEvent = () => {
 
     setEvent(prevEvent => ({
       ...prevEvent,
-      preRegisteredUsers: selectedUsers,
+      preRegisteredUsers: [...(prevEvent.preRegisteredUsers || []), username],
     }));
+
 
     setSuggestions([]);
     setDropdownOpen(false);
@@ -174,6 +174,10 @@ const CreateEvent = () => {
 
   const removeUser = (username: string) => {
     setSelectedUsers(selectedUsers.filter(user => user !== username));
+    setEvent(prevEvent => ({
+      ...prevEvent,
+      preRegisteredUsers: prevEvent.preRegisteredUsers!.filter(user => user !== username),
+    }));
   };
 
   const handleStartDateChange = (date: Date | null) => {
@@ -227,12 +231,24 @@ const CreateEvent = () => {
       eventDescription,
       eventStarts,
       eventEnds,
+      allowedGender,
       department,
     } = event;
-    if (!eventName || !eventDescription || !eventStarts || !eventEnds || department.length === 0) {
+    if (!eventName || !eventDescription || !eventStarts || !eventEnds) {
       setMessage({ text: "Please fill in all the required fields.", type: "error" });
       setIsCreating(false);
       return;
+    }
+    if (showGenderExclusive) {
+      event.allowedGender = allowedGender;
+    } else {
+      event.allowedGender = "ALL";
+    }
+
+    if (showDepartmentExclusive) {
+      event.department = department;
+    } else {
+      event.department = ["CEA", "CMBA", "CASE", "CNAHS", "CCS", "CCJ"];
     }
     const result: any = await createEvent(user!.username!, event);
     setIsCreating(false);
@@ -253,6 +269,7 @@ const CreateEvent = () => {
       setMessage({ text: result.message, type: "error" });
     }
   };
+
 
   const handleBlur = () => {
     setDropdownOpen(false);
@@ -286,6 +303,8 @@ const CreateEvent = () => {
     }
   };
 
+
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -302,7 +321,7 @@ const CreateEvent = () => {
   return (
     <div>
       <Sidebar />
-      <div className="mt-2 mx-2 mb-5">
+      <div className="mt-2 mx-2 mb-5 ">
         <p className="text-2xl mt-10 font-poppins font-bold text-center">
           Create Event
         </p>
@@ -330,7 +349,7 @@ const CreateEvent = () => {
               {newPicture ? "Change Event Image" : "Upload Event Image"}
             </button>
           </div>
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+          <div className="relative w-full mx-auto ">
             <input
               placeholder="Event Name"
               name="eventName"
@@ -342,7 +361,7 @@ const CreateEvent = () => {
               Event Name <span className="text-customRed">*</span>
             </label>
           </div>
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+          <div className="relative w-full mx-auto">
             <select
               className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100"
               value={event.eventType}
@@ -361,7 +380,7 @@ const CreateEvent = () => {
               Event Type
             </label>
           </div>
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+          <div className="relative w-full mx-auto">
             <textarea
               placeholder="Event Description"
               name="eventDescription"
@@ -373,7 +392,7 @@ const CreateEvent = () => {
               Event Description <span className="text-customRed">*</span>
             </label>
           </div>
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
+          <div className="relative w-full mx-auto">
             <input
               placeholder="Event Limit"
               name="eventLimit"
@@ -386,7 +405,7 @@ const CreateEvent = () => {
             </label>
           </div>
 
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%] ">
+          <div className="relative w-full mx-auto">
             <input
               placeholder="Pre-registered Users"
               name="preRegisteredUsers"
@@ -421,7 +440,7 @@ const CreateEvent = () => {
 
 
           {selectedUsers.length > 0 && (
-            <div className="w-full max-w-[24rem] tablet:max-w-[32rem] mx-auto flex flex-wrap mb-2 max-h-24 overflow-auto">
+            <div className="w-full max-w-[24rem] tablet:max-w-[32rem] mx-auto flex flex-wrap mb-2 max-h-32 overflow-auto">
               {selectedUsers.map((username, index) => (
                 <div key={index} className="flex items-center bg-customYellow rounded-full px-2 py-1 mr-2 mb-2">
                   {username}
@@ -437,75 +456,8 @@ const CreateEvent = () => {
           )}
 
 
-          <div className="relative w-full max-w-[24rem] mx-auto tablet:max-w-[90%]">
-            <select
-              className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={event.allowedGender} onChange={(e) => { handleInputChange(e); e.target.blur(); }} name="allowedGender">
-              <option value="ALL">ALL</option>
-              <option value="MALE">MALE</option>
-              <option value="FEMALE">FEMALE</option>
-            </select>
-            <label
-              className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-black peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-black peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-black peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-              Gender
-            </label>
-          </div>
-          <div className="relative flex w-full max-w-[24rem] mx-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md tablet:max-w-[90%]">
-            <p className="m-2">Department(s)</p>
-            <nav className="flex flex-wrap gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
-              {departments.map((department, index) => (
-                <div
-                  key={index}
-                  role="button"
-                  className="flex items-center w-full p-0 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
-                >
-                  <label
-                    htmlFor={`horizontal-list-${department}`}
-                    className="flex items-center w-full px-3 py-2 cursor-pointer"
-                  >
-                    <div className="grid mr-3 place-items-center">
-                      <div className="inline-flex items-center">
-                        <label
-                          className="relative flex items-center p-0 rounded-full cursor-pointer"
-                          htmlFor={`horizontal-list-${department}`}
-                        >
-                          <input
-                            id={`horizontal-list-${department}`}
-                            type="checkbox"
-                            className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-0"
-                            checked={event.department.includes(department)}
-                            onChange={() => handleCheckboxChange(department)}
-                          />
-                          <span
-                            onClick={() => handleCheckboxChange(department)}
-                            className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3.5 w-3.5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              stroke="currentColor"
-                              strokeWidth="1"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              ></path>
-                            </svg>
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                    <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                      {department}
-                    </p>
-                  </label>
-                </div>
-              ))}
-            </nav>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-2 mx-auto tablet:flex-row tablet:max-w-[90%]">
+
+          <div className="flex flex-col items-center justify-center gap-2 tablet:flex-row  max-w-[24rem] mx-auto tablet:max-w-[90%]">
             <div>
               <p>Start Date</p>
               <DatePicker
@@ -542,6 +494,100 @@ const CreateEvent = () => {
               />
             </div>
           </div>
+
+          <div className="relative w-full flex justify-evenly items-center mx-auto">
+            <label className="flex items-center mb-2">
+              <input
+                type="checkbox"
+                checked={showGenderExclusive}
+                onChange={() => setShowGenderExclusive(!showGenderExclusive)}
+                className="mr-2 accent-black"
+              />
+              Gender Exclusive
+            </label>
+            <label className="flex items-center mb-2">
+              <input
+                type="checkbox"
+                checked={showDepartmentExclusive}
+                onChange={() => setShowDepartmentExclusive(!showDepartmentExclusive)}
+                className="mr-2 accent-black"
+              />
+              Department Exclusive
+            </label>
+          </div>
+          {showGenderExclusive && (
+            <div className="relative w-full mx-auto">
+              <select
+                className="peer h-full w-full rounded-[7px] border border-black border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-black placeholder-shown:border-t-black focus:border-2 focus:border-black focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100" value={event.allowedGender} onChange={(e) => { handleInputChange(e); e.target.blur(); }} name="allowedGender">
+                {/* <option value="ALL">ALL</option> */}
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+              </select>
+              <label
+                className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px] font-normal leading-tight text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-black before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-black after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-black peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-black peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-black peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                Gender
+              </label>
+            </div>
+          )}
+          {showDepartmentExclusive && (
+            <div className="relative flex w-full mx-auto flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md ">
+              <p className="m-2">Department(s)</p>
+              <nav className="flex flex-wrap gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">
+                {departments.map((department, index) => (
+                  <div
+                    key={index}
+                    role="button"
+                    className="flex items-center w-full p-0 leading-tight transition-all rounded-lg outline-none text-start hover:bg-blue-gray-50 hover:bg-opacity-80 hover:text-blue-gray-900 focus:bg-blue-gray-50 focus:bg-opacity-80 focus:text-blue-gray-900 active:bg-blue-gray-50 active:bg-opacity-80 active:text-blue-gray-900"
+                  >
+                    <label
+                      htmlFor={`horizontal-list-${department}`}
+                      className="flex items-center w-full py-2 cursor-pointer"
+                    >
+                      <div className="grid mr-3 place-items-center">
+                        <div className="inline-flex items-center">
+                          <label
+                            className="relative flex items-center p-0 rounded-full cursor-pointer"
+                            htmlFor={`horizontal-list-${department}`}
+                          >
+                            <input
+                              id={`horizontal-list-${department}`}
+                              type="checkbox"
+                              className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-0"
+                              checked={event.department.includes(department)}
+                              onChange={() => handleCheckboxChange(department)}
+                            />
+                            <span
+                              onClick={() => handleCheckboxChange(department)}
+                              className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3.5 w-3.5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                stroke="currentColor"
+                                strokeWidth="1"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                ></path>
+                              </svg>
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+                        {department}
+                      </p>
+                    </label>
+                  </div>
+                ))}
+              </nav>
+            </div>
+          )}
+
           <div className="flex flex-col items-center justify-center gap-2">
             <button
               className={`bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isCreating ? "opacity-50 cursor-not-allowed" : ""

@@ -59,10 +59,22 @@ const RegisteredEvents = () => {
                         return event;
                     })
                 );
+                
+                const sortedEvents = processedEvents.sort((a, b) => {
+                    const aStartDate = new Date(a.eventStarts!);
+                    const bStartDate = new Date(b.eventStarts!);
+                    if (isNaN(aStartDate.getTime()) || isNaN(bStartDate.getTime())) {
+                        return 0;
+                    }
+    
+                    return aStartDate.getTime() - bStartDate.getTime();
+                });
+    
+
 
                 const attendedEvents = await getAllEventsAfterAttendance(user.id!);
                 const attendedEventIds = attendedEvents.map((event: Event) => event.id);
-                const finalEvents = processedEvents.filter(event => !attendedEventIds.includes(event.id));
+                const finalEvents = sortedEvents.filter(event => !attendedEventIds.includes(event.id));
 
                 setJoinedEvents(finalEvents);
                 setLoading(false);

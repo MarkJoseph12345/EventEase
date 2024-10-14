@@ -133,7 +133,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     if (onJoinUnjoin) {
                         onJoinUnjoin(event.id!);
                     }
-                    setMessage({ text: "Successfuly unjoined event", type: "success" });
+                    setMessage({ text: "Successfully unjoined event", type: "success" });
                 }
             } else {
                 const success = await joinEvent(user!.id!, event.id!);
@@ -143,7 +143,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     if (onJoinUnjoin) {
                         onJoinUnjoin(event.id!);
                     }
-                    setMessage({ text: "Successfuly joined event", type: "success" });
+                    setMessage({ text: "Successfully joined event", type: "success" });
                 }
             }
         } catch (error) {

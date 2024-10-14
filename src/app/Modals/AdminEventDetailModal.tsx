@@ -29,7 +29,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                 const allUsers = usersArrays.flat();
                 setUsersJoinedToEvent(allUsers);
             } catch (error) {
-               
+
             }
         };
         fetchUsersJoinedToEvent()
@@ -50,7 +50,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
     const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
     return (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 ">
             {!(clickedManage || clickedJoined) && (
                 <div className="bg-white relative p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto text-pretty tablet:max-w-[70rem]">
                     <div className=" sticky top-0 z-10 flex justify-end">
@@ -70,7 +70,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                                     <p className=""><strong>Event Type:</strong> {type[0]}</p>
                                     <p className=""><strong>Created By:</strong> {event.createdBy}</p>
                                     <p className=""><strong>Gender:</strong> {event.allowedGender}</p>
-                                    <p className=""><strong>Slots left:</strong> {availableSlots}</p>
+                                    <p className=""><strong>{from === "analytics" ? "Slots: " : "Slots left: "}</strong>{from === "analytics" ? event.eventLimit : availableSlots}</p>
                                     <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                     <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
                                     <p className=""><strong>Department(s):</strong> {event.department.join(', ')}</p>
@@ -91,19 +91,21 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                             </div>
                         </div>
                     </div>
-                    <div className="flex w-full justify-end">
-                        <div className=" flex gap-3">
-                            {from !== 'create' && (
-                                <button
-                                    className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4"
-                                    onClick={() => { setClickedJoined(true); }}
-                                >
-                                    View Participants
-                                </button>
-                            )}
-                            {/* <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button> */}
-                            <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
-                        </div>
+                    <div className={`flex w-full justify-end ${from === "analytics" ? "mb-5" : ""}`}>
+                        {from !== "analytics" && (
+                            <div className=" flex gap-3">
+                                {from !== "create" && (
+                                    <button
+                                        className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4"
+                                        onClick={() => { setClickedJoined(true); }}
+                                    >
+                                        View Participants
+                                    </button>
+                                )}
+                                {/* <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button> */}
+                                <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

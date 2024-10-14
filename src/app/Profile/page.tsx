@@ -128,8 +128,8 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<User | null>({
         newPassword: "",
-    }
-    );
+    });
+    const [currentNames, setCurrentNames] = useState({ firstName: "", lastName: "" });
     const [imageUrl, setImageUrl] = useState("");
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showProfilePicturePrompt, setShowProfilePicturePrompt] = useState(false);
@@ -146,6 +146,7 @@ const Profile = () => {
             try {
                 const userData = await me();
                 setUser(userData);
+                setCurrentNames({ firstName: userData.firstName, lastName: userData.lastName });
                 if (userData.profilePictureName === "XyloGraph1.png") {
                     setShowProfilePicturePrompt(true);
                 }
@@ -155,10 +156,10 @@ const Profile = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchUserData();
     }, []);
-    
+
 
     const handleProfilePicClick = (picture: string) => {
         setClickedProfilePic(picture);
@@ -205,6 +206,12 @@ const Profile = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        const hasNameChanged = (user!.firstName !== currentNames.firstName && user!.firstName!.trim() !== "") || (user!.lastName !== currentNames.lastName && user!.lastName!.trim() !== "");
+        if (!hasNameChanged) {
+            setMessage({ text: "Cannot Update Details with Empty Fields!", type: "error" });
+            return;
+        }
+
         if (currentPassword == "" && user!.newPassword! != undefined) {
             setMessage({ text: "Enter current password", type: "error" });
             return;

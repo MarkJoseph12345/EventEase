@@ -1,4 +1,4 @@
-const BASE_URL = "https://eventease-meey.onrender.com";
+const BASE_URL = "https://eventease-1-k4xo.onrender.com";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,

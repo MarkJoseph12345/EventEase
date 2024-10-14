@@ -149,7 +149,7 @@ const Events = () => {
                                 <img
                                     src={event.eventPicture}
                                     alt={event.eventName}
-                                    className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill"
+                                    className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-contain"
                                 />
                                 <div>
                                     <p className="font-semibold">{event.eventName}</p>
