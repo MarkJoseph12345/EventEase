@@ -395,9 +395,12 @@ public class EventService {
 
 
 
+
 //    public Optional<Event> getEventByNow() {
 //        return eventRepository.findByCurrentEvent(OffsetDateTime.now(),OffsetDateTime.now().minusMinutes(5), OffsetDateTime.now().plusMinutes(5));
 //    }
+
+
 
 
 
