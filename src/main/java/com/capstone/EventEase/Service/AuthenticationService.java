@@ -272,8 +272,6 @@ public class AuthenticationService {
     }
 
 
-
-
     public String callCron() {
        User user = userRepository.findByUsername("admin");
        if (user == null) {

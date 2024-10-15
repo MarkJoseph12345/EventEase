@@ -4,7 +4,6 @@ import com.capstone.EventEase.Classes.PasswordGenerator;
 import com.capstone.EventEase.DTO.Request.EmailSendRequestDTO;
 import com.capstone.EventEase.ENUMS.Gender;
 import com.capstone.EventEase.ENUMS.Role;
-import com.capstone.EventEase.Entity.Attendance;
 import com.capstone.EventEase.Entity.Event;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
@@ -22,13 +21,11 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.plaf.multi.MultiTabbedPaneUI;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +33,6 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -398,12 +394,16 @@ public class EventService {
     }
 
 
-    public Optional<Event> getEventByNow() {
+
+//    public Optional<Event> getEventByNow() {
+//        return eventRepository.findByCurrentEvent(OffsetDateTime.now(),OffsetDateTime.now().minusMinutes(5), OffsetDateTime.now().plusMinutes(5));
+//    }
+
+
+
+    public List<Event> getEventByNow() {
         return eventRepository.findByCurrentEvent(OffsetDateTime.now());
-    }
-
-
-
+        }
 
 
 }
