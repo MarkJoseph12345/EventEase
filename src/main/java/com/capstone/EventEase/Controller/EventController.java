@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
+import jakarta.mail.SendFailedException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -44,14 +46,13 @@ public class EventController {
     @Operation(summary = "CREATE AN EVENT")
     @PostMapping("/createEvent")
     public ResponseEntity<?> createEvent(@RequestParam("creator") String username,@RequestBody Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException
-    ,EntityNotFoundException, DateTimeException {
+    ,EntityNotFoundException, DateTimeException  {
         try{
             return new ResponseEntity<>(eventService.createEvent(username,event),HttpStatus.CREATED);
         } catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
-
 
 
 

@@ -6,11 +6,13 @@ import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Repository.UserRepository;
 import com.capstone.EventEase.UTIL.ImageUtils;
 import jakarta.mail.MessagingException;
+import jakarta.mail.SendFailedException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.angus.mail.smtp.SMTPAddressFailedException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -93,7 +95,7 @@ public class EmailService {
 
 
 
-    private void updateEmailSend(EmailSendRequestDTO email, Event event){
+    private void updateEmailSend(EmailSendRequestDTO email, Event event) throws SendFailedException {
         try{
             Context context = new Context();
             context.setVariable("subject", "Event Update");
@@ -124,14 +126,14 @@ public class EmailService {
 
         } catch (MessagingException e) {
             logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
+            throw new SendFailedException("Custom message: Failed to send email to " + email.getReceiver(), e);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-
-    private void sendEmail(EmailSendRequestDTO email, Event event) {
+    private void sendEmail(EmailSendRequestDTO email, Event event) throws MessagingException {
         try {
             Context context = new Context();
             context.setVariable("subject", "Event Invitation");
@@ -139,9 +141,11 @@ public class EmailService {
             context.setVariable("eventDescription", event.getEventDescription());
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
-           // context.setVariable("location", event.getLocation());
-            setActionUrl(getUserByUsername(email.getReceiver()) ? "https://eventease-five.vercel.app/Login" : "https://eventease-five.vercel.app/SignUp");
-            context.setVariable("actionUrl", ACTION_URL);
+
+            String actionUrl = getUserByUsername(email.getReceiver())
+                    ? "https://eventease-five.vercel.app/Login"
+                    : "https://eventease-five.vercel.app/SignUp";
+            context.setVariable("actionUrl", actionUrl);
 
             ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
             ZonedDateTime eventEnds = event.getEventEnds().atZoneSameInstant(UTC_8);
@@ -149,23 +153,24 @@ public class EmailService {
             context.setVariable("eventEnds", eventEnds);
 
             String htmlContent = templateEngine.process("email-template", context);
+
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-             //  ByteArrayDataSource dataSource = new ByteArrayDataSource(ImageUtils.decompressImage(event.getEventPicture()), "image/png");
-           // helper.addInline("eventPicture", dataSource);
             helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email.getReceiver());
             helper.setSubject("Event Invitation");
             helper.setText(htmlContent, true);
 
             javaMailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (SMTPAddressFailedException e) {
+            logger.error("Invalid email address: {}. Error: {}", email.getReceiver(), e.getMessage());
+            throw new MessagingException("Invalid email address: " + email.getReceiver(), e);
+        } catch (MessagingException | UnsupportedEncodingException e) {
             logger.error("Failed to send email to {}: {}", email.getReceiver(), e.getMessage());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new MessagingException("Failed to send email to " + email.getReceiver(), e);
         }
     }
+
 
 
 

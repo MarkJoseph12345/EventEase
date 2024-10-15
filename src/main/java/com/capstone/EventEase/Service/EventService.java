@@ -17,12 +17,14 @@ import com.capstone.EventEase.Repository.UserEventRepository;
 
 import com.capstone.EventEase.Repository.UserRepository;
 import com.capstone.EventEase.UTIL.ImageUtils;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 //import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +35,7 @@ import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -48,6 +51,12 @@ public class EventService {
     private final UserRepository userRepository;
 
     private final AttendanceRepository attendanceRepository;
+
+
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
+
+
 
 
     private final ImageService imageService;
@@ -76,10 +85,15 @@ public class EventService {
     }
 
 
+    private boolean isValidEmail(String email) {
+        return EMAIL_PATTERN.matcher(email).matches();
+    }
 
 
+
+    @Transactional(rollbackFor = {GenderNotAllowedException.class, DoubleJoinException.class, EventFullException.class, UserBlockedException.class, EntityNotFoundException.class, MessagingException.class})
     public Event createEvent(String nameUser, Event event) throws GenderNotAllowedException, DoubleJoinException, EventFullException, UserBlockedException,
-            EntityNotFoundException {
+            EntityNotFoundException, MessagingException {
 
         User userCreator = userRepository.findByUsername(nameUser);
         if (userCreator == null) {
@@ -95,9 +109,11 @@ public class EventService {
         System.out.println("Event ends: " + event.getEventEnds());
 
         for (String username : event.getPreRegisteredUsers()) {
-           // User user = createUser(username, passwords);
-            emails.add(createEmailDTO(username));
-           // userEventService.joinEvent(user.getId(), newEvent.getId());
+            if (isValidEmail(username)) {
+                emails.add(createEmailDTO(username));
+            } else {
+                throw new MessagingException("Invalid email address: " + username);
+            }
         }
 
         emailService.emailSend(emails, newEvent);
