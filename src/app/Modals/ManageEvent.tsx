@@ -63,16 +63,23 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
     const filterStartPassedTime = (time: string | number | Date) => {
         const currentDate = new Date();
         const selectedDate = new Date(time);
-
-        return currentDate!.getTime() < selectedDate.getTime();
-    };
-
-    const filterEndPassedTime = (time: string | number | Date) => {
+        const isInTheFuture = currentDate.getTime() < selectedDate.getTime();
+        const hours = selectedDate.getHours();
+        const minutes = selectedDate.getMinutes();
+        const isDuringDisabledTime = (hours === 12) || (hours === 13 && minutes === 0);
+        return isInTheFuture && !isDuringDisabledTime;
+      };
+    
+      const filterEndPassedTime = (time: string | number | Date) => {
         const currentDate = new Date(event.eventStarts!);
         const selectedDate = new Date(time);
-
-        return currentDate.getTime() < selectedDate.getTime();
-    };
+        const isInTheFuture = currentDate.getTime() < selectedDate.getTime();
+        const hours = selectedDate.getHours();
+        const minutes = selectedDate.getMinutes();
+        const isDuringDisabledTime = (hours === 12) || (hours === 13 && minutes === 0);
+        return isInTheFuture && !isDuringDisabledTime;
+      };
+    
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
