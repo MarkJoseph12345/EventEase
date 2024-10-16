@@ -12,7 +12,7 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({ onClose }) =>
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | undefined>()
-  const [step, setStep] = useState<'sendEmail' | 'verifyToken' | 'resetPassword'>('resetPassword');
+  const [step, setStep] = useState<'sendEmail' | 'verifyToken' | 'resetPassword'>('sendEmail');
   const [token, setToken] = useState('');
   const [tokenVerified, setTokenVerified] = useState("");
   const [newPassword, setNewPassword] = useState('');
