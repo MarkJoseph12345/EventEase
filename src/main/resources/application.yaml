@@ -5,18 +5,18 @@ server:
 spring:
   datasource:
 
-#
-#    url: ${db.url}
-#    username:  ${db.username}
-#    password:  ${db.password}
-#    driver-class-name: org.postgresql.Driver
 
-
-
-    url: jdbc:postgresql://localhost:5432/eventeasedb
-    username: postgres
-    password: root
+    url: ${db.url}
+    username:  ${db.username}
+    password:  ${db.password}
     driver-class-name: org.postgresql.Driver
+
+
+#
+#    url: jdbc:postgresql://localhost:5432/eventeasedb
+#    username: postgres
+#    password: root
+#    driver-class-name: org.postgresql.Driver
 
 
   mail:
