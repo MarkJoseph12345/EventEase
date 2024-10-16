@@ -373,7 +373,7 @@ public class AuthenticationController {
                     function updateTimer() {
                         timerElement.textContent = timeLeft;
                         if (timeLeft === 0) {
-                            window.location.href = 'http://localhost:3000/Login';
+                            window.location.href = 'https://eventease-five.vercel.app/Login';
                         } else {
                             timeLeft--;
                             setTimeout(updateTimer, 1000);
