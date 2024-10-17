@@ -15,7 +15,7 @@ const ManageEvents = () => {
     const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[] }>({ types: [], departments: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
-
+    const [includeDoneEvents, setIncludeDoneEvents] = useState(false);
     const types = Array.from(new Set(events.flatMap(event => event.eventType || []).map(type => type.split(", ")[0])));
     const classifications = Array.from(new Set(events.flatMap(event => event.eventType || []).map(type => type.split(", ")[1])));
     const departments = Array.from(new Set(events.flatMap(event => event.department)));
@@ -25,7 +25,12 @@ const ManageEvents = () => {
     };
 
 
-    const handleFilterChange = (filterCategory: 'types' | 'departments', filterValue: string) => {
+    const handleFilterChange = (filterCategory: 'types' | 'departments' | 'doneEvents', filterValue: string) => {
+        if (filterCategory === 'doneEvents') {
+            setIncludeDoneEvents(prevState => !prevState);
+            return;
+        }
+
         const updatedFilters = selectedFilters[filterCategory].includes(filterValue)
             ? selectedFilters[filterCategory].filter(filter => filter !== filterValue)
             : [...selectedFilters[filterCategory], filterValue];
@@ -124,14 +129,20 @@ const ManageEvents = () => {
     };
 
     const filteredEvents = events.filter(event => {
-        const type = event.eventType.toString().split(', ')
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const type = event.eventType.toString().split(', ');
         const matchesSearch = event.eventName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = selectedFilters.types.length === 0 || selectedFilters.types.includes(type[0]);
         const matchesDepartment = selectedFilters.departments.length === 0 || selectedFilters.departments.some(department => event.department.includes(department));
 
-        return matchesSearch && matchesType && matchesDepartment;
-    });
+        const eventEndDate = new Date(event.eventEnds!);
+        const hasEnded = eventEndDate < today;
 
+        const matchesDoneEvents = includeDoneEvents || !hasEnded;
+
+        return matchesSearch && matchesType && matchesDepartment && matchesDoneEvents;
+    });
     const [loading, setLoading] = useState(true);
 
     if (loading) {
@@ -150,7 +161,7 @@ const ManageEvents = () => {
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>
                             {showFilters && (
-                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
+                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-max">
                                     <div className="flex items-center justify-between mb-2 flex-col">
                                         <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: [] })}>Clear Filters</button>
                                     </div>
@@ -164,7 +175,7 @@ const ManageEvents = () => {
                                             </div>
                                         ))}
                                     </div>
-                                    <div>
+                                    <div className="mb-2">
                                         <p className="font-semibold">Departments</p>
                                         {departments.map((department, index) => (
                                             <div key={index} className="flex items-center">
@@ -173,6 +184,17 @@ const ManageEvents = () => {
                                                     {department}</label>
                                             </div>
                                         ))}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="flex items-center cursor-pointer font-semibold">
+                                            <input
+                                                type="checkbox"
+                                                checked={includeDoneEvents}
+                                                onChange={() => handleFilterChange('doneEvents', '')}
+                                                className="mr-2 cursor-pointer accent-customYellow"
+                                            />
+                                            Include Done Events
+                                        </label>
                                     </div>
                                 </div>
                             )}
