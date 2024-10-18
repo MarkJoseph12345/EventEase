@@ -157,6 +157,7 @@ public class AdminController {
             }
     }
 
+
     @GetMapping("/getAllAttendanceAndTimeout/{userId}/{eventId}")
     public ResponseEntity<?> getAllAttendanceAndTimeout(@PathVariable Long userId, @PathVariable Long eventId){
         try{

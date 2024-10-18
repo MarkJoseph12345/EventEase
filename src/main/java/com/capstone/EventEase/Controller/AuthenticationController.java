@@ -359,6 +359,9 @@ public class AuthenticationController {
                     }
                 </style>
             </head>
+            
+          
+            
             <body>
                 <div class="container">
                     <h1>Account Confirmed!</h1>
