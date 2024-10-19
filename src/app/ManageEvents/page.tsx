@@ -12,7 +12,7 @@ const ManageEvents = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [events, setEvents] = useState<Event[]>([]);
     const [error, setError] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[] }>({ types: [], departments: [] });
+    const [selectedFilters, setSelectedFilters] = useState<{ types: string[], departments: string[]}>({ types: [], departments: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
     const [includeDoneEvents, setIncludeDoneEvents] = useState(false);
@@ -163,7 +163,7 @@ const ManageEvents = () => {
                             {showFilters && (
                                 <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-max">
                                     <div className="flex items-center justify-between mb-2 flex-col">
-                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], departments: [] })}>Clear Filters</button>
+                                        <button className="text-sm text-customYellow" onClick={() => {setSelectedFilters({ types: [], departments: []}); setIncludeDoneEvents(false)}}>Clear Filters</button>
                                     </div>
                                     <div className="mb-2">
                                         <p className="font-semibold">Type</p>

@@ -101,7 +101,7 @@ const AttendedEvents = () => {
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>
                             {showFilters && (
-                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
+                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-max">
                                     <div className="flex items-center justify-between mb-2 flex-col">
                                         <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], createdBy: [] })}>Clear Filters</button>
                                     </div>

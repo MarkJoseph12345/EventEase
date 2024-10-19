@@ -34,6 +34,12 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
         return words.slice(0, 30).join(' ')
     };
 
+    const type = event.eventType.toString().split(', ');
+    const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
+    const isJoinDisabled = genderMismatch || (!isJoined && availableSlots <= 0);
+    const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
+
+
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -46,7 +52,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     setGenderMismatch(false);
                 }
             } catch (error) {
-                
+
             }
         };
 
@@ -76,7 +82,6 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
 
     useEffect(() => {
         if (!user?.id || !event?.id) {
-            setIsLoading(false);
             return;
         }
 
@@ -85,9 +90,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 const joinedEvents = await getEventsJoinedByUser(user.id!);
                 const hasJoined = joinedEvents.some(joinedEvent => joinedEvent.id === event.id);
                 setIsJoined(hasJoined);
-                setIsLoading(false);
-            } catch (error) {
-               
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -99,7 +102,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 const allUsers = usersArrays.flat();
                 setUsersJoinedToEvent(allUsers);
             } catch (error) {
-               
+
             }
         };
 
@@ -108,13 +111,13 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
         };
 
         fetchData();
-        const interval = setInterval(() => {
-            fetchData();
-        }, POLL_INTERVAL);
+        // const interval = setInterval(() => {
+        //     fetchData();
+        // }, POLL_INTERVAL);
 
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
     }, [event?.id, user?.id]);
-    
+
     useEffect(() => {
         document.body.style.overflow = 'hidden';
 
@@ -147,7 +150,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 }
             }
         } catch (error) {
-         
+
         }
     };
 
@@ -160,26 +163,15 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
         setActiveButton('dislike');
         const res = await dislikeEvent(event.id!, user!.id!)
     };
-
-    const type = event.eventType.toString().split(', ');
-    const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
-    const isJoinDisabled = genderMismatch || (!isJoined && availableSlots <= 0);
-    const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
-
-
-    if (isLoading) {
-        return null;
-    }
-
     return (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
             <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[50rem]">
-                <p className="sticky top-0 z-10  text-end text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={onClose}>✖</p>
+                <p className="sticky top-0 z-10  text-end text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={() => { setIsLoading(true); setTimeout(onClose, 300); }}>✖</p>
                 <div className="flex flex-col overflow-auto tablet:mx-20">
                     <div className="flex flex-col w-full ">
                         <div
                             className=" relative overflow-hidden text-white rounded-sm mx-auto">
-                            <img src={event.eventPicture} alt={event.eventName} className="max-h-96 max-w-full" />
+                            <img src={event.eventPicture} alt={event.eventName} className="max-w-full h-96 object-contain" />
                         </div>
                     </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
@@ -196,7 +188,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                             </div>
                             <p className="tablet:col-span-4 text-pretty">
                                 <strong>Description: </strong>{showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)} {hasLongDescription(event.eventDescription) && (
-                                    <>{isExpanded ? <span></span>: <span className='font-bold'>... </span>}
+                                    <>{isExpanded ? <span></span> : <span className='font-bold'>... </span>}
                                         < button
                                             className="font-bold underline"
                                             onClick={() => setIsExpanded(!isExpanded)}

@@ -38,7 +38,7 @@ const JoinEvents = () => {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-            
+
             }
         };
 
@@ -59,9 +59,22 @@ const JoinEvents = () => {
                     !joinedEvents.some(joinedEvent => joinedEvent.id === event.id)
                 );
 
-                const upcomingEvents = notJoinedEvents.filter(event =>
-                    new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                    event.department.includes(user!.department!)
+                const upcomingEvents = notJoinedEvents.filter(
+                    (event) => {
+                        if (user.department != 'N/A') {
+                            return (
+                                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                                event.department.includes(user.department!) &&
+                                event.department.includes("Open to All")
+                            )
+                        }
+                        else {
+                            return (
+                                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                                event.department.includes("Open to All")
+                            )
+                        }
+                    }
                 );
 
                 const processedEvents = await Promise.all(
@@ -81,10 +94,10 @@ const JoinEvents = () => {
                     if (isNaN(aStartDate.getTime()) || isNaN(bStartDate.getTime())) {
                         return 0;
                     }
-    
+
                     return aStartDate.getTime() - bStartDate.getTime();
                 });
-    
+
                 setEvents(sortedEvents);
                 setLoading(false);
             } catch (error) {
@@ -128,7 +141,11 @@ const JoinEvents = () => {
         <div>
             <Sidebar />
             <div className="mt-[6rem] mx-[2rem]">
-                <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">{user!.department} Events</p>
+                <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">
+                    {user.department === "N/A"
+                        ? "Available Events"
+                        : `{user!.department} Events`}
+                </p>
                 <div className="">
                     <div className="flex items-center mb-5 ">
                         <div className="relative mr-3 z-10">
@@ -136,7 +153,7 @@ const JoinEvents = () => {
                                 <img src="/filter.png" className="h-6 w-6" />
                             </div>
                             {showFilters && (
-                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2">
+                                <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-max">
                                     <div className="flex items-center justify-between mb-2 flex-col">
                                         <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], createdBy: [] })}>Clear Filters</button>
                                     </div>

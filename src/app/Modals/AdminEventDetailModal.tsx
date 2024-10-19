@@ -11,6 +11,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
     const [clickedFeedback, setClickedFeedback] = useState(false);
     const [clickedJoined, setClickedJoined] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const hasLongDescription = (description: string) => {
         return description.split(' ').length > 30;
@@ -28,8 +29,8 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                 const usersArrays = await getAllUsersJoinedToEvent(event.id!);
                 const allUsers = usersArrays.flat();
                 setUsersJoinedToEvent(allUsers);
-            } catch (error) {
-
+            } finally {
+                setIsLoading(false)
             }
         };
         fetchUsersJoinedToEvent()
@@ -50,17 +51,17 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
     const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
     return (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 ">
+        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
             {!(clickedManage || clickedJoined) && (
                 <div className="bg-white relative p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto text-pretty tablet:max-w-[70rem]">
                     <div className=" sticky top-0 z-10 flex justify-end">
-                        <span className=" text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={onClose}>✖</span>
+                        <span className=" text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={() => { setIsLoading(true); setTimeout(onClose, 300); }}>✖</span>
                     </div>
                     <div className="flex flex-col overflow-auto mx-1 tablet:mx-20">
                         <div className="flex flex-col w-full ">
                             <div
                                 className=" relative overflow-hidden text-white rounded-sm mx-auto">
-                                <img src={event.eventPicture} alt={event.eventName} className="max-h-96 max-w-full" />
+                                <img src={event.eventPicture} alt={event.eventName} className="max-w-full h-96 object-contain" />
                             </div>
                         </div>
                         <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
@@ -73,7 +74,7 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                                     <p className=""><strong>{from === "analytics" ? "Slots: " : "Slots left: "}</strong>{from === "analytics" ? event.eventLimit : availableSlots}</p>
                                     <p className=""><strong>Start Date:</strong> {formatDate(event.eventStarts)}</p>
                                     <p className=""><strong>End Date:</strong> {formatDate(event.eventEnds)}</p>
-                                    <p className=""><strong>Department(s):</strong> {event.department.join(', ')}</p>
+                                    <p className="col-span-2"><strong>Department(s):</strong> {event.department.join(', ')}</p>
                                 </div>
                                 <p className="tablet:col-span-4 text-pretty">
                                     <strong>Description: </strong>{showFullDescription ? event.eventDescription : truncateDescription(event.eventDescription)}

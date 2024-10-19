@@ -30,12 +30,10 @@ const EventDetail = ({ event, onClose }: EventDetailModal) => {
                     <span className="text-gray-500 font-bold text-2xl cursor-pointer mr-4 mt-2" onClick={onClose}>✖</span>
                 </div>
                 <div className="flex flex-col overflow-auto tablet:mx-20">
-                    <div className="flex flex-col items-center w-full">
                         <div
-                            className=" relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-sm bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40 h-44 w-72">
-                            <img src={event.eventPicture} alt={event.eventName} className="h-full w-full" />
+                            className=" relative overflow-hidden  w-full flex items-center justify-center">
+                            <img src={event.eventPicture} alt={event.eventName} className="max-w-full h-96 object-contain" />
                         </div>
-                    </div>
                     <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
                     <div className="flex overflow-hidden bg-gray-100 rounded-xl p-4">
                         <div className=" w-full">

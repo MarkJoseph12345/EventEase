@@ -49,7 +49,7 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                 <div className={`bg-white shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem] `}>
                     <div className="flex bg-black p-2 w-full">
                         <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
-                        <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={onClose}>✖</p>
+                        <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={() => {setLoading(true); setTimeout(onClose, 100);}}>✖</p>
                     </div>
                     <div className="p-4 overflow-x-auto">
 

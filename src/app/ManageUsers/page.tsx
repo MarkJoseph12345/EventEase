@@ -15,10 +15,11 @@ type SelectedFilters = {
 const ManageUsers = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [showDepartments, setShowDepartments] = useState<boolean>(false);
     const [userImages, setUserImages] = useState<{ [key: string]: string }>({});
-    const departments = Array.from(new Set(users.map(user => user.department).filter(department => department)));
+    const departments = Array.from(new Set(users.map(user => user.department).filter(department => department))).sort((a, b) => a!.localeCompare(b!));
     const roles = ["Admin", "Student"];
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [confirmationAction, setConfirmationAction] = useState<'delete' | 'block' | 'role' | null>(null);
@@ -90,7 +91,7 @@ const ManageUsers = () => {
             try {
                 const fetchedUsers = await getAllUsers();
                 const userData = await me();
-                const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id);
+                const filteredUsers = fetchedUsers.filter(user => user.id !== userData.id).sort((a, b) => a.firstName!.localeCompare(b.firstName!));;
                 setUsers(filteredUsers);
                 await fetchUserImages(filteredUsers);
             } finally {
@@ -176,7 +177,7 @@ const ManageUsers = () => {
                     const action = isAdmin ? setUserAsStudent : setUserAsAdmin;
                     const response = await action(id);
                     if (response) {
-                        setMessage({ text: `Successfully made ${user.firstName} ${user.lastName} into ${isAdmin ? 'student' : 'admin'}!`, type: "success" });
+                        setMessage({ text: `Successfully made ${user.firstName} ${user.lastName} into ${isAdmin ? 'user' : 'admin'}!`, type: "success" });
                         setUsers(prevUsers =>
                             prevUsers.map(u =>
                                 u.id === id ? { ...u, role: isAdmin ? "STUDENT" : "ADMIN" } : u
@@ -188,7 +189,7 @@ const ManageUsers = () => {
                             );
                         }
                     } else {
-                        setMessage({ text: `Failed to make ${isAdmin ? 'student into admin' : 'admin into student'}!`, type: "error" });
+                        setMessage({ text: `Failed to make ${isAdmin ? 'user into admin' : 'admin into user'}!`, type: "error" });
                     }
                 }
             } catch (error) {
@@ -219,6 +220,18 @@ const ManageUsers = () => {
         setIsConfirmationOpen(false);
         setConfirmationAction(null);
     };
+
+    useEffect(() => {
+        if (selectedUser) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = 'unset';
+        }
+    
+        return () => {
+          document.body.style.overflow = 'unset';
+        };
+      }, [selectedUser]);
 
     if (loading) {
         return <Loading />;
@@ -282,7 +295,7 @@ const ManageUsers = () => {
                     </div>
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
-                            <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 cursor-pointer hover:bg-customYellow hover:border-customYellow hover:bg-opacity-20" onClick={() => handleUserClick(user)}>
+                            <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 cursor-pointer hover:bg-customYellow hover:border-customYellow hover:bg-opacity-20" onClick={() => {handleUserClick(user); setTimeout(() => setIsLoading(false), 300);}}>
                                 <img src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
                                 <div>
                                     <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
@@ -297,7 +310,7 @@ const ManageUsers = () => {
                                         className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         disabled={user.username === "admin"}
                                     >
-                                        {user.role === "STUDENT" ? 'Set as Admin' : 'Set as Student'}
+                                        {user.role === "STUDENT" ? 'Set as Admin' : 'Set as User'}
                                     </button>
 
                                     <button
@@ -334,9 +347,9 @@ const ManageUsers = () => {
                 </div>
             </div>
             {selectedUser && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+                <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
                     <div className="bg-white px-4 rounded-md shadow-md w-[21rem]">
-                        <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={handleClosePopup}>✖</p>
+                        <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={()=> {setIsLoading(true); setTimeout(handleClosePopup, 300);}}>✖</p>
                         <div className="my-2 flex flex-col items-center">
                             <img src={userImages[selectedUser.id!] || "/defaultpic.png"} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-64 h-64 object-cover rounded-md mt-2" />
                             <p className='font-poppins mt-2'><strong>Name:</strong></p>
@@ -345,9 +358,11 @@ const ManageUsers = () => {
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.username}</p>
                             <p className='font-poppins mt-2'><strong>Department:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.department}</p>
+                            <p className='font-poppins mt-2'><strong>Id Number:</strong></p>
+                            <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.idNumber}</p>
                             <p className='font-poppins mt-2'><strong>Gender:</strong></p>
                             <p className='font-poppins font-regular text-sm -mt-1'>{selectedUser.gender}</p>
-                            <div className="flex flex-col gap-1 w-full items-center justify-center tablet:hidden">
+                            <div className="flex flex-col gap-1 w-full items-center justify-center tablet:hidden mt-3">
                                 <button
                                     onClick={(e) => {
                                         handleConfirmation('role', selectedUser);
@@ -355,7 +370,7 @@ const ManageUsers = () => {
                                     className={`w-32 py-1 ${selectedUser.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${selectedUser.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} tablet:hidden`}
                                     disabled={selectedUser.username === "admin"}
                                 >
-                                    {selectedUser.role === "STUDENT" ? 'Set as Admin' : 'Set as Student'}
+                                    {selectedUser.role === "STUDENT" ? 'Set as Admin' : 'Set as User'}
                                 </button>
                                 <button
                                     onClick={(e) => {
@@ -385,7 +400,7 @@ const ManageUsers = () => {
                 isOpen={isConfirmationOpen}
                 message={
                     confirmationAction === "role"
-                        ? `Are you sure you want ${selectedUserConfirm?.firstName} ${selectedUserConfirm?.lastName} to be ${selectedUserConfirm?.role === "STUDENT" ? 'Admin' : 'Student'}?`
+                        ? `Are you sure you want ${selectedUserConfirm?.firstName} ${selectedUserConfirm?.lastName} to be ${selectedUserConfirm?.role === "STUDENT" ? 'Admin' : 'User'}?`
                         : `Are you sure you want to ${confirmationAction === "delete" ? "delete" : selectedUserConfirm?.blocked ? "unblock" : "block"} ${selectedUserConfirm?.firstName} ${selectedUserConfirm?.lastName}?`
                 }
                 actionType={

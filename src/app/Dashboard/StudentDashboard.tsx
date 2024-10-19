@@ -20,7 +20,7 @@ const StudentDashboard = () => {
         const fetchedUser = await me();
         setUser(fetchedUser);
       } catch (error) {
-       
+
       }
     };
 
@@ -52,11 +52,24 @@ const StudentDashboard = () => {
             return event;
           })
         );
+
         const upcomingEvents = processedEvents.filter(
-          (event) =>
-            new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-            event.department.includes(user.department!) &&
-            !attendedEventIds.has(event.id)
+          (event) => {
+            if (user.department != 'N/A') {
+              return (
+                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                event.department.includes(user.department!) && event.department.includes("Open to All") &&
+                !attendedEventIds.has(event.id)
+              )
+            }
+            else {
+              return (
+                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                event.department.includes("Open to All") &&
+                !attendedEventIds.has(event.id)
+              )
+            }
+          }
         );
 
         const sortedEvents = upcomingEvents.sort((a, b) =>
@@ -95,9 +108,17 @@ const StudentDashboard = () => {
       <Sidebar />
       <div className="mt-[6rem] mx-2 mb-4 ml-[2rem]">
         <p className="text-xl font-semibold font-bevietnam tablet:text-3xl">Hello, {user.firstName}</p>
-        <p className="tablet:text-xl font-poppins">Discover exciting events for your department!</p>
+        <p className="tablet:text-xl font-poppins">
+          {user.department === "N/A"
+            ? "Discover exciting events in Wildcats Innovation Labs!"
+            : "Discover exciting events for your department!"}
+        </p>
         <div className="w-full border-t my-4" />
-        <p className="text-xl font-medium font-poppins underline">Closest {user.department} Events</p>
+        <p className="text-xl font-medium font-poppins underline">
+          {user.department === "N/A"
+            ? "Closest Events"
+            : `Closest ${user.department} Events`}
+        </p>
         <div className="tablet:flex tablet:justify-center tablet:gap-5 tablet:flex-wrap">
           {events.length == 0 ? (
             <div className="flex flex-col items-center gap pt-2">
