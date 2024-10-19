@@ -158,16 +158,20 @@ public class AdminController {
     }
 
 
+
+
+
     @GetMapping("/getAllAttendanceAndTimeout/{userId}/{eventId}")
     public ResponseEntity<?> getAllAttendanceAndTimeout(@PathVariable Long userId, @PathVariable Long eventId){
         try{
-            return new ResponseEntity<>(attendanceService.getAttendanceTimeByUserandEvent(userId,eventId),HttpStatus.OK);
+            return new ResponseEntity<>(attendanceService.getAttendanceTimeByUserAndEvent(userId,eventId),HttpStatus.OK);
         }catch (EntityNotFoundException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.CONFLICT);
         }catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 

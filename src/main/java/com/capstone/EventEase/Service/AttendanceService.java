@@ -242,14 +242,15 @@ public class AttendanceService {
 
 
 
-
-    public AttendanceTimes getAttendanceTimeByUserandEvent(Long userId, Long eventId) {
+    public AttendanceTimes getAttendanceTimeByUserAndEvent(Long userId, Long eventId) {
         User user = getUserById(userId);
         Event event = getEventById(eventId);
         UserEvent userEvent = getByUserAndEvent(user, event);
         Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
         return attendance.map(value -> new AttendanceTimes(value.getAttendedTime(), value.getTimeOut())).orElse(null);
     }
+
+
 
 
 

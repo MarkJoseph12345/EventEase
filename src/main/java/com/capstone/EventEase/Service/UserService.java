@@ -1,18 +1,13 @@
 package com.capstone.EventEase.Service;
 
-import com.capstone.EventEase.Entity.Attendance;
-import com.capstone.EventEase.Entity.PasswordResetToken;
 import com.capstone.EventEase.Entity.User;
 import com.capstone.EventEase.Entity.UserEvent;
-import com.capstone.EventEase.Exceptions.EntityNotDeletedException;
 import com.capstone.EventEase.Repository.AttendanceRepository;
 import com.capstone.EventEase.Repository.PasswordResetTokenRepository;
 import com.capstone.EventEase.Repository.UserEventRepository;
 import com.capstone.EventEase.Repository.UserRepository;
-import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -71,6 +65,7 @@ public class UserService implements UserDetailsService {
         User user = getUserById(userId);
         deletePasswordResetToken(user);
         deleteUserEvents(user);
+
         userRepository.deleteById(userId);
         return "User has been Deleted";
     }
@@ -80,15 +75,25 @@ public class UserService implements UserDetailsService {
         emailService.sendDeleteEmail(user.getUsername());
         deletePasswordResetToken(user);
         deleteUserEvents(user);
+        deleteUserAttendance(user);
         userRepository.deleteById(userId);
-
         return "User has been Deleted By Admin";
+    }
+
+
+
+    public void deleteUserAttendance(User user){
+        List<UserEvent> userEvents = userEventRepository.findByUserId(user.getId());
+        for (UserEvent userEvent : userEvents) {
+            attendanceRepository.findByUserevent(userEvent).ifPresent(attendanceRepository::delete);
+        }
     }
 
 
     private void deletePasswordResetToken(User user){
         Optional.ofNullable(passwordResetTokenRepository.findByUser(user)).ifPresent(passwordResetTokenRepository::delete);
     }
+
 
     private void deleteUserEvents(User user){
         List<UserEvent> userEvents = userEventRepository.findByUserId(user.getId());
