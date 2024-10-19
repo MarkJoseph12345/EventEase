@@ -236,6 +236,7 @@ public class AuthenticationController {
     }
 
 
+
     @PostMapping("/verifyToken")
     public ResponseEntity<Boolean> verifyToken(@RequestParam("token") String token){
         return ResponseEntity.ok(passwordResetTokenService.verifyToken(token));

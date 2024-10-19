@@ -70,6 +70,8 @@ public class UserService implements UserDetailsService {
     }
 
 
+
+
     public String deleteUserByIdByAdmin(Long userId) throws IOException {
         User user = getUserById(userId);
         emailService.sendDeleteEmail(user.getUsername());

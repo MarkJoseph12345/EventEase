@@ -205,13 +205,17 @@ public class EmailService {
     }
 
 
-    public void sendConfirmationLink(String email, String token){
+
+
+
+    public void sendConfirmationLink(String email, String token) throws MessagingException{
         try{
             Context context = new Context();
             context.setVariable("subject","Confirmation Link");
             context.setVariable("token",token);
 
             String htmlContent = templateEngine.process("confirm-template",context);
+
 
 
             MimeMessage message = javaMailSender.createMimeMessage();
@@ -223,12 +227,16 @@ public class EmailService {
 
 
             javaMailSender.send(message);
-        }catch (MessagingException e){
+        } catch (SMTPAddressFailedException e) {
+            logger.error("Invalid email address: {}. Error: {}", email, e.getMessage());
+            throw new MessagingException("Invalid email address: " + email, e);
+        } catch (MessagingException | UnsupportedEncodingException e) {
             logger.error("Failed to send email to {}: {}", email, e.getMessage());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new MessagingException("Failed to send email to " + email, e);
         }
     }
+
+
 
 
 
