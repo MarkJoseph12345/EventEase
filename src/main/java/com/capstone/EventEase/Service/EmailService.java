@@ -270,6 +270,7 @@ public class EmailService {
         }
     }
 
+
     public void sendDeleteEmail(String email) {
         try {
             MimeMessage message = javaMailSender.createMimeMessage();

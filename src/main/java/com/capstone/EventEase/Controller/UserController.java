@@ -152,6 +152,22 @@ public class UserController {
 
 
 
+
+    @Operation(summary = "User can delete account by passing their id")
+    @DeleteMapping("/deleteUserByAdmin/{userId}")
+    public ResponseEntity<?> deleteUserByAdminId(@PathVariable Long userId){
+        try{
+            return new ResponseEntity<>(userService.deleteUserByIdByAdmin(userId),HttpStatus.OK);
+        }catch (EntityNotDeletedException e){
+            return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
     @Operation(summary = "Check if uuid")
     @GetMapping("/getByUUID/{uuid}")
     public ResponseEntity<?> checkUuid(@PathVariable String uuid){

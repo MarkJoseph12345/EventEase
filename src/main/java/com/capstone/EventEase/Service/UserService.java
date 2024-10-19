@@ -65,10 +65,10 @@ public class UserService implements UserDetailsService {
         User user = getUserById(userId);
         deletePasswordResetToken(user);
         deleteUserEvents(user);
-
         userRepository.deleteById(userId);
         return "User has been Deleted";
     }
+
 
     public String deleteUserByIdByAdmin(Long userId) throws IOException {
         User user = getUserById(userId);
