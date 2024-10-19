@@ -54,7 +54,6 @@ public class AdminService {
 
 
 
-
     public User setAdmin(Long userId){
         User user = getUserById(userId);
         user.setRole(Role.ADMIN);

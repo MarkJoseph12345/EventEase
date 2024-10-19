@@ -213,6 +213,8 @@ public class AttendanceService {
 
 
 
+
+
     public long countDays(Long eventId) {
 
         Event event = getEventById(eventId);
@@ -247,7 +249,15 @@ public class AttendanceService {
         Event event = getEventById(eventId);
         UserEvent userEvent = getByUserAndEvent(user, event);
         Optional<Attendance> attendance = attendanceRepository.findByUserevent(userEvent);
-        return attendance.map(value -> new AttendanceTimes(value.getAttendedTime(), value.getTimeOut())).orElse(null);
+        return attendance.map(value -> new AttendanceTimes(value.getAttendedTime(), value.getTimeOut(),
+                value.getUserevent().getUser().getId(), value.getUserevent().getEvent().getId())).orElse(null);
+        }
+
+
+    public List<AttendanceTimes> getAllAttendanceTimes() {
+        List<Attendance> attendances = attendanceRepository.findAll();
+        return attendances.stream().map(attendance -> new AttendanceTimes(attendance.getAttendedTime(), attendance.getTimeOut(),
+                attendance.getUserevent().getUser().getId(), attendance.getUserevent().getEvent().getId())).toList();
     }
 
 

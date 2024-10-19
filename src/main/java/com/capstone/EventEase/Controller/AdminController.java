@@ -205,6 +205,18 @@ public class AdminController {
 
 
 
+
+    @Operation(summary = "Get All Attendance Times")
+    @GetMapping("/getAllAttendanceTimes")
+    public ResponseEntity<?> getAllAttendanceTimes(){
+        try{
+            return new ResponseEntity<>(attendanceService.getAllAttendanceTimes(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @Operation(summary = "Get All Events Joined By Event After Attendance")
     @GetMapping("/getEventsJoinedAttendance/{userId}")
     public ResponseEntity<?> getEventsJoinedAfterAttending(@PathVariable Long userId){
