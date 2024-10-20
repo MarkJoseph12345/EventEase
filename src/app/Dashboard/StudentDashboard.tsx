@@ -58,14 +58,14 @@ const StudentDashboard = () => {
             if (user.department != 'N/A') {
               return (
                 new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                event.department.includes(user.department!) && event.department.includes("Open to All") &&
+                event.department.includes(user.department!) || event.department.includes("Open To All") &&
                 !attendedEventIds.has(event.id)
               )
             }
             else {
               return (
                 new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                event.department.includes("Open to All") &&
+                event.department.includes("Open To All") &&
                 !attendedEventIds.has(event.id)
               )
             }

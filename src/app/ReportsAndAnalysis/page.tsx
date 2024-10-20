@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Sidebar from '../Comps/Sidebar';
 import Loading from '../Loader/Loading';
-import { getAllUsersAfterAttendance, getAllUsersJoinedToEvent, getEvents, getEventPopularity, getJoinRate, getEventTypeDistribution, getEventSchedulingTrends, getAverageEventDuration, getDepartmentEngagement, fetchEventPicture } from '@/utils/apiCalls';
+import { getAllUsersAfterAttendance, getAllUsersJoinedToEvent, getEvents, getEventPopularity, getJoinRate, getEventTypeDistribution, getEventSchedulingTrends, getAverageEventDuration, getDepartmentEngagement, fetchEventPicture, getAttendanceAndTimeout } from '@/utils/apiCalls';
 import { Event } from '@/utils/interfaces';
 import ViewJoined from '../Modals/ViewJoined';
 import EventTypeDistributionChart from '../Charts/EventTypeDistribution';
@@ -82,13 +82,15 @@ const ReportsAndAnalysis: React.FC = () => {
                         joinRate,
                     };
                 }));
+
                 setEventData(eventsWithUserCounts);
                 setFilteredEventData(eventsWithUserCounts);
-                setEventTypeDistribution(await getEventTypeDistribution())
-                //setEventSchedulingTrends(await getEventSchedulingTrends())
-                setAverageEventDuration(await getAverageEventDuration())
-                setDepartmentEngagement(await getDepartmentEngagement())
-
+                setEventTypeDistribution(await getEventTypeDistribution());
+                //setEventSchedulingTrends(await getEventSchedulingTrends());
+                setAverageEventDuration(await getAverageEventDuration());
+                setDepartmentEngagement(await getDepartmentEngagement());
+            } catch (error) {
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
@@ -212,6 +214,7 @@ const ReportsAndAnalysis: React.FC = () => {
                                                     </td> */}
                                                         <td className="px-6 py-4 whitespace-nowrap hover:underline hover:cursor-pointer" onClick={() => handleOpenPopup(event.id)}>
                                                             {event.eventName}
+
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                                             {event.registeredCount}

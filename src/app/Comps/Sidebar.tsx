@@ -5,6 +5,7 @@ import Link from "next/link";
 import { deleteCookie } from '@/utils/cookies';
 import { deleteUser, fetchProfilePicture, me } from '@/utils/apiCalls';
 import { User } from '@/utils/interfaces';
+import PopUps from '../Modals/PopUps';
 
 const studentSideBarLinks = [
     { name: 'Join Events', imageUrl: "/join.png", href: "/JoinEvents" },
@@ -28,14 +29,14 @@ const Sidebar = () => {
     const [imageUrl, setImageUrl] = useState("");
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
+    const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>()
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const userData = await me();
                 setUser(userData);
             } catch (error) {
-                
+
             }
         };
 
@@ -49,7 +50,7 @@ const Sidebar = () => {
                     const url = await fetchProfilePicture(user.id);
                     setImageUrl(url);
                 } catch (error) {
-                  
+
                 }
             }
         };
@@ -110,15 +111,19 @@ const Sidebar = () => {
         setOpenProfile(false);
     };
 
-    const handleConfirmDelete = () => {
-        setShowDeleteConfirmation(false);
-        setShowSuccessMessage(true);
-        deleteUser(user!.id!)
+    const handleConfirmDelete = async () => {
+        const response = await deleteUser(user!.id!)
+        if (response) {
+            setShowDeleteConfirmation(false);
+            setShowSuccessMessage(true);
 
-        setTimeout(() => {
-            setShowSuccessMessage(false);
-        }, 3000);
-        window.location.reload();
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
+            window.location.reload();
+        } else {
+            setMessage({ text: "Failed to delete account", type: "error" });
+        }
     };
 
     const handleCancelDelete = () => {
@@ -130,8 +135,8 @@ const Sidebar = () => {
     if (!user) {
         return (
             <div className="flex items-center bg-customYellow">
-                 <p className="ml-2 text-4xl font-bold cursor-pointer">≡</p>
-                 <img src="/logo.png" alt="Logo" className="h-10 object-cover ml-4 cursor-pointer m-3 "/>
+                <p className="ml-2 text-4xl font-bold cursor-pointer">≡</p>
+                <img src="/logo.png" alt="Logo" className="h-10 object-cover ml-4 cursor-pointer m-3 " />
             </div>
         );
     }
@@ -210,6 +215,7 @@ const Sidebar = () => {
                     </div>
                 </div>
             )}
+            {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div>
     )
 }

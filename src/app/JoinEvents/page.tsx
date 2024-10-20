@@ -17,6 +17,7 @@ const JoinEvents = () => {
     const [selectedFilters, setSelectedFilters] = useState<{ types: string[], createdBy: string[] }>({ types: [], createdBy: [] });
     const [showFilters, setShowFilters] = useState<boolean>(false);
 
+    const [includeOpenToAllEvents, setIncludeOpenToAllEvents] = useState(false);
     const types = Array.from(new Set(events.flatMap(event => event.eventType || []).map(type => type.split(", ")[0])));
     const createdBy = Array.from(new Set(events.flatMap(event => event.createdBy)));
 
@@ -24,7 +25,12 @@ const JoinEvents = () => {
         setShowFilters(!showFilters);
     };
 
-    const handleFilterChange = (filterCategory: 'types' | 'createdBy', filterValue: string) => {
+    const handleFilterChange = (filterCategory: 'types' | 'createdBy' | 'showOpenToAll', filterValue: string) => {
+        if (filterCategory === 'showOpenToAll') {
+            setIncludeOpenToAllEvents(prevState => !prevState);
+            return;
+        }
+
         const updatedFilters = selectedFilters[filterCategory].includes(filterValue)
             ? selectedFilters[filterCategory].filter(filter => filter !== filterValue)
             : [...selectedFilters[filterCategory], filterValue];
@@ -64,14 +70,14 @@ const JoinEvents = () => {
                         if (user.department != 'N/A') {
                             return (
                                 new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                                event.department.includes(user.department!) &&
-                                event.department.includes("Open to All")
+                                event.department.includes(user.department!) ||
+                                event.department.includes("Open To All")
                             )
                         }
                         else {
                             return (
                                 new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-                                event.department.includes("Open to All")
+                                event.department.includes("Open To All")
                             )
                         }
                     }
@@ -127,8 +133,15 @@ const JoinEvents = () => {
         const matchesSearch = event.eventName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = selectedFilters.types.length === 0 || selectedFilters.types.includes(type[0]);
         const matchesCreatedBy = selectedFilters.createdBy.length === 0 || selectedFilters.createdBy.includes(event.createdBy!);
+        const isOpenToAllEvent = event.department.includes("Open To All");
 
-        return matchesSearch && matchesType && matchesCreatedBy;
+        const matchesOpenToAllEvents = (includeOpenToAllEvents || !isOpenToAllEvent);
+
+        if (user!.department !== 'N/A') {
+            return matchesSearch && matchesType && matchesCreatedBy && matchesOpenToAllEvents;
+        } else {
+            return matchesSearch && matchesType && matchesCreatedBy;
+        }
     });
 
 
@@ -144,7 +157,7 @@ const JoinEvents = () => {
                 <p className="text-xl mb-2 font-bevietnam font-semibold tablet:text-3xl">
                     {user.department === "N/A"
                         ? "Available Events"
-                        : `{user!.department} Events`}
+                        : `${user!.department} Events`}
                 </p>
                 <div className="">
                     <div className="flex items-center mb-5 ">
@@ -167,7 +180,7 @@ const JoinEvents = () => {
                                             </div>
                                         ))}
                                     </div>
-                                    <div>
+                                    <div className="mb-2">
                                         <p className="font-semibold">Creator</p>
                                         {createdBy.map((createdBy, index) => (
                                             <div key={index} className="flex items-center">
@@ -177,6 +190,19 @@ const JoinEvents = () => {
                                             </div>
                                         ))}
                                     </div>
+                                    {user.department != 'N/A' && (
+                                        <div className="flex items-center">
+                                            <label className="flex items-center cursor-pointer font-semibold">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={includeOpenToAllEvents}
+                                                    onChange={() => handleFilterChange('showOpenToAll', '')}
+                                                    className="mr-2 cursor-pointer accent-customYellow"
+                                                />
+                                                Include Open To All Events
+                                            </label>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

@@ -6,7 +6,7 @@ const StudentEventsFilteredList: React.FC<FilteredEventListProps> = ({ events, s
         event.eventName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    let noEventMessage = 'There are no upcoming events for your department.';
+    let noEventMessage = 'There are no upcoming events found!';
     if (eventType === 'registered') {
         noEventMessage = 'You have not joined any events!';
     } else if (eventType === 'attended') {

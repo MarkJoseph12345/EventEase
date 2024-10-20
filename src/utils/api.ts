@@ -1,4 +1,4 @@
-const BASE_URL = "https://eventease-ms7t.onrender.com";
+const BASE_URL = "https://king-prawn-app-92pca.ondigitalocean.app";
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,
@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
   GET_PROFILE_PICTURE_SVG: `${BASE_URL}/user/getProfilePicture/svg/`,
   GET_EVENT_BY_ID: `${BASE_URL}/event/getEventById/`,
   GET_USER_BY_ID: `${BASE_URL}/user/`,
-  DELETE_USER_BY_ADMIN: `${BASE_URL}/deleteUserByAdmin/`,
+  DELETE_USER_BY_ADMIN: `${BASE_URL}/admin/deleteUserByAdmin/`,
   DELETE_USER: `${BASE_URL}/user/deleteUser/`,
   UPDATE_USER: `${BASE_URL}/user/updateUser/`,
   JOIN_EVENT: `${BASE_URL}/userevent/joinEvent/`,
@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   UNBLOCK_USER: `${BASE_URL}/admin/unblock/`,
   GET_ALL_EVENTS_AFTER_ATTENDANCE: `${BASE_URL}/admin/getEventsJoinedAttendance/`,
   GET_ALL_USERS_AFTER_ATTENDANCE: `${BASE_URL}/admin/getUsersJoinedAfterAttendance/`,
+  GET_ATTENDANCE_AND_TIMEOUT: `${BASE_URL}/admin/getAllAttendanceAndTimeout/`,
   EVENT_NOW: `${BASE_URL}/event/getEventNow`,
   LIKE_EVENT: `${BASE_URL}/event/likeEvent/`,
   DISLIKE_EVENT: `${BASE_URL}/event/dislikeEvent/`,

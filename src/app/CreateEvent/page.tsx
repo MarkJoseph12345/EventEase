@@ -255,7 +255,7 @@ const CreateEvent = () => {
     if (showDepartmentExclusive) {
       event.department = department;
     } else {
-      event.department = ['Open to All'];
+      event.department = ['Open To All'];
     }
     const result: any = await createEvent(user!.username!, event);
     setIsCreating(false);

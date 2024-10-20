@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import { EventDetailModal, User } from '@/utils/interfaces';
-import { getAllUsersJoinedToEvent, getAllUsersAfterAttendance, me } from '@/utils/apiCalls';
+import { getAllUsersJoinedToEvent, getAllUsersAfterAttendance, me, getAttendanceAndTimeout } from '@/utils/apiCalls';
 import Loading from '../Loader/Loading';
+import { formatDate } from '@/utils/data';
 
 const ViewJoined = ({ event, onClose }: EventDetailModal) => {
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -14,14 +15,17 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
             try {
                 const usersData = await getAllUsersJoinedToEvent(event.id!);
                 const attendedUsers = await getAllUsersAfterAttendance(event.id!);
-
                 const attendedUserIds = attendedUsers.map((user: { id: any; }) => user.id);
-
-                const updatedUsers = usersData.map(user => ({
-                    ...user,
-                    hasAttended: attendedUserIds.includes(user.id)
-                }));
-
+                const attendanceDataPromises = usersData.map(async (user) => {
+                    const userId = user.id;
+                    const attendanceData = await getAttendanceAndTimeout(userId!, event.id!);
+                    return {
+                        ...user,
+                        hasAttended: attendedUserIds.includes(userId),
+                        attendanceData,
+                    };
+                });
+                const updatedUsers = await Promise.all(attendanceDataPromises);
                 setUsers(updatedUsers);
             } finally {
                 setLoading(false);
@@ -30,7 +34,7 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
 
         fetchUsersAndAttendance();
     }, [event.id]);
-    
+
     useEffect(() => {
         document.body.style.overflow = 'hidden';
 
@@ -46,13 +50,12 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
             {loading ? (
                 <div></div>
             ) : (
-                <div className={`bg-white shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-[50rem] `}>
+                <div className={`bg-white shadow-md w-11/12 max-h-[95%] overflow-auto relative laptop:max-w-fit`}>
                     <div className="flex bg-black p-2 w-full">
                         <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
-                        <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={() => {setLoading(true); setTimeout(onClose, 100);}}>✖</p>
+                        <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={() => { setLoading(true); setTimeout(onClose, 100); }}>✖</p>
                     </div>
                     <div className="p-4 overflow-x-auto">
-
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
@@ -65,8 +68,14 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                                         Department
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                                         Attended
+                                    </th> */}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                        Attendance Time
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                                        Time Out Time
                                     </th>
                                 </tr>
                             </thead>
@@ -83,18 +92,33 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {user.department}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            {/* <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {user.hasAttended ? (
                                                     <span className="text-green-500">&#10003;</span>
                                                 ) : (
                                                     <span className="text-red-500">&#10007;</span>
                                                 )}
+                                            </td> */}
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                {user.attendanceData && user.attendanceData.attendedTimes && user.attendanceData.attendedTimes.length > 0 ? (
+                                                    <span>{formatDate(user.attendanceData.attendedTimes)}</span>
+                                                ) : (
+                                                    <span className="">No attendance recorded</span>
+                                                )}
                                             </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                {user.attendanceData && user.attendanceData.timeoutTimes && user.attendanceData.timeoutTimes.length > 0 ? (
+                                                    <span>{formatDate(user.attendanceData.timeoutTimes)}</span>
+                                                ) : (
+                                                    <span className="">No timeout recorded</span>
+                                                )}
+                                            </td>
+
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                                        <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                                             No users have joined yet.
                                         </td>
                                     </tr>

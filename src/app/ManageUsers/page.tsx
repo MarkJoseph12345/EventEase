@@ -120,7 +120,7 @@ const ManageUsers = () => {
         const id = userId || selectedUser?.id;
         if (id) {
             try {
-                const isDeleted = await deleteUser(id);
+                const isDeleted = await deleteUserByAdmin(id);
                 if (isDeleted) {
                     setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
                     if (selectedUser && !userId) {

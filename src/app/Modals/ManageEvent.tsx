@@ -12,6 +12,9 @@ const types = ["Workshop", "Seminar", "Networking Events", "Other"];
 
 
 const ManageEvent = ({ event, onClose }: EventDetailModal) => {
+    const currentTime = new Date();
+
+    const isEventEnded = new Date(event.eventEnds!) < currentTime;
     const [newPicture, setNewPicture] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>(event.eventPicture || "");
     const [updateEventData, setUpdateEventData] = useState<any>({
@@ -25,7 +28,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
     const [confirmationAction, setConfirmationAction] = useState<'delete' | 'update' | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [showGenderExclusive, setShowGenderExclusive] = useState(event.allowedGender !== "ALL");
-    const [showDepartmentExclusive, setShowDepartmentExclusive] = useState(event.department.some(dept => dept !== "Open to All"));
+    const [showDepartmentExclusive, setShowDepartmentExclusive] = useState(event.department.some(dept => dept !== "Open To All"));
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleCheckboxChange = (department: string) => {
@@ -132,9 +135,9 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
 
         if (showDepartmentExclusive) {
             updatedEventData.department = department;
-            updatedEventData.department = updatedEventData.department.filter((dep: string) => dep !== "Open to All");
+            updatedEventData.department = updatedEventData.department.filter((dep: string) => dep !== "Open To All");
         } else {
-            updatedEventData.department = ["Open to All"];
+            updatedEventData.department = ["Open To All"];
         }
         const result = await updateEvent(event.id, updatedEventData);
 
@@ -142,11 +145,11 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
             await updateEventPicture(event.id, newPicture);
         }
 
-        if (result) {
+        if (result.success) {
             setMessage({ text: "Successfully updated event", type: "success" });
             window.location.reload();
         } else {
-            setMessage({ text: "Failed to update event", type: "error" });
+            setMessage({ text: result.messages, type: "error" });
         }
     };
 
@@ -457,7 +460,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                         <button className="bg-customRed text-white font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={(e) => {
                             handleConfirmation('delete', event);
                         }}>Delete Event</button>
-                        <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={(e) => {
+                        <button     className={`font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isEventEnded ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-customYellow'}`} disabled={isEventEnded} onClick={(e) => {
                             handleConfirmation('update', event);
                         }}>Update Event</button>
                     </div>
