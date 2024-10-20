@@ -392,6 +392,8 @@ public class AuthenticationController {
     }
 
 
+
+
     @Operation(summary = "Register A User")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
