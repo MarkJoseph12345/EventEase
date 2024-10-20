@@ -168,7 +168,7 @@ const JoinEvents = () => {
                             {showFilters && (
                                 <div ref={dropdownRef} className="absolute top-10 left-0 bg-white border border-gray-200 shadow-md rounded-md p-2 w-max">
                                     <div className="flex items-center justify-between mb-2 flex-col">
-                                        <button className="text-sm text-customYellow" onClick={() => setSelectedFilters({ types: [], createdBy: [] })}>Clear Filters</button>
+                                        <button className="text-sm text-customYellow" onClick={() => {setSelectedFilters({ types: [], createdBy: [] }); setIncludeOpenToAllEvents(false) }}>Clear Filters</button>
                                     </div>
                                     <div className="mb-2">
                                         <p className="font-semibold">Type</p>
