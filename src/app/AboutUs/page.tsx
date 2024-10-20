@@ -6,7 +6,7 @@ const AboutUs = () => {
     return (
         <div>
             <NavBar />
-            <div className="flex flex-col items-center gap-5 mx-[10rem] pt-2 mt-[3rem]">
+            <div className="flex flex-col items-center gap-5 mx-[1rem] laptop:mx-[10rem] pt-2 laptop:mt-[3rem]">
                 <div className="mt-10 flex items-center gap-2">
                 <p className="tablet:text-4xl text-2xl font-poppins font-bold laptop:text-center">Learn More About</p>
                 <img src="/logo.png" alt="Logo" className="bg-customYellow h-14 w-48 object-scale-down" />
