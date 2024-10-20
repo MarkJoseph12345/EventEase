@@ -187,8 +187,6 @@ public class EventController {
 
 
 
-
-
     @Operation(summary = "Get ALl Events")
 
     @GetMapping("/getAllEvents")
