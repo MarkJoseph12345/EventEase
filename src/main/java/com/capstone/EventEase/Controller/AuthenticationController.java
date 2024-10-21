@@ -269,6 +269,8 @@ public class AuthenticationController {
     }
 
 
+
+
     @Operation(summary = "Register A User with Send Link")
     @PostMapping("/registerLink")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest){

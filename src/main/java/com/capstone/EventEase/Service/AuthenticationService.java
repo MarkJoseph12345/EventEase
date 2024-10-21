@@ -137,12 +137,20 @@ public class AuthenticationService {
 
 
     public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
-        checkIfUserExists(registerRequest.getUsername());
-        User newUser = createUserFromRequest(registerRequest);
-        User user = userRepository.save(newUser);
-        String token = UUID.randomUUID().toString();
-        generateVerificationToken(token,user);
-        return "Check your email for verification";
+     try{
+         checkIfUserExists(registerRequest.getUsername());
+         User newUser = createUserFromRequest(registerRequest);
+         User user = userRepository.save(newUser);
+         String token = UUID.randomUUID().toString();
+         generateVerificationToken(token,user);
+         return "Check your email for verification";
+     }  catch (SMTPAddressFailedException e) {
+        logger.error("Invalid email address: {}. Error: {}", registerRequest.getUsername(), e.getMessage());
+        throw new MessagingException("Invalid email address: " +  registerRequest.getUsername(), e);
+    } catch (MessagingException e) {
+        logger.error("Failed to send email to {}: {}",  registerRequest.getUsername(), e.getMessage());
+        throw new MessagingException("Failed to send email to " +  registerRequest.getUsername(), e);
+    }
     }
 
 
