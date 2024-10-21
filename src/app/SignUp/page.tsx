@@ -40,7 +40,7 @@ const SignUp = () => {
     }
 
     const validatePassword = (password: string): void => {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
         if (!passwordRegex.test(password)) {
             setPasswordError("Your password must be 8 characters with at least one uppercase letter and one number.");
         } else {
@@ -88,8 +88,8 @@ const SignUp = () => {
         setLoading(false)
         if (result) {
             if (result.success) {
-                // setMessage({ text: "Please check your email to verify.", type: "success" });
-                setMessage({ text: result.message, type: "success" });
+                setMessage({ text: "Please check your email to verify.", type: "success" });
+                // setMessage({ text: result.message, type: "success" });
                 setTimeout(() => {
                     window.location.href = "/Login";
                 }, 3000);
