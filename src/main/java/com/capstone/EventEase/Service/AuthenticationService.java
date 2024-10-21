@@ -18,6 +18,7 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.angus.mail.smtp.SMTPAddressFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -141,12 +143,22 @@ public class AuthenticationService {
         String token = UUID.randomUUID().toString();
         generateVerificationToken(token,user);
         return "Check your email for verification";
-
     }
+
+
+
     public void generateVerificationToken(String token, User user) throws MessagingException {
-        VerificationToken verificationToken = new VerificationToken(token,user);
-        verificationTokenRepository.save(verificationToken);
-        emailService.sendConfirmationLink(user.getUsername(),token);
+        try {
+            VerificationToken verificationToken = new VerificationToken(token, user);
+            verificationTokenRepository.save(verificationToken);
+            emailService.sendConfirmationLink(user.getUsername(), token);
+        } catch (SMTPAddressFailedException e) {
+            logger.error("Invalid email address: {}. Error: {}", user.getUsername(), e.getMessage());
+            throw new MessagingException("Invalid email address: " + user.getUsername(), e);
+        } catch (MessagingException e) {
+            logger.error("Failed to send email to {}: {}", user.getUsername(), e.getMessage());
+            throw new MessagingException("Failed to send email to " + user.getUsername(), e);
+        }
     }
 
 
