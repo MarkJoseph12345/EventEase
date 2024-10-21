@@ -296,6 +296,9 @@ public class EventService {
         ZonedDateTime eventStart = oldEvent.getEventStarts().atZoneSameInstant(UTC_8);
         ZonedDateTime eventEnd = oldEvent.getEventEnds().atZoneSameInstant(UTC_8);
 
+        validateEventDates(event);
+
+
         if(currentDate.isAfter(eventStart) && currentDate.isBefore(eventEnd)){
             throw new DateTimeException("Event Can't Be Updated During Event Starts");
         }
