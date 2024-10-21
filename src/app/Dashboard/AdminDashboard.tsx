@@ -27,8 +27,8 @@ const AdminDashboard = () => {
       try {
         const fetchedUser = await me();
         setUser(fetchedUser);
-      } catch (error) {
-
+      } finally {
+        
       }
     };
 
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
   }, []);
 
 
-  if (loading) {
+  if (loading || !user) {
     return <Loading />;
   }
 
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
     <div>
       <Sidebar />
       <div className="mt-[6rem] mb-4 mx-[2rem]">
-        <p className="text-xl font-semibold tablet:text-3xl font-bevietnam">Hello, {user!.firstName}</p>
+        <p className="text-xl font-semibold tablet:text-3xl font-bevietnam">Hello, {user?.firstName}</p>
         <p className="tablet:text-xl text-[10px] font-poppins">Manage your events!</p>
         <div className="w-full border-t my-4" />
         <p className="text-xl font-medium font-poppins underline">Closest Events</p>
