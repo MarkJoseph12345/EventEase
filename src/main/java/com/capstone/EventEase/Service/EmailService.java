@@ -241,7 +241,7 @@ public class EmailService {
             throw new MessagingException("Invalid email address: " + email, e);
         } catch (MessagingException | UnsupportedEncodingException e) {
             logger.error("Failed to send email to {}: {}", email, e.getMessage());
-            throw new MessagingException("Failed to send email to " + email, e);
+            throw new MessagingException("Invalid email address:  " + email, e);
         }
     }
 
