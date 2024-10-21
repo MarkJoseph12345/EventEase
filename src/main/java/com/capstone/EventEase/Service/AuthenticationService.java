@@ -141,6 +141,7 @@ public class AuthenticationService {
         String token = UUID.randomUUID().toString();
         generateVerificationToken(token,user);
         return "Check your email for verification";
+
     }
     public void generateVerificationToken(String token, User user) throws MessagingException {
         VerificationToken verificationToken = new VerificationToken(token,user);

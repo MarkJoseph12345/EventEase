@@ -276,7 +276,7 @@ public class AuthenticationController {
             return new ResponseEntity<>(authenticationService.generateConfirmationToken(registerRequest),HttpStatus.OK);
         }catch (EntityExistsException e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()), HttpStatus.CONFLICT);
-        }catch (Exception e){
+        } catch (Exception e){
             return new ResponseEntity<>(Map.of("messages",e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }

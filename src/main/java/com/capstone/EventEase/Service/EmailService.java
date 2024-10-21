@@ -208,23 +208,20 @@ public class EmailService {
 
 
 
-    public void sendConfirmationLink(String email, String token) throws MessagingException{
-        try{
+    public void sendConfirmationLink(String email, String token) throws MessagingException {
+        try {
             Context context = new Context();
-            context.setVariable("subject","Confirmation Link");
-            context.setVariable("token",token);
+            context.setVariable("subject", "Confirmation Link");
+            context.setVariable("token", token);
 
-            String htmlContent = templateEngine.process("confirm-template",context);
-
-
+            String htmlContent = templateEngine.process("confirm-template", context);
 
             MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,true);
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom("eventease2002@gmail.com", "EventEase");
             helper.setTo(email);
             helper.setSubject("Account Confirmation");
-            helper.setText(htmlContent,true);
-
+            helper.setText(htmlContent, true);
 
             javaMailSender.send(message);
         } catch (SMTPAddressFailedException e) {
