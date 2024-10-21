@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -205,10 +206,21 @@ public class EmailService {
     }
 
 
+    public boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
+    }
+
 
 
 
     public void sendConfirmationLink(String email, String token) throws MessagingException {
+
+        if (!isValidEmail(email)) {
+            logger.error("Invalid email address format: {}", email);
+            throw new MessagingException("Invalid email address. Please provide a valid one.");
+        }
         try {
             Context context = new Context();
             context.setVariable("subject", "Confirmation Link");
