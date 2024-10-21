@@ -158,7 +158,7 @@ public class AuthenticationService {
         } catch (SMTPAddressFailedException e) {
             handleMessagingException("Invalid email address: " + user.getUsername(), e);
         } catch (MessagingException e) {
-            handleMessagingException("Failed to send email to: " + user.getUsername(), e);
+            throw new MessagingException("Invalid email address:  " + user.getUsername(), e);
         }
     }
 
