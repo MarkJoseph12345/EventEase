@@ -420,7 +420,7 @@ public class EventService {
 
 
 
-    public List<Event> getEventByNow() {
+    public Optional<Event> getEventByNow() {
         return eventRepository.findByCurrentEvent(OffsetDateTime.now());
         }
 

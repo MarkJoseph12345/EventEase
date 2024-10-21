@@ -33,11 +33,9 @@ public interface EventRepository extends JpaRepository<Event,Long> {
 
 
 
-
-
     //@Query(value = "SELECT * FROM tbl_event WHERE :now BETWEEN event_starts - INTERVAL '5 minutes' AND event_ends + INTERVAL '5 minutes'", nativeQuery = true)
      @Query("SELECT e FROM Event e WHERE :now BETWEEN e.eventStarts AND e.eventEnds")
-    List<Event> findByCurrentEvent(@Param("now") OffsetDateTime now);
+    Optional<Event> findByCurrentEvent(@Param("now") OffsetDateTime now);
 
 
 
