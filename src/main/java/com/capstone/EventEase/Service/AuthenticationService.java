@@ -137,37 +137,36 @@ public class AuthenticationService {
 
 
     public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
-     try{
-         checkIfUserExists(registerRequest.getUsername());
-         User newUser = createUserFromRequest(registerRequest);
-         User user = userRepository.save(newUser);
-         String token = UUID.randomUUID().toString();
-         generateVerificationToken(token,user);
-         return "Check your email for verification";
-     }  catch (SMTPAddressFailedException e) {
-        logger.error("Invalid email address: {}. Error: {}", registerRequest.getUsername(), e.getMessage());
-        throw new MessagingException("Invalid email address: " +  registerRequest.getUsername(), e);
-    } catch (MessagingException e) {
-        logger.error("Failed to send email to {}: {}",  registerRequest.getUsername(), e.getMessage());
-        throw new MessagingException("Failed to send email to " +  registerRequest.getUsername(), e);
-    }
-    }
+        checkIfUserExists(registerRequest.getUsername());
+        User newUser = createUserFromRequest(registerRequest);
+        User user = userRepository.save(newUser);
 
+        String token = UUID.randomUUID().toString();
+        generateVerificationToken(token, user);
 
+        logger.info("Verification token generated for user: {}", user.getUsername());
+        return "Check your email for verification.";
+    }
 
     public void generateVerificationToken(String token, User user) throws MessagingException {
         try {
             VerificationToken verificationToken = new VerificationToken(token, user);
             verificationTokenRepository.save(verificationToken);
             emailService.sendConfirmationLink(user.getUsername(), token);
+
+            logger.info("Confirmation email sent to: {}", user.getUsername());
         } catch (SMTPAddressFailedException e) {
-            logger.error("Invalid email address: {}. Error: {}", user.getUsername(), e.getMessage());
-            throw new MessagingException("Invalid email address: " + user.getUsername(), e);
+            handleMessagingException("Invalid email address: " + user.getUsername(), e);
         } catch (MessagingException e) {
-            logger.error("Failed to send email to {}: {}", user.getUsername(), e.getMessage());
-            throw new MessagingException("Failed to send email to " + user.getUsername(), e);
+            handleMessagingException("Failed to send email to: " + user.getUsername(), e);
         }
     }
+
+    private void handleMessagingException(String message, Exception e) throws MessagingException {
+        logger.error("{} - Error: {}", message, e.getMessage());
+        throw new MessagingException(message, e);
+    }
+
 
 
 
