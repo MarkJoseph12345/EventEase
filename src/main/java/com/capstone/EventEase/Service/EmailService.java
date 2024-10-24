@@ -105,7 +105,7 @@ public class EmailService {
             context.setVariable("allowedGender", event.getAllowedGender().toString());
             context.setVariable("eventLimit", event.getEventLimit());
          //   context.setVariable("location", event.getLocation());
-            context.setVariable("actionUrl", "https://eventease-five.vercel.app/Login");
+            context.setVariable("actionUrl", "https://www.eventease.pro/Login");
 
 
             ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
