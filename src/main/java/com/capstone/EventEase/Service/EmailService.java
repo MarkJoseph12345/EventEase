@@ -144,8 +144,8 @@ public class EmailService {
             context.setVariable("eventLimit", event.getEventLimit());
 
             String actionUrl = getUserByUsername(email.getReceiver())
-                    ? "https://eventease-five.vercel.app/Login"
-                    : "https://eventease-five.vercel.app/SignUp";
+                    ? "https://www.eventease.pro/Login"
+                    : "https://www.eventease.pro/SignUp";
             context.setVariable("actionUrl", actionUrl);
 
             ZonedDateTime eventStarts = event.getEventStarts().atZoneSameInstant(UTC_8);
