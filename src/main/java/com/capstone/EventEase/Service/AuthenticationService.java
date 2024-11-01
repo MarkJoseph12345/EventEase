@@ -109,6 +109,7 @@ public class AuthenticationService {
     }
 
 
+
     public LoginResponse registerUser(RegisterRequest registerRequest) throws MessagingException {
         checkIfUserExists(registerRequest.getUsername());
         User newUser = createUserFromRequest(registerRequest);
@@ -134,6 +135,10 @@ public class AuthenticationService {
                 .profilePictureType("image/png")
                 .build();
     }
+
+
+    
+
 
 
     public String generateConfirmationToken(RegisterRequest registerRequest) throws MessagingException {
@@ -169,8 +174,6 @@ public class AuthenticationService {
 
 
 
-
-
     public boolean confirmAccount(String token) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         if (verificationToken == null) {
@@ -182,9 +185,6 @@ public class AuthenticationService {
         verificationTokenRepository.delete(verificationToken);
         return true;
     }
-
-
-
 
 
 

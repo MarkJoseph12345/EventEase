@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 public class UserEvent {
 
 
+    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userevent_id")

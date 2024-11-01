@@ -134,6 +134,8 @@ public class EmailService {
     }
 
 
+
+
     private void sendEmail(EmailSendRequestDTO email, Event event) throws MessagingException {
         try {
             Context context = new Context();
@@ -174,6 +176,15 @@ public class EmailService {
 
 
 
+    //artify
+    //tutory free
+    //chef connect
+
+
+
+
+
+
 
 
 
@@ -206,11 +217,13 @@ public class EmailService {
     }
 
 
+
     public boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
         Pattern pattern = Pattern.compile(emailRegex);
         return pattern.matcher(email).matches();
     }
+
 
 
 
