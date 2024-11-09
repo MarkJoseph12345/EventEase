@@ -1,4 +1,4 @@
-const BASE_URL = "https://king-prawn-app-92pca.ondigitalocean.app";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const API_ENDPOINTS = {
   ME: `${BASE_URL}/api/v1/authenticated/me`,

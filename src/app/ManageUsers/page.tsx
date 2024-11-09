@@ -307,7 +307,7 @@ const ManageUsers = () => {
                                             e.stopPropagation();
                                             handleConfirmation('role', user);
                                         }}
-                                        className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
                                         disabled={user.username === "admin"}
                                     >
                                         {user.role === "STUDENT" ? 'Set as Admin' : 'Set as User'}
@@ -318,7 +318,7 @@ const ManageUsers = () => {
                                             e.stopPropagation();
                                             handleConfirmation('block', user);
                                         }}
-                                        className={`w-24 py-1 ${user.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`w-24 py-1 ${user.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
                                         disabled={user.username === "admin"}
                                     >
                                         {user.blocked ? 'Unblock' : 'Block'}
@@ -329,7 +329,7 @@ const ManageUsers = () => {
                                             e.stopPropagation();
                                             handleConfirmation('delete', user);
                                         }}
-                                        className={`w-24 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        className={`w-24 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
                                         disabled={user.username === "admin"}
                                     >
                                         Delete

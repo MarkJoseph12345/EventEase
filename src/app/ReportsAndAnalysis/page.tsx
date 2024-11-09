@@ -60,12 +60,29 @@ const ReportsAndAnalysis: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
+    
+            const storedEventData = sessionStorage.getItem("eventData");
+            const storedEventTypeDistribution = sessionStorage.getItem("eventTypeDistribution");
+            const storedAverageEventDuration = sessionStorage.getItem("averageEventDuration");
+            const storedDepartmentEngagement = sessionStorage.getItem("departmentEngagement");
+    
+            if (storedEventData && storedEventTypeDistribution && storedAverageEventDuration && storedDepartmentEngagement) {
+                setEventData(JSON.parse(storedEventData));
+                setFilteredEventData(JSON.parse(storedEventData));
+                setEventTypeDistribution(JSON.parse(storedEventTypeDistribution));
+                setAverageEventDuration(JSON.parse(storedAverageEventDuration));
+                setDepartmentEngagement(JSON.parse(storedDepartmentEngagement));
+                setLoading(false);
+                return;
+            }
+    
             try {
+              
                 const fetchedEvents = await getEvents();
-
+    
                 const eventsWithUserCounts = await Promise.all(fetchedEvents.map(async (event) => {
                     const eventId = event.id;
-
+    
                     const usersData = await getAllUsersJoinedToEvent(eventId!);
                     const attendedUsers = await getAllUsersAfterAttendance(eventId!);
                     const eventPopularity = await getEventPopularity(eventId!);
@@ -73,7 +90,7 @@ const ReportsAndAnalysis: React.FC = () => {
                     const registeredCount = usersData.length;
                     const attendedCount = attendedUsers.length;
                     event.eventPicture = await fetchEventPicture(event.id!);
-
+    
                     return {
                         ...event,
                         registeredCount,
@@ -82,22 +99,30 @@ const ReportsAndAnalysis: React.FC = () => {
                         joinRate,
                     };
                 }));
-
+    
                 setEventData(eventsWithUserCounts);
                 setFilteredEventData(eventsWithUserCounts);
-                setEventTypeDistribution(await getEventTypeDistribution());
-                //setEventSchedulingTrends(await getEventSchedulingTrends());
-                setAverageEventDuration(await getAverageEventDuration());
-                setDepartmentEngagement(await getDepartmentEngagement());
-            } catch (error) {
-                console.error("Error fetching data:", error);
+    
+                const eventTypeDistribution = await getEventTypeDistribution();
+                const averageEventDuration = await getAverageEventDuration();
+                const departmentEngagement = await getDepartmentEngagement();
+    
+                setEventTypeDistribution(eventTypeDistribution);
+                setAverageEventDuration(averageEventDuration);
+                setDepartmentEngagement(departmentEngagement);
+    
+                sessionStorage.setItem("eventData", JSON.stringify(eventsWithUserCounts));
+                sessionStorage.setItem("eventTypeDistribution", JSON.stringify(eventTypeDistribution));
+                sessionStorage.setItem("averageEventDuration", JSON.stringify(averageEventDuration));
+                sessionStorage.setItem("departmentEngagement", JSON.stringify(departmentEngagement));
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchData();
     }, []);
+    
 
     const handleViewParticipants = (event: Event) => {
         setSelectedEvent(event);
@@ -155,9 +180,30 @@ const ReportsAndAnalysis: React.FC = () => {
     return (
         <div>
             <Sidebar />
+            <h2 className="mt-5 text-center text-2xl font-semibold font-poppins">Reports and Analysis</h2>
             <div className="flex flex-col tablet:flex-row tablet:mx-[2rem]  justify-stretch flex-wrap gap-4">
+               
+                <div ref={containerRef} className={`flex w-full tablet:w-fit flex-wrap items-center tablet:p-2 gap-2 ${isWrapped ? 'flex-row flex-1 justify-evenly' : 'flex-col flex-none'}`}>
+                    <EventTypeDistributionChart eventTypeDistribution={eventTypeDistribution} />
+                    {/* <EventSchedulingTrends eventSchedulingTrends={eventSchedulingTrends} /> */}
+                    <DepartmentEngagement departmentEngagement={departmentEngagement} />
+                    <div className="w-full max-w-96 tablet:w-96 h-64 bg-gray-100 flex items-center justify-center flex-col ">
+                        <h2 className="px-3 py-3 text-xs font-medium text-customYellow uppercase tracking-wider bg-black w-full">Average Event Duration</h2>
+                        <div className="w-full mx-auto flex-1 flex items-center justify-center ">
+                            <p className="flex items-baseline">
+                                {hoursDisplay && (
+                                    <>
+                                        <span className="text-red-600 text-5xl font-bold">{hoursNumber}</span>
+                                        <span className="text-customYellow text-3xl font-semibold">{hoursLabel}</span>
+                                    </>
+                                )}
+                                <span className="text-red-600 text-5xl font-bold ml-2">{minutesNumber}</span>
+                                <span className="text-customYellow text-3xl font-semibold">{minutesLabel}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div className="tablet:flex-1 w-full" ref={reportsDivRef}>
-                    <h2 className="mt-5 text-center text-2xl font-semibold font-poppins">Reports and Analysis</h2>
                     <div className="mt-5 w-11/12 mx-auto tablet:w-full flex flex-col items-center">
                         <div className="bg-white tablet:p-2 rounded-md shadow-md w-full max-h-[95%] relative ">
                             <div className="relative">
@@ -256,26 +302,6 @@ const ReportsAndAnalysis: React.FC = () => {
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div ref={containerRef} className={`flex w-full tablet:w-fit flex-wrap items-center tablet:p-2 gap-2 ${isWrapped ? 'flex-row flex-1 justify-evenly' : 'flex-col flex-none'}`}>
-                    <EventTypeDistributionChart eventTypeDistribution={eventTypeDistribution} />
-                    {/* <EventSchedulingTrends eventSchedulingTrends={eventSchedulingTrends} /> */}
-                    <DepartmentEngagement departmentEngagement={departmentEngagement} />
-                    <div className="w-full max-w-96 tablet:w-96 h-64 bg-gray-100 flex items-center justify-center flex-col ">
-                        <h2 className="px-3 py-3 text-xs font-medium text-customYellow uppercase tracking-wider bg-black w-full">Average Event Duration</h2>
-                        <div className="w-full mx-auto flex-1 flex items-center justify-center ">
-                            <p className="flex items-baseline">
-                                {hoursDisplay && (
-                                    <>
-                                        <span className="text-red-600 text-5xl font-bold">{hoursNumber}</span>
-                                        <span className="text-customYellow text-3xl font-semibold">{hoursLabel}</span>
-                                    </>
-                                )}
-                                <span className="text-red-600 text-5xl font-bold ml-2">{minutesNumber}</span>
-                                <span className="text-customYellow text-3xl font-semibold">{minutesLabel}</span>
-                            </p>
                         </div>
                     </div>
                 </div>

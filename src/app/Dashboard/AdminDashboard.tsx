@@ -23,60 +23,71 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const fetchedUser = await me();
-        setUser(fetchedUser);
-      } finally {
-        
-      }
-    };
-
-    fetchUserDetails();
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      const fetchUserDetails = async () => {
+        try {
+          const fetchedUser = await me();
+          setUser(fetchedUser);
+          sessionStorage.setItem("user", JSON.stringify(fetchedUser));
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        }
+      };
+      fetchUserDetails();
+    }
   }, []);
-
 
   useEffect(() => {
-    const loadEvents = async () => {
+    const eventsData = sessionStorage.getItem("adminEvents");
+    if (eventsData) {
+      setEvents(JSON.parse(eventsData));
+      setLoading(false);
+    } else {
+      const loadEvents = async () => {
+        try {
+          const fetchedEvents = await getEvents();
 
-      try {
-        const fetchedEvents = await getEvents();
+          if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
+            return;
+          } else {
+            const currentTime = new Date();
 
-        if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
-          return
-        } else {
-          const currentTime = new Date();
+            const processedEvents = await Promise.all(
+              fetchedEvents.map(async (event) => {
+                if (event.eventType && Array.isArray(event.eventType)) {
+                  const eventTypeString = event.eventType[0];
+                  event.eventType = eventTypeString.split(", ");
+                }
+                event.eventPicture = await fetchEventPicture(event.id!);
+                return event;
+              })
+            );
 
-          const processedEvents = await Promise.all(
-            fetchedEvents.map(async (event) => {
-              if (event.eventType && Array.isArray(event.eventType)) {
-                const eventTypeString = event.eventType[0];
-                event.eventType = eventTypeString.split(", ");
-              }
-              event.eventPicture = await fetchEventPicture(event.id!);
-              return event;
-            })
-          );
+            const upcomingEvents = processedEvents.filter(
+              (event) => new Date(event.eventEnds!).getTime() > currentTime.getTime()
+            );
 
-          const upcomingEvents = processedEvents.filter(
-            (event) => new Date(event.eventEnds!).getTime() > currentTime.getTime()
-          );
+            const sortedEvents = upcomingEvents.sort((a, b) =>
+              new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
+            );
 
-          const sortedEvents = upcomingEvents.sort((a, b) =>
-            new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
-          );
+            const closestEvents = sortedEvents.slice(0, 3);
 
-          const closestEvents = sortedEvents.slice(0, 3);
-
-          setEvents(closestEvents);
+            setEvents(closestEvents);
+            sessionStorage.setItem("adminEvents", JSON.stringify(closestEvents));
+          }
+        } finally {
+          setLoading(false);
         }
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    loadEvents();
+      loadEvents();
+    }
   }, []);
+
 
 
   if (loading || !user) {

@@ -98,7 +98,6 @@ export const createEvent = async (username: string, eventData: any) => {
             eventLimit: eventData.eventLimit,
             preRegisteredUsers: eventData.preRegisteredUsers
         };
-        console.log(formattedEventData)
         const response = await fetch(API_ENDPOINTS.CREATE_EVENT + `?creator=${encodeURIComponent(username)}`, {
             method: 'POST',
             headers: {
@@ -107,7 +106,6 @@ export const createEvent = async (username: string, eventData: any) => {
             },
             body: JSON.stringify(formattedEventData),
         });
-        console.log(response.status)
         const data = await response.json();
         const { messages } = data;
         if (response.ok) {
@@ -324,9 +322,6 @@ export const updateProfilePicture = async (userId: number, file: File): Promise<
             },
             body: formData,
         });
-        if (!response.ok) {
-            console.log(response)
-        }
         const contentType = response.headers.get("Content-Type");
         if (contentType && contentType.includes("application/json")) {
             const result = await response.json();
@@ -401,7 +396,7 @@ export const fetchEventPicture = async (eventid: number): Promise<string> => {
         return `data:image/jpeg;base64,${base64String}`;
 
     } catch (error) {
-        console.error('Error fetching profile picture:', error);
+        // console.error('Error fetching event picture:', error); 
         return "";
     }
 };
@@ -701,7 +696,6 @@ export const resetPassword = async (token: string, newPassword: string) => {
             },
             body: JSON.stringify({ newPassword }),
         });
-        console.log(response.status)
 
         if (!response.ok) {
             console.error(`HTTP error! status: ${response.status}`);
@@ -839,7 +833,6 @@ export const getAverageEventDuration = async () => {
         }
 
         const data = await response.json();
-        console.log(data)
         return data;
     } catch (error) {
         console.error('Error fetching average event duration:', error);
