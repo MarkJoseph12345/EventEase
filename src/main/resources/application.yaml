@@ -23,6 +23,9 @@ spring:
 
 
 
+
+
+
   mail:
     host:  smtp.gmail.com
     port: 587
@@ -53,6 +56,10 @@ security:
 
 
 
+
   devtools:
     livereload:
       enabled: true
+
+app:
+  url: ${appUrl}

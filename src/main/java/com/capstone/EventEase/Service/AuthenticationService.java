@@ -137,7 +137,7 @@ public class AuthenticationService {
     }
 
 
-    
+
 
 
 
@@ -167,6 +167,8 @@ public class AuthenticationService {
         }
     }
 
+    
+
     private void handleMessagingException(String message, Exception e) throws MessagingException {
         logger.error("{} - Error: {}", message, e.getMessage());
         throw new MessagingException(message, e);
@@ -190,6 +192,7 @@ public class AuthenticationService {
 
     public LoginResponse loginUser(LoginRequest loginRequest) throws AccountNotEnabledException {
         User user = userRepository.findByUsername(loginRequest.getUsername());
+
 
         if (user == null) {
             throw new EntityNotFoundException("User not Found!");
@@ -253,6 +256,10 @@ public class AuthenticationService {
         emailService.forgotPasswordEmail(email, randomToken);
         return "Email has been sent!";
     }
+
+
+
+
 
 
     public String newPassword(String token, String newPassword) {
