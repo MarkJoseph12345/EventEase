@@ -16,94 +16,79 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const storedUser = sessionStorage.getItem("user");
-      
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-        return;
-      }
-  
+
       try {
         const fetchedUser = await me();
         setUser(fetchedUser);
-  
-        sessionStorage.setItem("user", JSON.stringify(fetchedUser));
       } catch (error) {
         console.error('Failed to fetch user details:', error);
       }
     };
-  
+
     fetchUserDetails();
   }, []);
 
   useEffect(() => {
-  const loadEvents = async () => {
-    if (!user?.id) return;
-
-    const storedEvents = sessionStorage.getItem("userEvents");
-
-    if (storedEvents) {
-      setEvents(JSON.parse(storedEvents));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const fetchedEvents = await getEvents();
-
-      if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
+    const loadEvents = async () => {
+      if (!user || !user.id) {
         return;
       }
+      try {
+        const fetchedEvents = await getEvents();
 
-      const attendedEvents = await getAllEventsAfterAttendance(user.id);
-      const attendedEventIds = new Set(attendedEvents.map((event: Event) => event.id));
-
-      const currentTime = new Date();
-
-      const processedEvents = await Promise.all(
-        fetchedEvents.map(async (event) => {
-          if (event.eventType && Array.isArray(event.eventType)) {
-            const eventTypeString = event.eventType[0];
-            event.eventType = eventTypeString.split(", ");
-          }
-          event.eventPicture = await fetchEventPicture(event.id!);
-          return event;
-        })
-      );
-
-      const upcomingEvents = processedEvents.filter(
-        (event) => {
-          if (user.department !== 'N/A') {
-            return (
-              new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-              event.department.includes(user.department!) || event.department.includes("Open To All") &&
-              !attendedEventIds.has(event.id)
-            );
-          } else {
-            return (
-              new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
-              event.department.includes("Open To All") &&
-              !attendedEventIds.has(event.id)
-            );
-          }
+        if (Array.isArray(fetchedEvents) && fetchedEvents.length === 0) {
+          return;
         }
-      );
 
-      const sortedEvents = upcomingEvents.sort((a, b) =>
-        new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
-      );
+        const attendedEvents = await getAllEventsAfterAttendance(user.id);
+        const attendedEventIds = new Set(attendedEvents.map((event: Event) => event.id));
 
-      const closestEvents = sortedEvents.slice(0, 3);
+        const currentTime = new Date();
 
-      sessionStorage.setItem("userEvents", JSON.stringify(closestEvents));
-      setEvents(closestEvents);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const processedEvents = await Promise.all(
+          fetchedEvents.map(async (event) => {
+            if (event.eventType && Array.isArray(event.eventType)) {
+              const eventTypeString = event.eventType[0];
+              event.eventType = eventTypeString.split(", ");
+            }
+            event.eventPicture = await fetchEventPicture(event.id!);
+            return event;
+          })
+        );
 
-  loadEvents();
-}, [user]);
+        const upcomingEvents = processedEvents.filter(
+          (event) => {
+            if (user!.department !== 'N/A') {
+              return (
+                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                (event.department.includes(user!.department!) || event.department.includes("Open To All")) &&
+                !attendedEventIds.has(event.id)
+              );
+            } else {
+              return (
+                new Date(event.eventEnds!).getTime() > currentTime.getTime() &&
+                event.department.includes("Open To All") &&
+                !attendedEventIds.has(event.id)
+              );
+            }
+          }
+        );
+
+
+
+        const sortedEvents = upcomingEvents.sort((a, b) =>
+          new Date(a.eventStarts!).getTime() - new Date(b.eventStarts!).getTime()
+        );
+
+        const closestEvents = sortedEvents.slice(0, 3);
+        setEvents(closestEvents);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [user]);
 
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);

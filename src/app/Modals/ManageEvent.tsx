@@ -126,6 +126,8 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         const {
             allowedGender,
             department,
+            eventStarts,
+            eventEnds,
         } = updatedEventData;
         if (showGenderExclusive) {
             updatedEventData.allowedGender = allowedGender;
@@ -139,6 +141,12 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
         } else {
             updatedEventData.department = ["Open To All"];
         }
+        if (new Date(event.eventStarts!).getTime() === new Date(eventStarts).getTime() &&
+            new Date(event.eventEnds!).getTime() === new Date(eventEnds).getTime()) {
+            // delete updatedEventData.eventStarts;
+            // delete updatedEventData.eventEnds;
+        }
+
         const result = await updateEvent(event.id, updatedEventData);
 
         if (newPicture instanceof File) {
@@ -460,7 +468,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                         <button className="bg-customRed text-white font-poppins font-semibold px-4 py-2 rounded-md mt-4" onClick={(e) => {
                             handleConfirmation('delete', event);
                         }}>Delete Event</button>
-                        <button     className={`font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isEventEnded ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-customYellow'}`} disabled={isEventEnded} onClick={(e) => {
+                        <button className={`font-poppins font-semibold px-4 py-2 rounded-md mt-4 ${isEventEnded ? 'bg-gray-500 text-gray-300 cursor-not-allowed' : 'bg-customYellow'}`} disabled={isEventEnded} onClick={(e) => {
                             handleConfirmation('update', event);
                         }}>Update Event</button>
                     </div>

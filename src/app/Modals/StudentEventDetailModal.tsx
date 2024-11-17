@@ -21,6 +21,8 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
     const [usersJoinedToEvent, setUsersJoinedToEvent] = useState<User[]>([]);
     const [user, setUser] = useState<User | null>(null);
     const [genderMismatch, setGenderMismatch] = useState(false);
+    const [eventEnded, setEventEnded] = useState(false);
+    const currentTime = new Date();
     const [activeButton, setActiveButton] = useState<'like' | 'dislike' | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
@@ -36,7 +38,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
 
     const type = event.eventType.toString().split(', ');
     const availableSlots = event.eventLimit! - usersJoinedToEvent.length;
-    const isJoinDisabled = genderMismatch || (!isJoined && availableSlots <= 0);
+    const isJoinDisabled = genderMismatch || (!isJoined && availableSlots <= 0) || eventEnded;
     const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
 
@@ -50,6 +52,11 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     setGenderMismatch(true);
                 } else {
                     setGenderMismatch(false);
+                }
+                if(new Date(event.eventEnds!).getTime() < currentTime.getTime()) {
+                    setEventEnded(true)
+                }else {
+                    setEventEnded(false)
                 }
             } catch (error) {
 

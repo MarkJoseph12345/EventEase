@@ -181,16 +181,21 @@ export const getAttendees = async (): Promise<any[]> => {
 
 export const updateEvent = async (eventId: number, eventData: any): Promise<any> => {
     try {
-        const formattedEventData = {
+        const formattedEventData: any = {
             eventName: eventData.eventName,
             eventDescription: eventData.eventDescription,
-            eventStarts: eventData.eventStarts,
-            eventEnds: eventData.eventEnds,
             department: eventData.department,
             eventType: eventData.eventType,
             allowedGender: eventData.allowedGender,
-            eventLimit: eventData.eventLimit
+            eventLimit: eventData.eventLimit,
         };
+        
+        if (eventData.eventStarts) {
+            formattedEventData.eventStarts = eventData.eventStarts;
+        }
+        if (eventData.eventEnds) {
+            formattedEventData.eventEnds = eventData.eventEnds;
+        }
         const response = await fetch(`${API_ENDPOINTS.UPDATE_EVENT}${eventId}`, {
             method: "PUT",
             headers: {

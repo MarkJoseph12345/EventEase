@@ -207,7 +207,8 @@ const Profile = () => {
         event.preventDefault();
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
         const hasNameChanged = (user!.firstName !== currentNames.firstName && user!.firstName!.trim() !== "") || (user!.lastName !== currentNames.lastName && user!.lastName!.trim() !== "");
-        if (!hasNameChanged) {
+      
+        if (!hasNameChanged && user!.newPassword! == undefined) {
             setMessage({ text: "Cannot Update Details with Empty Fields!", type: "error" });
             return;
         }
@@ -233,7 +234,7 @@ const Profile = () => {
             setMessage({ text: "Passwords do not match!", type: "error" });
             setTimeout(() => setMessage(undefined), 3000);
             return;
-        }
+        }  
         setShowConfirmation(true);
     };
 
