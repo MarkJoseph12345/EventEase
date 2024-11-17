@@ -79,7 +79,7 @@ const ReportsAndAnalysis: React.FC = () => {
             try {
               
                 const fetchedEvents = await getEvents();
-    
+
                 const eventsWithUserCounts = await Promise.all(fetchedEvents.map(async (event) => {
                     const eventId = event.id;
     
@@ -99,7 +99,7 @@ const ReportsAndAnalysis: React.FC = () => {
                         joinRate,
                     };
                 }));
-    
+                
                 setEventData(eventsWithUserCounts);
                 setFilteredEventData(eventsWithUserCounts);
     
@@ -172,7 +172,9 @@ const ReportsAndAnalysis: React.FC = () => {
     const handleClosePopup = () => {
         setEventToShow(null);
     };
-
+    filteredEventData.sort((a, b) => {
+        return a.eventName.localeCompare(b.eventName);
+    });
     if (loading) {
         return <Loading />;
     }
