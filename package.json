@@ -17,6 +17,8 @@
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
     "eventease": "file:",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "next": "^14.2.13",
     "next-navigation": "^1.0.6",
     "postcss-cli": "^11.0.0",
@@ -27,7 +29,8 @@
     "react-qr-code": "^2.0.13",
     "react-router-dom": "^6.23.0",
     "react-slick": "^0.30.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "20.16.2",

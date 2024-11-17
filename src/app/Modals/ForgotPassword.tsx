@@ -86,7 +86,8 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({ onClose }) =>
   };
 
   const validatePassword = (password: string): boolean => {
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])?[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+
     if (!passwordRegex.test(password)) {
       setMessage({ text: "Your password must be 8 characters with at least one uppercase letter and one number.", type: "error" });
       return true;

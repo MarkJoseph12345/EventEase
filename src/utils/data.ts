@@ -77,3 +77,15 @@ export const formatDate = (dateString: string | Date | null) => {
         minute: "2-digit",
     });
 };
+export const formatDateHome = (dateString: string | Date | null) => {
+    const date = new Date(dateString!);
+    return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    }) + ", " + date.toLocaleString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+};

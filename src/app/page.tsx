@@ -10,7 +10,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loading from "./Loader/Loading";
-import { formatDate } from "@/utils/data";
+import { formatDateHome } from "@/utils/data";
 
 const isDateInCurrentWeek = (date: Date): boolean => {
   const now = new Date();
@@ -128,11 +128,12 @@ const Home = () => {
                   >
                     {hoveredEvent === event && (
                       <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-20 rounded-lg shadow-xl transition-opacity duration-300 opacity-100">
-                        <div className="bg-customYellow p-4 rounded-lg shadow-md">
-                          <h3 className="text-lg font-bold text-black mb-2">{event.eventName}</h3>
+                        <div className="bg-[rgba(255,255,255,0.7)] p-4 rounded-lg shadow-md px-8">
+                          <h3 className="text-lg text-center font-bold text-customYellow drop-shadow-lg">{event.eventName}</h3>
                           {/* <p className="text-gray-700 text-sm">{event.eventDescription}</p> */}
-                          <p className="">Event starts at {formatDate(event.eventStarts)}</p>
+                          <p className="text-xs text-center text-white">{formatDateHome(event.eventStarts)}</p>
                         </div>
+
                       </div>
                     )}
 

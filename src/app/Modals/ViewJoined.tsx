@@ -4,7 +4,9 @@ import { EventDetailModal, User } from '@/utils/interfaces';
 import { getAllUsersJoinedToEvent, getAllUsersAfterAttendance, me, getAttendanceAndTimeout } from '@/utils/apiCalls';
 import Loading from '../Loader/Loading';
 import { formatDate } from '@/utils/data';
-
+import { jsPDF } from 'jspdf';
+import "jspdf-autotable";
+import * as XLSX from 'xlsx';
 const ViewJoined = ({ event, onClose }: EventDetailModal) => {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -44,6 +46,20 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
     }, []);
 
 
+    const downloadPDF = () => {
+        const doc = new jsPDF();
+        const table = document.getElementById("user-table");
+        doc.autoTable({ html: table });
+        doc.save(event.eventName + " Attendance.pdf");
+    };
+
+    const downloadExcel = () => {
+        const table = document.getElementById("user-table");
+        const ws = XLSX.utils.table_to_sheet(table);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Users");
+        XLSX.writeFile(wb, event.eventName + " Attendance.xlsx");
+    };
 
     return (
         <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
@@ -55,8 +71,12 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
                         <h3 className="text-xl font-bold text-customYellow flex-1">Participants</h3>
                         <p className="text-end text-customYellow font-bold text-2xl cursor-pointer" onClick={() => { setLoading(true); setTimeout(onClose, 100); }}>✖</p>
                     </div>
+                    <div className="flex justify-end gap-4 my-4 mr-4">
+                        <p onClick={downloadPDF} className="cursor-pointer  hover:underline">Download as PDF</p>
+                        <p onClick={downloadExcel} className="cursor-pointer hover:underline">Download as Excel</p>
+                    </div>
                     <div className="p-4 overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
+                        <table id="user-table" className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
