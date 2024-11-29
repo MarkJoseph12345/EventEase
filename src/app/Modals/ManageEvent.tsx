@@ -478,8 +478,8 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                 isOpen={isConfirmationOpen}
                 message={
                     confirmationAction === "delete"
-                        ? `Are you sure you want to delete ${selectedEvent?.eventName}?`
-                        : `Are you sure you want to update  ${selectedEvent?.eventName}?`
+                        ? `Are you sure you want to delete this event?`
+                        : `Are you sure you want to update  this event?`
                 }
                 actionType={
                     confirmationAction === 'delete'
