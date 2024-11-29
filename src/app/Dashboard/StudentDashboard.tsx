@@ -132,7 +132,7 @@ const StudentDashboard = () => {
             events.map(event => (
               <div
                 key={event.id}
-                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
+                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1 w-96 h-80"
                 onClick={() => handleEventClick(event)}
               >
                 <img
@@ -140,9 +140,9 @@ const StudentDashboard = () => {
                   alt={event.eventName}
                   className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill"
                 />
-                <div>
-                  <p className="font-semibold">{event.eventName}</p>
-                  <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                <div className="truncate w-full">
+                  <p className="font-semibold truncate">{event.eventName}</p>
+                  <p className="text-gray-600 truncate">{formatDate(event.eventStarts)}</p>
                 </div>
               </div>
             ))

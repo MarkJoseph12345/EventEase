@@ -23,15 +23,15 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-      const fetchUserDetails = async () => {
-        try {
-          const fetchedUser = await me();
-          setUser(fetchedUser);
-        } catch (error) {
-          console.error("Error fetching user details:", error);
-        }
-      };
-      fetchUserDetails();
+    const fetchUserDetails = async () => {
+      try {
+        const fetchedUser = await me();
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+    fetchUserDetails();
   }, []);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
             events.map(event => (
               <div
                 key={event.id}
-                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
+                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1 tablet:w-96 tablet:h-80"
                 onClick={() => handleEventClick(event)}
               >
                 <img
@@ -109,9 +109,9 @@ const AdminDashboard = () => {
                   alt={event.eventName}
                   className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-fill"
                 />
-                <div>
-                  <p className="font-semibold">{event.eventName}</p>
-                  <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                <div className="truncate w-full">
+                  <p className="font-semibold truncate">{event.eventName}</p>
+                  <p className="text-gray-600 truncate">{formatDate(event.eventStarts)}</p>
                 </div>
               </div>
             ))

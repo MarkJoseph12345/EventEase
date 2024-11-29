@@ -142,16 +142,16 @@ const Events = () => {
                             <div
                                 key={event.id}
                                 onClick={() => handleEventClick(event)}
-                                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1"
+                                className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-1 tablet:w-96 tablet:h-80"
                             >
                                 <img
                                     src={event.eventPicture}
                                     alt={event.eventName}
                                     className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-contain"
                                 />
-                                <div>
-                                    <p className="font-semibold">{event.eventName}</p>
-                                    <p className="text-gray-600">{formatDate(event.eventStarts)}</p>
+                                <div className="truncate w-full">
+                                    <p className="font-semibold truncate">{event.eventName}</p>
+                                    <p className="text-gray-600 truncate">{formatDate(event.eventStarts)}</p>
                                 </div>
                             </div>
                         ))

@@ -219,13 +219,13 @@ const ManageEvents = () => {
                                 filteredEvents.map(event => (
                                     <div
                                         key={event.id}
-                                        className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-2"
+                                        className="flex items-center border border-gray-200 rounded-md p-4 mt-2 tablet:flex-col tablet:text-center cursor-pointer transition-transform transform hover:-translate-y-2 tablet:w-96 tablet:h-80"
                                         onClick={() => handleEventClick(event)}
                                     >
                                         <img src={event.eventPicture} alt={event.eventName} className="w-16 h-16 object-cover rounded-md mr-4 tablet:mr-0 tablet:w-72 tablet:h-56 tablet:object-scale-down" />
-                                        <div>
-                                            <p className="font-semibold text-lg mt-2">{event.eventName}</p>
-                                            <p className="text-gray-600 text-sm">{formatDate(event.eventStarts)}</p>
+                                        <div className="truncate w-full">
+                                            <p className="font-semibold text-lg mt-2 truncate">{event.eventName}</p>
+                                            <p className="text-gray-600 text-sm  truncate">{formatDate(event.eventStarts)}</p>
                                         </div>
                                     </div>
                                 ))

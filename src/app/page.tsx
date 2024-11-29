@@ -127,7 +127,7 @@ const Home = () => {
                     onMouseLeave={handleMouseLeave}
                   >
                     {hoveredEvent === event && (
-                      <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-20 rounded-lg shadow-xl transition-opacity duration-300 opacity-100">
+                      <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-20 rounded-lg shadow-xl transition-opacity duration-300 opacity-100 px-5">
                         <div className="bg-[rgba(255,255,255,0.7)] p-4 rounded-lg shadow-md px-8">
                           <h3 className="text-lg text-center font-bold text-customYellow drop-shadow-lg">{event.eventName}</h3>
                           {/* <p className="text-gray-700 text-sm">{event.eventDescription}</p> */}
@@ -142,9 +142,8 @@ const Home = () => {
                       className="w-full h-48 tablet:h-64 object-fill rounded-lg shadow-lg"
                       alt={event.eventName}
                     />
-                    <div className="absolute bottom-6 left-0 bg-customYellow p-2 pr-5 z-10">
-                      <p className="text-lg font-bold truncate text-black">{event.eventName}</p>
-                      <p className="text-sm text-white">{event.eventType}</p>
+                    <div className="absolute bottom-0 left-0 bg-customYellow p-2 pr-5 z-10 w-56">
+                      <p className="text-xs font-bold truncate text-black">{event.eventName}</p>
                     </div>
 
                   </div>

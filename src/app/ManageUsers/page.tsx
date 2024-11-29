@@ -161,7 +161,7 @@ const ManageUsers = () => {
                     }
                 }
             } catch (error) {
-                
+
             }
         }
     };
@@ -223,15 +223,15 @@ const ManageUsers = () => {
 
     useEffect(() => {
         if (selectedUser) {
-          document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
         } else {
-          document.body.style.overflow = 'unset';
+            document.body.style.overflow = 'unset';
         }
-    
+
         return () => {
-          document.body.style.overflow = 'unset';
+            document.body.style.overflow = 'unset';
         };
-      }, [selectedUser]);
+    }, [selectedUser]);
 
     if (loading) {
         return <Loading />;
@@ -295,49 +295,50 @@ const ManageUsers = () => {
                     </div>
                     {filteredUsers.length > 0 ? (
                         filteredUsers.map(user => (
-                            <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 cursor-pointer hover:bg-customYellow hover:border-customYellow hover:bg-opacity-20" onClick={() => {handleUserClick(user); setTimeout(() => setIsLoading(false), 300);}}>
-                                <img src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
-                                <div>
-                                    <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
-                                    <p className="text-gray-600 font-poppins">{user.department}</p>
+                            user.username !== "admin" && (
+                                <div key={user.id} className="flex items-center border border-gray-200 rounded-md p-4 mt-2 cursor-pointer hover:bg-customYellow hover:border-customYellow hover:bg-opacity-20" onClick={() => { handleUserClick(user); setTimeout(() => setIsLoading(false), 300); }}>
+                                    <img src={userImages[user.id!] || "/defaultpic.png"} alt={`${user.firstName} ${user.lastName}`} className="w-16 h-16 object-cover rounded-full mr-4" />
+                                    <div>
+                                        <p className="font-medium font-poppins">{`${user.firstName} ${user.lastName}`}</p>
+                                        <p className="text-gray-600 font-poppins">{user.department}</p>
+                                    </div>
+                                    <div className="ml-auto tablet:flex flex-row gap-2 hidden">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleConfirmation('role', user);
+                                            }}
+                                            className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
+                                            disabled={user.username === "admin"}
+                                        >
+                                            {user.role === "STUDENT" ? 'Set as Admin' : 'Set as User'}
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleConfirmation('block', user);
+                                            }}
+                                            className={`w-24 py-1 ${user.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
+                                            disabled={user.username === "admin"}
+                                        >
+                                            {user.blocked ? 'Unblock' : 'Block'}
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleConfirmation('delete', user);
+                                            }}
+                                            className={`w-24 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
+                                            disabled={user.username === "admin"}
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </div>
                                 </div>
-                                <div className="ml-auto tablet:flex flex-row gap-2 hidden">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleConfirmation('role', user);
-                                        }}
-                                        className={`w-32 py-1 ${user.blocked ? 'hidden' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
-                                        disabled={user.username === "admin"}
-                                    >
-                                        {user.role === "STUDENT" ? 'Set as Admin' : 'Set as User'}
-                                    </button>
-
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleConfirmation('block', user);
-                                        }}
-                                        className={`w-24 py-1 ${user.blocked ? 'bg-opacity-40' : ''} bg-customRed text-customWhite rounded font-poppins font-medium box-border ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
-                                        disabled={user.username === "admin"}
-                                    >
-                                        {user.blocked ? 'Unblock' : 'Block'}
-                                    </button>
-
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleConfirmation('delete', user);
-                                        }}
-                                        className={`w-24 py-1 bg-customRed text-customWhite rounded font-poppins font-medium ${user.username === "admin" ? 'opacity-50 cursor-not-allowed' : ''} hover:bg-black hover:text-customYellow`}
-                                        disabled={user.username === "admin"}
-                                    >
-                                        Delete
-                                    </button>
-
-                                </div>
-                            </div>
-                        ))
+                            )))
                     ) : (
                         <div className="flex flex-col items-center justify-center ">
                             <img src="no-user-image.png" className="mb-4 w-32 h-32 grayscale" />
@@ -349,7 +350,7 @@ const ManageUsers = () => {
             {selectedUser && (
                 <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
                     <div className="bg-white px-4 rounded-md shadow-md w-[21rem]">
-                        <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={()=> {setIsLoading(true); setTimeout(handleClosePopup, 300);}}>✖</p>
+                        <p className="sticky top-0 text-end text-customYellow font-bold mt-2 text-2xl z-10 cursor-pointer" onClick={() => { setIsLoading(true); setTimeout(handleClosePopup, 300); }}>✖</p>
                         <div className="my-2 flex flex-col items-center">
                             <img src={userImages[selectedUser.id!] || "/defaultpic.png"} alt={`${selectedUser.firstName} ${selectedUser.lastName}`} className="w-64 h-64 object-cover rounded-md mt-2" />
                             <p className='font-poppins mt-2'><strong>Name:</strong></p>
