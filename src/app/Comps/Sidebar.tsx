@@ -114,6 +114,7 @@ const Sidebar = () => {
     const handleConfirmDelete = async () => {
         const response = await deleteUser(user!.id!)
         if (response) {
+            deleteCookie("token")
             setShowDeleteConfirmation(false);
             setShowSuccessMessage(true);
 
