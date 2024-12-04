@@ -61,20 +61,20 @@ const ReportsAndAnalysis: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
     
-            const storedEventData = sessionStorage.getItem("eventData");
-            const storedEventTypeDistribution = sessionStorage.getItem("eventTypeDistribution");
-            const storedAverageEventDuration = sessionStorage.getItem("averageEventDuration");
-            const storedDepartmentEngagement = sessionStorage.getItem("departmentEngagement");
+            // const storedEventData = sessionStorage.getItem("eventData");
+            // const storedEventTypeDistribution = sessionStorage.getItem("eventTypeDistribution");
+            // const storedAverageEventDuration = sessionStorage.getItem("averageEventDuration");
+            // const storedDepartmentEngagement = sessionStorage.getItem("departmentEngagement");
     
-            if (storedEventData && storedEventTypeDistribution && storedAverageEventDuration && storedDepartmentEngagement) {
-                setEventData(JSON.parse(storedEventData));
-                setFilteredEventData(JSON.parse(storedEventData));
-                setEventTypeDistribution(JSON.parse(storedEventTypeDistribution));
-                setAverageEventDuration(JSON.parse(storedAverageEventDuration));
-                setDepartmentEngagement(JSON.parse(storedDepartmentEngagement));
-                setLoading(false);
-                return;
-            }
+            // if (storedEventData && storedEventTypeDistribution && storedAverageEventDuration && storedDepartmentEngagement) {
+            //     setEventData(JSON.parse(storedEventData));
+            //     setFilteredEventData(JSON.parse(storedEventData));
+            //     setEventTypeDistribution(JSON.parse(storedEventTypeDistribution));
+            //     setAverageEventDuration(JSON.parse(storedAverageEventDuration));
+            //     setDepartmentEngagement(JSON.parse(storedDepartmentEngagement));
+            //     setLoading(false);
+            //     return;
+            // }
     
             try {
               
@@ -111,10 +111,10 @@ const ReportsAndAnalysis: React.FC = () => {
                 setAverageEventDuration(averageEventDuration);
                 setDepartmentEngagement(departmentEngagement);
     
-                sessionStorage.setItem("eventData", JSON.stringify(eventsWithUserCounts));
-                sessionStorage.setItem("eventTypeDistribution", JSON.stringify(eventTypeDistribution));
-                sessionStorage.setItem("averageEventDuration", JSON.stringify(averageEventDuration));
-                sessionStorage.setItem("departmentEngagement", JSON.stringify(departmentEngagement));
+                // sessionStorage.setItem("eventData", JSON.stringify(eventsWithUserCounts));
+                // sessionStorage.setItem("eventTypeDistribution", JSON.stringify(eventTypeDistribution));
+                // sessionStorage.setItem("averageEventDuration", JSON.stringify(averageEventDuration));
+                // sessionStorage.setItem("departmentEngagement", JSON.stringify(departmentEngagement));
             } finally {
                 setLoading(false);
             }
