@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { EventDetailModal, User } from '@/utils/interfaces';
 import ManageEvent from './ManageEvent';
-import ViewFeedback from './ViewFeedback';
 import { formatDate } from '@/utils/data';
 import { getAllUsersJoinedToEvent } from '@/utils/apiCalls';
 import ViewJoined from './ViewJoined';
+import Comments from './Comments';
 const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { from?: string }) => {
     const [clickedManage, setClickedManage] = useState(false);
     const [clickedFeedback, setClickedFeedback] = useState(false);
@@ -51,8 +51,8 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
     const showFullDescription = isExpanded || !hasLongDescription(event.eventDescription);
 
     return (
-        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-            {!(clickedManage || clickedJoined) && (
+        <div className={`fixed inset-0 z-50 flex justify-center items-center ${!(clickedManage || clickedJoined || clickedFeedback) ? 'bg-black': 'bg-none'} bg-opacity-50 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+            {!(clickedManage || clickedJoined || clickedFeedback) && (
                 <div className="bg-white relative p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto text-pretty tablet:max-w-[70rem]">
                     <div className=" sticky top-0 z-10 flex justify-end">
                         <span className=" text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={() => { setIsLoading(true); setTimeout(onClose, 300); }}>✖</span>
@@ -97,21 +97,21 @@ const AdminEventDetailModal = ({ event, onClose, from }: EventDetailModal & { fr
                             <div className=" flex gap-3">
                                 {from !== "create" && (
                                     <button
-                                        className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4"
+                                        className="bg-customYellow font-poppins font-semibold px-2 tablet:px-4 tablet:py-2 rounded-md tablet:my-4"
                                         onClick={() => { setClickedJoined(true); }}
                                     >
                                         View Participants
                                     </button>
                                 )}
-                                {/* <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4" onClick={() => { setClickedFeedback(true) }}>View Feedbacks</button> */}
-                                <button className="bg-customYellow font-poppins font-semibold px-4 py-2 rounded-md my-4 mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
+                                <button className="bg-customYellow font-poppins font-semibold px-2 tablet:px-4 tablet:py-2 rounded-md tablet:my-4" onClick={() => { setClickedFeedback(true) }}>View Comments</button>
+                                <button className="bg-customYellow font-poppins font-semibold px-2 tablet:px-4 tablet:py-2 rounded-md tablet:my-4 tablet:mr-8" onClick={() => { setClickedManage(true) }}>Manage</button>
                             </div>
                         )}
                     </div>
                 </div>
             )}
             {clickedManage && <ManageEvent event={event} onClose={() => setClickedManage(false)} />}
-            {/* {clickedFeedback && <ViewFeedback event={event} onClose={() => setClickedFeedback(false)} />} */}
+            {clickedFeedback && <Comments event={event} onClose={() => setClickedFeedback(false)} />}
             {clickedJoined && <ViewJoined event={event} onClose={() => setClickedJoined(false)} />}
         </div>
     );

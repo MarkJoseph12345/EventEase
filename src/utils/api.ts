@@ -53,4 +53,7 @@ export const API_ENDPOINTS = {
   SET_ADMIN: `${BASE_URL}/admin/setAdmin/`,
   SET_STUDENT: `${BASE_URL}/admin/setStudent/`,
 
+
+  ADD_COMMENT: `${BASE_URL}/comment/addComment/`,
+  GET_COMMENTS: `${BASE_URL}/comment/getCommentsByEventId/`,
 };

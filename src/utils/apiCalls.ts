@@ -934,3 +934,52 @@ export const getAttendanceAndTimeout = async (userId: number, eventId: number): 
         return null;
     }
 };
+
+export const addComment = async (comment: any): Promise<any> => {
+    try {
+        const response = await fetch(API_ENDPOINTS.ADD_COMMENT, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`,
+            },
+            body: JSON.stringify(comment)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Failed to add comment:", errorData.messages);
+            return null;
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        return null;
+    }
+};
+
+export const getCommentsByEventId = async (eventId: number): Promise<any> => {
+    try {
+        const response = await fetch(`${API_ENDPOINTS.GET_COMMENTS}${eventId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${getCookie("token")}`,
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Failed to fetch comments:", errorData.messages);
+            return null;
+        }
+
+        const data = await response.json();
+        return data;  
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        return null;
+    }
+};

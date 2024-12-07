@@ -3,6 +3,7 @@ import type { EventDetailModal, User } from '@/utils/interfaces';
 import { formatDate } from '@/utils/data';
 import { dislikeEvent, getAllUsersJoinedToEvent, getEventById, getEventsJoinedByUser, joinEvent, likeEvent, me, unjoinEvent } from '@/utils/apiCalls';
 import PopUps from './PopUps';
+import Comments from './Comments';
 
 const POLL_INTERVAL = 10000;
 
@@ -26,6 +27,7 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
     const [activeButton, setActiveButton] = useState<'like' | 'dislike' | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
+    const [clickedFeedback, setClickedFeedback] = useState(false);
 
     const hasLongDescription = (description: string) => {
         return description.split(' ').length > 30;
@@ -53,9 +55,9 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                 } else {
                     setGenderMismatch(false);
                 }
-                if(new Date(event.eventEnds!).getTime() < currentTime.getTime()) {
+                if (new Date(event.eventEnds!).getTime() < currentTime.getTime()) {
                     setEventEnded(true)
-                }else {
+                } else {
                     setEventEnded(false)
                 }
             } catch (error) {
@@ -170,9 +172,17 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
         setActiveButton('dislike');
         const res = await dislikeEvent(event.id!, user!.id!)
     };
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
     return (
         <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-            <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[50rem]">
+            {!(clickedFeedback) && (
+                <div className="bg-white p-2 rounded-md shadow-md w-11/12 max-h-[95%] overflow-auto relative text-pretty tablet:max-w-[50rem]">
                 <p className="sticky top-0 z-10  text-end text-gray-500 font-bold text-2xl cursor-pointer tablet:mr-4 tablet:mt-2" onClick={() => { setIsLoading(true); setTimeout(onClose, 300); }}>✖</p>
                 <div className="flex flex-col overflow-auto tablet:mx-20">
                     <div className="flex flex-col w-full ">
@@ -205,39 +215,13 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                                     </>
                                 )}
                             </p>
-
-
-
                         </div>
-                        {/* <div className="flex flex-col items-center w-full">
-                        <div
-                            className="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-sm bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40 h-44 w-72">
-                            <img src={event.eventPicture} alt={event.eventName} className="h-full w-full" />
-                        </div>
-                    </div>
-                    <h2 className="text-xl font-semibold my-2 text-center">{event.eventName}</h2>
-                    <div className="flex overflow-hidden">
-                        <div className="grid grid-cols-6 gap-5">
-                            <p className="col-span-2"><strong>Event Description:</strong></p>
-                            <p className="col-span-4 text-pretty">{event.eventDescription}</p>
-                            <p className="col-span-2"><strong>Event Type:</strong></p>
-                            <p className="col-span-4">{type[0]}</p>
-                            <p className="col-span-2"><strong>Department(s):</strong></p>
-                            <p className="col-span-4">{event.department.join(', ')}</p>
-                            <p className="col-span-2"><strong>Gender:</strong></p>
-                            <p className="col-span-4">{event.allowedGender}</p>
-                            <p className="col-span-2"><strong>Slots left:</strong></p>
-                            <p className="col-span-4">{availableSlots}</p>
-                            <p className="col-span-2"><strong>Start Date:</strong></p>
-                            <p className="col-span-4">{formatDate(event.eventStarts)}</p>
-                            <p className="col-span-2"><strong>End Date:</strong></p>
-                            <p className="col-span-4">{formatDate(event.eventEnds)}</p>
-                        </div> */}
                     </div>
                 </div>
                 <div className="flex w-full justify-end">
                     {eventType === "attended" ? (
                         <div className="flex gap-4 my-4">
+                            <button className="bg-customYellow font-poppins font-semibold px-2 tablet:px-4 rounded-md" onClick={() => { setClickedFeedback(true) }}>View Comments</button>
                             <div className="group">
                                 <button
                                     onClick={handleLike}
@@ -282,7 +266,8 @@ const StudentEventDetailModal: React.FC<StudentEventDetailModalProps> = ({
                     )}
                 </div>
             </div>
-
+            )}
+            {clickedFeedback && <Comments event={event} onClose={() => setClickedFeedback(false)} />}
             {message && <PopUps message={message} onClose={() => setMessage(undefined)} />}
         </div >
     );

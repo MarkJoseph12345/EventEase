@@ -26,7 +26,6 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
     const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | undefined>();
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [confirmationAction, setConfirmationAction] = useState<'delete' | 'update' | null>(null);
-    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [showGenderExclusive, setShowGenderExclusive] = useState(event.allowedGender !== "ALL");
     const [showDepartmentExclusive, setShowDepartmentExclusive] = useState(event.department.some(dept => dept !== "Open To All"));
 
@@ -164,7 +163,6 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
     const handleConfirmation = (action: 'delete' | 'update', event: Event) => {
         setConfirmationAction(action);
         setIsConfirmationOpen(true);
-        setSelectedEvent(event);
     };
 
 
@@ -412,8 +410,6 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                                 }}
                                 name="allowedGender"
                             >
-                                {/* Option for "ALL" can be uncommented if needed */}
-                                {/* <option value="ALL">ALL</option> */}
                                 <option value="MALE">MALE</option>
                                 <option value="FEMALE">FEMALE</option>
                             </select>
@@ -479,7 +475,7 @@ const ManageEvent = ({ event, onClose }: EventDetailModal) => {
                 message={
                     confirmationAction === "delete"
                         ? `Are you sure you want to delete this event?`
-                        : `Are you sure you want to update  this event?`
+                        : `Are you sure you want to update this event?`
                 }
                 actionType={
                     confirmationAction === 'delete'

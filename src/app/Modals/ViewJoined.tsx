@@ -62,7 +62,7 @@ const ViewJoined = ({ event, onClose }: EventDetailModal) => {
     };
 
     return (
-        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-300 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-all duration-100 ease-in-out ${loading ? 'opacity-0' : 'opacity-100'}`}>
             {loading ? (
                 <div></div>
             ) : (
