@@ -88,7 +88,8 @@ const ReportsAndAnalysis: React.FC = () => {
                     const eventPopularity = await getEventPopularity(eventId!);
                     const joinRate = await getJoinRate(eventId!);
                     // const registeredCount = usersData.length;
-                    const attendedCount = attendedUsers.length;
+                    const attendedCount = Array.isArray(attendedUsers) ? attendedUsers.length : 0;
+
                     event.eventPicture = await fetchEventPicture(event.id!);
     
                     return {
