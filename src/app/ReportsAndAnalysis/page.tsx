@@ -61,20 +61,6 @@ const ReportsAndAnalysis: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
     
-            // const storedEventData = sessionStorage.getItem("eventData");
-            // const storedEventTypeDistribution = sessionStorage.getItem("eventTypeDistribution");
-            // const storedAverageEventDuration = sessionStorage.getItem("averageEventDuration");
-            // const storedDepartmentEngagement = sessionStorage.getItem("departmentEngagement");
-    
-            // if (storedEventData && storedEventTypeDistribution && storedAverageEventDuration && storedDepartmentEngagement) {
-            //     setEventData(JSON.parse(storedEventData));
-            //     setFilteredEventData(JSON.parse(storedEventData));
-            //     setEventTypeDistribution(JSON.parse(storedEventTypeDistribution));
-            //     setAverageEventDuration(JSON.parse(storedAverageEventDuration));
-            //     setDepartmentEngagement(JSON.parse(storedDepartmentEngagement));
-            //     setLoading(false);
-            //     return;
-            // }
     
             try {
               
@@ -83,18 +69,15 @@ const ReportsAndAnalysis: React.FC = () => {
                 const eventsWithUserCounts = await Promise.all(fetchedEvents.map(async (event) => {
                     const eventId = event.id;
     
-                    const usersData = await getAllUsersJoinedToEvent(eventId!);
                     const attendedUsers = await getAllUsersAfterAttendance(eventId!);
                     const eventPopularity = await getEventPopularity(eventId!);
                     const joinRate = await getJoinRate(eventId!);
-                    // const registeredCount = usersData.length;
-                    const attendedCount = attendedUsers.length;
+                    const attendedCount = attendedUsers?.length || 0;
 
                     event.eventPicture = await fetchEventPicture(event.id!);
     
                     return {
                         ...event,
-                        // registeredCount,
                         attendedCount,
                         eventPopularity,
                         joinRate,
