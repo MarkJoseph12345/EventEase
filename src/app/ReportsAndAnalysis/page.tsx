@@ -87,13 +87,13 @@ const ReportsAndAnalysis: React.FC = () => {
                     const attendedUsers = await getAllUsersAfterAttendance(eventId!);
                     const eventPopularity = await getEventPopularity(eventId!);
                     const joinRate = await getJoinRate(eventId!);
-                    const registeredCount = usersData.length;
+                    // const registeredCount = usersData.length;
                     const attendedCount = attendedUsers.length;
                     event.eventPicture = await fetchEventPicture(event.id!);
     
                     return {
                         ...event,
-                        registeredCount,
+                        // registeredCount,
                         attendedCount,
                         eventPopularity,
                         joinRate,
@@ -233,9 +233,9 @@ const ReportsAndAnalysis: React.FC = () => {
                                                 <th className="px-6 py-3 text-xs font-medium text-customYellow uppercase tracking-wider text-center">
                                                     Event Name
                                                 </th>
-                                                <th className="px-6 py-3 text-xs font-medium text-customYellow uppercase tracking-wider text-center">
+{/*                                                 <th className="px-6 py-3 text-xs font-medium text-customYellow uppercase tracking-wider text-center">
                                                     Registered
-                                                </th>
+                                                </th> */}
                                                 <th className="px-6 py-3 text-xs font-medium text-customYellow uppercase tracking-wider text-center">
                                                     Attended
                                                 </th>
@@ -264,9 +264,9 @@ const ReportsAndAnalysis: React.FC = () => {
                                                             {event.eventName}
 
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+{/*                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                                             {event.registeredCount}
-                                                        </td>
+                                                        </td> */}
                                                         <td className="px-6 py-4 whitespace-nowrap text-center">
                                                             {event.attendedCount}
                                                         </td>
